@@ -664,3 +664,128 @@ remote: Resolving deltas: 100% (1/1), completed with 1 local object.
 To https://github.com/max-mani/ZeroRespond.git
    fa6d6c0..57bb91e  main -> main
 (venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: add all 7 SQLAlchemy models (cases, alerts, playbooks, steps, evidence, org_profile)"
+[main 5132e1b] feat: add all 7 SQLAlchemy models (cases, alerts, playbooks, steps, evidence, org_profile)
+ 9 files changed, 211 insertions(+)
+ create mode 100644 backend/app/models/alert.py
+ create mode 100644 backend/app/models/base.py
+ create mode 100644 backend/app/models/case.py
+ create mode 100644 backend/app/models/case_step.py
+ create mode 100644 backend/app/models/evidence.py
+ create mode 100644 backend/app/models/org_profile.py
+ create mode 100644 backend/app/models/playbook.py
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 24, done.
+Counting objects: 100% (24/24), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (15/15), done.
+Writing objects: 100% (16/16), 4.42 KiB | 2.21 MiB/s, done.
+Total 16 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 4 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   57bb91e..5132e1b  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+alembic init alembic
+  Creating directory /home/mani/Projects/ZeroRespond/backend/alembic/versions ...  done
+  Generating /home/mani/Projects/ZeroRespond/backend/alembic/README ...  done
+  Generating /home/mani/Projects/ZeroRespond/backend/alembic.ini ...  done
+  Generating /home/mani/Projects/ZeroRespond/backend/alembic/env.py ...  done
+  Generating /home/mani/Projects/ZeroRespond/backend/alembic/script.py.mako ...  done
+  Please edit configuration/connection/logging settings in
+  /home/mani/Projects/ZeroRespond/backend/alembic.ini before proceeding.
+(venv) [mani@maxim backend]$ cd backend
+alembic revision --autogenerate -m "initial_schema"
+bash: cd: backend: No such file or directory
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'alerts'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'org_profile'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_org_profile_id' on '('id',)'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'playbooks'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'cases'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'playbook_steps'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'case_steps'
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'evidence'
+  Generating /home/mani/Projects/ZeroRespond/backend/alembic/versions/3e3424f16eb1_initial_schema.py ...  done
+(venv) [mani@maxim backend]$ alembic upgrade head
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 3e3424f16eb1, initial_schema
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\dt"
+            List of relations
+ Schema |      Name       | Type  | Owner 
+--------+-----------------+-------+-------
+ public | alembic_version | table | zr
+ public | alerts          | table | zr
+ public | case_steps      | table | zr
+ public | cases           | table | zr
+ public | evidence        | table | zr
+ public | org_profile     | table | zr
+ public | playbook_steps  | table | zr
+ public | playbooks       | table | zr
+(8 rows)
+
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\d cases"
+                             Table "public.cases"
+      Column      |           Type           | Collation | Nullable | Default 
+------------------+--------------------------+-----------+----------+---------
+ id               | character varying(30)    |           | not null | 
+ title            | character varying(255)   |           | not null | 
+ severity         | severityenum             |           | not null | 
+ status           | statusenum               |           | not null | 
+ breach_type      | breachtypeenum           |           | not null | 
+ data_categories  | character varying(255)   |           |          | 
+ persons_affected | integer                  |           |          | 
+ breach_est_at    | timestamp with time zone |           |          | 
+ source_host      | character varying(255)   |           |          | 
+ source_ip        | character varying(45)    |           |          | 
+ alert_id         | character varying(50)    |           |          | 
+ playbook_id      | integer                  |           |          | 
+ assigned_to      | character varying(255)   |           |          | 
+ ai_summary       | text                     |           |          | 
+ ai_confidence    | double precision         |           |          | 
+ ai_mitre         | character varying(20)    |           |          | 
+ immediate_action | text                     |           |          | 
+ notes            | text                     |           |          | 
+ detected_at      | timestamp with time zone |           |          | now()
+ resolved_at      | timestamp with time zone |           |          | 
+ created_at       | timestamp with time zone |           |          | now()
+ updated_at       | timestamp with time zone |           |          | 
+Indexes: 
+    "cases_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "cases_alert_id_fkey" FOREIGN KEY (alert_id) REFERENCES alerts(id)
+    "cases_playbook_id_fkey" FOREIGN KEY (playbook_id) REFERENCES playbooks(id)
+Referenced by:
+    TABLE "case_steps" CONSTRAINT "case_steps_case_id_fkey" FOREIGN KEY (case_id) REFERENCES cases(id)
+    TABLE "evidence" CONSTRAINT "evidence_case_id_fkey" FOREIGN KEY (case_id) REFERENCES cases(id)
+         
+(venv) [mani@maxim backend]$ git add .
+(venv) [mani@maxim backend]$ git commit -m "feat: alembic config + initial schema migration — all 7 tables"
+[main feaa7c4] feat: alembic config + initial schema migration — all 7 tables
+ 5 files changed, 352 insertions(+)
+ create mode 100644 backend/alembic.ini
+ create mode 100644 backend/alembic/README
+ create mode 100644 backend/alembic/env.py
+ create mode 100644 backend/alembic/script.py.mako
+ create mode 100644 backend/alembic/versions/3e3424f16eb1_initial_schema.py
+(venv) [mani@maxim backend]$ git push origin main
+Enumerating objects: 12, done.
+Counting objects: 100% (12/12), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (10/10), 4.80 KiB | 4.80 MiB/s, done.
+Total 10 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 1 local object.
+To https://github.com/max-mani/ZeroRespond.git
+   5132e1b..feaa7c4  main -> main
+(venv) [mani@maxim backend]$ 

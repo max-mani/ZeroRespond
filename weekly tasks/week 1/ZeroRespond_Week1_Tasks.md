@@ -1,4 +1,5 @@
 # ZeroRespond — Week 1 Task List
+
 **Phase 1 · Foundation · Database Schema + FastAPI Project Setup**
 
 > **Goal by end of Week 1:** PostgreSQL running in Docker with all 7 tables created via Alembic migration. FastAPI project boots without errors. You have a clean, professional project structure you will build on for the next 11 weeks. No endpoint logic this week — just setup and schema.
@@ -25,6 +26,7 @@ mkdir -p landing
 ```
 
 Verify the structure looks like this:
+
 ```
 zerorespondnd/
 ├── backend/
@@ -86,12 +88,14 @@ data/reports/*
 ```
 
 Create placeholder files so empty folders are tracked:
+
 ```bash
 touch data/evidence/.gitkeep
 touch data/reports/.gitkeep
 ```
 
 Initial commit:
+
 ```bash
 git add .
 git commit -m "chore: initial project structure"
@@ -110,6 +114,7 @@ venv\Scripts\activate      # Windows
 ```
 
 Verify Python version is 3.11+:
+
 ```bash
 python --version
 # Should output: Python 3.11.x
@@ -127,11 +132,13 @@ pip install fastapi uvicorn[standard] sqlalchemy alembic psycopg2-binary \
 ```
 
 Pin all versions by generating requirements.txt immediately:
+
 ```bash
 pip freeze > requirements.txt
 ```
 
 Verify key packages installed correctly:
+
 ```bash
 python -c "import fastapi; print('FastAPI:', fastapi.__version__)"
 python -c "import sqlalchemy; print('SQLAlchemy:', sqlalchemy.__version__)"
@@ -143,6 +150,7 @@ python -c "import alembic; print('Alembic:', alembic.__version__)"
 ### Task 1.5 — Create the .env file and .env.example
 
 Create `backend/.env` (never commit this):
+
 ```env
 # Database
 DATABASE_URL=postgresql://zr:secret@localhost:5432/zerorespondnd
@@ -162,6 +170,7 @@ ENVIRONMENT=development
 ```
 
 Create `backend/.env.example` (commit this):
+
 ```env
 # Database
 DATABASE_URL=postgresql://zr:secret@localhost:5432/zerorespondnd
@@ -181,6 +190,7 @@ ENVIRONMENT=development
 ```
 
 Add `.env` to `.gitignore` (already done in Task 1.2). Commit `.env.example`:
+
 ```bash
 git add backend/.env.example
 git commit -m "chore: add .env.example with all required variables"
@@ -203,6 +213,7 @@ newgrp docker
 ```
 
 Verify Docker works:
+
 ```bash
 docker --version
 docker compose version
@@ -224,6 +235,7 @@ docker run -d \
 ```
 
 Verify it is running:
+
 ```bash
 docker ps
 # Should show zr-postgres as running
@@ -233,6 +245,7 @@ docker logs zr-postgres
 ```
 
 Test connection:
+
 ```bash
 docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\conninfo"
 # Should output: You are connected to database "zerorespondnd" as user "zr"
@@ -267,7 +280,7 @@ If this fails, check Docker is running and port 5432 is not blocked by another p
 
 ## Day 3 — FastAPI Project Skeleton + Database Config
 
-### Task 3.1 — Create backend/app/__init__.py
+### Task 3.1 — Create backend/app/**init**.py
 
 ```bash
 touch backend/app/__init__.py
@@ -368,6 +381,7 @@ async def health_check():
 ```
 
 Test the server boots:
+
 ```bash
 cd backend
 source venv/bin/activate
@@ -375,10 +389,11 @@ uvicorn app.main:app --reload
 # Should output: Uvicorn running on http://127.0.0.1:8000
 ```
 
-Open http://127.0.0.1:8000/health — should return `{"status":"ok"}`.
-Open http://127.0.0.1:8000/docs — FastAPI Swagger UI should load.
+Open [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) — should return `{"status":"ok"}`.
+Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) — FastAPI Swagger UI should load.
 
 Commit:
+
 ```bash
 git add backend/
 git commit -m "feat: fastapi skeleton with health endpoint and db config"
@@ -619,7 +634,7 @@ class Evidence(Base):
 
 ---
 
-### Task 4.8 — Update backend/app/models/__init__.py to import all models
+### Task 4.8 — Update backend/app/models/**init**.py to import all models
 
 ```python
 # backend/app/models/__init__.py
@@ -639,6 +654,7 @@ __all__ = [
 ```
 
 Commit:
+
 ```bash
 git add backend/app/models/
 git commit -m "feat: add all 7 SQLAlchemy models (cases, alerts, playbooks, steps, evidence, org_profile)"
@@ -663,10 +679,13 @@ This creates `alembic/` folder with `alembic.ini` and `alembic/env.py`.
 ### Task 5.2 — Configure alembic.ini
 
 Open `backend/alembic.ini`. Find the line:
+
 ```
 sqlalchemy.url = driver://user:pass@localhost/dbname
 ```
+
 Replace it with:
+
 ```
 sqlalchemy.url = postgresql://zr:secret@localhost:5432/zerorespondnd
 ```
@@ -732,11 +751,13 @@ alembic revision --autogenerate -m "initial_schema"
 ```
 
 Expected output:
+
 ```
 Generating /backend/alembic/versions/xxxxxxxxxxxx_initial_schema.py ... done
 ```
 
 Open the generated file in `alembic/versions/`. Verify it contains `op.create_table(...)` calls for all 7 tables:
+
 - `org_profile`
 - `alerts`
 - `playbooks`
@@ -756,6 +777,7 @@ alembic upgrade head
 ```
 
 Expected output:
+
 ```
 INFO  [alembic.runtime.migration] Running upgrade  -> xxxxxxxxxxxx, initial_schema
 ```
@@ -769,6 +791,7 @@ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\dt"
 ```
 
 Expected output:
+
 ```
             List of relations
  Schema |     Name      | Type  | Owner
@@ -784,6 +807,7 @@ Expected output:
 ```
 
 Verify column structure of the most important table:
+
 ```bash
 docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\d cases"
 ```
@@ -791,6 +815,7 @@ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\d cases"
 Make sure all columns are present with the correct types.
 
 Commit:
+
 ```bash
 git add backend/alembic/
 git commit -m "feat: alembic config + initial schema migration — all 7 tables"
@@ -807,6 +832,7 @@ curl -fsSL https://ollama.ai/install.sh | sh
 ```
 
 Verify installation:
+
 ```bash
 ollama --version
 ```
@@ -904,6 +930,7 @@ def parse_llm_json(raw: str) -> dict:
 ```
 
 Test it manually:
+
 ```bash
 cd backend
 source venv/bin/activate
@@ -925,6 +952,7 @@ asyncio.run(test())
 ```
 
 Commit:
+
 ```bash
 git add backend/app/services/ollama_client.py
 git commit -m "feat: ollama client with JSON parsing and markdown stripping"
@@ -939,18 +967,21 @@ git commit -m "feat: ollama client with JSON parsing and markdown stripping"
 Open 3 terminals:
 
 **Terminal 1 — PostgreSQL (already running in Docker):**
+
 ```bash
 docker ps | grep zr-postgres
 # Should show: Up X minutes
 ```
 
 **Terminal 2 — Ollama:**
+
 ```bash
 ollama serve
 # Should show: Listening on 127.0.0.1:11434
 ```
 
 **Terminal 3 — FastAPI:**
+
 ```bash
 cd backend && source venv/bin/activate
 uvicorn app.main:app --reload
@@ -998,15 +1029,17 @@ git tag v0.1.0-week1
 
 ## Week 1 Summary
 
-| Day | What you built | Verification |
-|-----|---------------|-------------|
-| 1 | Project structure, Git, Python venv, all dependencies, .env | `pip freeze` shows all packages |
-| 2 | PostgreSQL in Docker with persistent volume | `docker exec psql` connects successfully |
-| 3 | FastAPI skeleton, config, database.py, health endpoint | `/health` returns 200, `/docs` loads |
-| 4 | All 7 SQLAlchemy models with correct types and relationships | All models import without errors |
-| 5 | Alembic configured, initial migration generated and applied | `\dt` shows 7 tables in psql |
-| 6 | Ollama installed, qwen2.5:7b pulled, ollama_client.py tested | Model returns parseable JSON |
-| 7 | Full stack boots together, all 5 checklist items pass | All checks green |
+
+| Day | What you built                                               | Verification                             |
+| --- | ------------------------------------------------------------ | ---------------------------------------- |
+| 1   | Project structure, Git, Python venv, all dependencies, .env  | `pip freeze` shows all packages          |
+| 2   | PostgreSQL in Docker with persistent volume                  | `docker exec psql` connects successfully |
+| 3   | FastAPI skeleton, config, database.py, health endpoint       | `/health` returns 200, `/docs` loads     |
+| 4   | All 7 SQLAlchemy models with correct types and relationships | All models import without errors         |
+| 5   | Alembic configured, initial migration generated and applied  | `\dt` shows 7 tables in psql             |
+| 6   | Ollama installed, qwen2.5:7b pulled, ollama_client.py tested | Model returns parseable JSON             |
+| 7   | Full stack boots together, all 5 checklist items pass        | All checks green                         |
+
 
 **You are now ready for Week 2 — Case Manager REST API.**
 
