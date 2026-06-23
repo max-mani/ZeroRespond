@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.next/
+
+# Docker
+*.log
+
+# Data (never commit patient/evidence data)
+data/evidence/*
+data/reports/*
+!data/evidence/.gitkeep
+!data/reports/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.DS_Store
