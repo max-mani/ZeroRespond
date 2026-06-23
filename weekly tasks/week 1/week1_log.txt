@@ -885,3 +885,70 @@ remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    feaa7c4..5a8e042  main -> main
 (venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ docker ps | grep zr-postgres
+e05a380b78ad   postgres:15-alpine   "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp   zr-postgres
+(venv) [mani@maxim ZeroRespond]$ ollama serve
+Error: listen tcp 127.0.0.1:11434: bind: address already in use
+(venv) [mani@maxim ZeroRespond]$ cd backend && source venv/bin/activate
+uvicorn app.main:app --reload
+INFO:     Will watch for changes in these directories: ['/home/mani/Projects/ZeroRespond/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [96571] using WatchFiles
+INFO:     Started server process [96573]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+^CINFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [96573]
+INFO:     Stopping reloader process [96571]
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\dt" | grep -c "table"
+8
+(venv) [mani@maxim backend]$ curl http://localhost:8000/health
+curl: (7) Failed to connect to localhost port 8000 after 0 ms: Could not connect to server
+(venv) [mani@maxim backend]$ curl http://localhost:8000/health
+{"status":"ok","version":"1.0.0","environment":"development"}(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ curl http://localhost:11434/api/tags | python3 -c "import sys,json; d=json.load(sys.stdin); print('Models:', [m['name'] for m in d.get('models',[])])"
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+100    424 100    424   0      0 300.0k      0                              0
+Models: ['qwen2.5:7b']
+(venv) [mani@maxim backend]$ cd backend && alembic current
+bash: cd: backend: No such file or directory
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ cd backend && alembic current
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+3e3424f16eb1 (head)
+(venv) [mani@maxim backend]$ python -c "from app.models import Case, Alert, Playbook, PlaybookStep, CaseStep, Evidence, OrgProfile; print('All 7 models imported OK')"
+All 7 models imported OK
+(venv) [mani@maxim backend]$ git add .
+git commit -m "feat: week 1 complete — db schema, fastapi skeleton, ollama client"
+git tag v0.1.0-week1
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   ../weekly tasks/week 1/week1_log.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add .
+git commit -m "feat: week 1 complete — db schema, fastapi skeleton, ollama client"
+git tag v0.1.0-week1
+[main b87ed89] feat: week 1 complete — db schema, fastapi skeleton, ollama client
+ 1 file changed, 96 insertions(+)
+fatal: tag 'v0.1.0-week1' already exists
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (5/5), 2.41 KiB | 2.41 MiB/s, done.
+Total 5 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   5a8e042..b87ed89  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
