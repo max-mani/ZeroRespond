@@ -1,0 +1,647 @@
+[mani@maxim ZeroRespond]$ mkdir -p backend/app/models
+mkdir -p backend/app/routers
+mkdir -p backend/app/services
+mkdir -p backend/app/schemas
+mkdir -p backend/alembic
+mkdir -p backend/templates
+mkdir -p alert-processor
+mkdir -p frontend
+mkdir -p data/evidence
+mkdir -p data/reports
+mkdir -p landing
+[mani@maxim ZeroRespond]$ touch data/evidence/.gitkeep
+touch data/reports/.gitkeep
+[mani@maxim ZeroRespond]$ git add .
+git commit -m "chore: initial project structure"
+[main 2814d3e] chore: initial project structure
+ 3 files changed, 27 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 data/evidence/.gitkeep
+ create mode 100644 data/reports/.gitkeep
+[mani@maxim ZeroRespond]$ git push main origin
+error: src refspec origin does not match any
+error: failed to push some refs to 'main'
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (6/6), 617 bytes | 617.00 KiB/s, done.
+Total 6 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/max-mani/ZeroRespond.git
+   c8cfe49..2814d3e  main -> main
+[mani@maxim ZeroRespond]$ cd backend
+python3 -m venv venv
+source venv/bin/activate 
+(venv) [mani@maxim backend]$ python --version
+Python 3.14.6
+(venv) [mani@maxim backend]$ source venv/bin/activate
+(venv) [mani@maxim backend]$ pip install fastapi uvicorn[standard] sqlalchemy alembic psycopg2-binary \
+            pydantic pydantic-settings python-multipart httpx \
+            python-jose[cryptography] passlib[bcrypt] \
+            jinja2 weasyprint pytest pytest-asyncio httpx
+WARNING: Cache entry deserialization failed, entry ignored
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting fastapi
+  Downloading fastapi-0.138.0-py3-none-any.whl.metadata (27 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting sqlalchemy
+  Using cached sqlalchemy-2.0.51-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.5 kB)
+Collecting alembic
+  Downloading alembic-1.18.4-py3-none-any.whl.metadata (7.2 kB)
+Collecting psycopg2-binary
+  Downloading psycopg2_binary-2.9.12-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pydantic
+  Using cached pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+Collecting pydantic-settings
+  Downloading pydantic_settings-2.14.2-py3-none-any.whl.metadata (3.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting python-multipart
+  Using cached python_multipart-0.0.32-py3-none-any.whl.metadata (2.1 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting httpx
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting jinja2
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting weasyprint
+  Downloading weasyprint-69.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting pytest
+  Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-asyncio
+  Downloading pytest_asyncio-1.4.0-py3-none-any.whl.metadata (4.1 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting uvicorn[standard]
+  Using cached uvicorn-0.49.0-py3-none-any.whl.metadata (6.7 kB)
+Collecting python-jose[cryptography]
+  Downloading python_jose-3.5.0-py2.py3-none-any.whl.metadata (5.5 kB)
+Collecting passlib[bcrypt]
+  Downloading passlib-1.7.4-py2.py3-none-any.whl.metadata (1.7 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting starlette>=0.46.0 (from fastapi)
+  Using cached starlette-1.3.1-py3-none-any.whl.metadata (6.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting typing-extensions>=4.8.0 (from fastapi)
+  Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting typing-inspection>=0.4.2 (from fastapi)
+  Using cached typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting annotated-doc>=0.0.2 (from fastapi)
+  Using cached annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting click>=7.0 (from uvicorn[standard])
+  Using cached click-8.4.1-py3-none-any.whl.metadata (2.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting h11>=0.8 (from uvicorn[standard])
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting httptools>=0.8.0 (from uvicorn[standard])
+  Using cached httptools-0.8.0-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (3.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting python-dotenv>=0.13 (from uvicorn[standard])
+  Using cached python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pyyaml>=5.1 (from uvicorn[standard])
+  Using cached pyyaml-6.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting uvloop>=0.15.1 (from uvicorn[standard])
+  Using cached uvloop-0.22.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting watchfiles>=0.20 (from uvicorn[standard])
+  Using cached watchfiles-1.2.0-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting websockets>=10.4 (from uvicorn[standard])
+  Using cached websockets-16.0-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting greenlet>=1 (from sqlalchemy)
+  Downloading greenlet-3.5.2-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting Mako (from alembic)
+  Using cached mako-1.3.12-py3-none-any.whl.metadata (2.9 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting annotated-types>=0.6.0 (from pydantic)
+  Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pydantic-core==2.46.4 (from pydantic)
+  Using cached pydantic_core-2.46.4-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting anyio (from httpx)
+  Using cached anyio-4.14.0-py3-none-any.whl.metadata (4.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting certifi (from httpx)
+  Using cached certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting httpcore==1.* (from httpx)
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting idna (from httpx)
+  Using cached idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting ecdsa!=0.15 (from python-jose[cryptography])
+  Downloading ecdsa-0.19.2-py2.py3-none-any.whl.metadata (29 kB)
+Collecting rsa!=4.1.1,!=4.4,<5.0,>=4.0 (from python-jose[cryptography])
+  Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pyasn1>=0.5.0 (from python-jose[cryptography])
+  Using cached pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting cryptography>=3.4.0 (from python-jose[cryptography])
+  Using cached cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting bcrypt>=3.1.0 (from passlib[bcrypt])
+  Using cached bcrypt-5.0.0-cp39-abi3-manylinux_2_34_x86_64.whl.metadata (10 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting MarkupSafe>=2.0 (from jinja2)
+  Using cached markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting pydyf>=0.11.0 (from weasyprint)
+  Downloading pydyf-0.12.1-py3-none-any.whl.metadata (2.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting cffi>=0.6 (from weasyprint)
+  Using cached cffi-2.0.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting tinyhtml5>=2.0.0b1 (from weasyprint)
+  Downloading tinyhtml5-2.1.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting tinycss2>=1.5.0 (from weasyprint)
+  Downloading tinycss2-1.5.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting cssselect2>=0.8.0 (from weasyprint)
+  Downloading cssselect2-0.9.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting Pyphen>=0.9.1 (from weasyprint)
+  Downloading pyphen-0.17.2-py3-none-any.whl.metadata (3.2 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting Pillow>=9.1.0 (from weasyprint)
+  Using cached pillow-12.2.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting fonttools>=4.59.2 (from fonttools[woff]>=4.59.2->weasyprint)
+  Using cached fonttools-4.63.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (118 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting packaging>=22 (from pytest)
+  Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pygments>=2.7.2 (from pytest)
+  Using cached pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting pycparser (from cffi>=0.6->weasyprint)
+  Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Collecting webencodings (from cssselect2>=0.8.0->weasyprint)
+  Downloading webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+WARNING: Cache entry deserialization failed, entry ignored
+Collecting six>=1.9.0 (from ecdsa!=0.15->python-jose[cryptography])
+  Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting brotli>=1.0.1 (from fonttools[woff]>=4.59.2->weasyprint)
+  Downloading brotli-1.2.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (6.1 kB)
+Collecting zopfli>=0.1.4 (from fonttools[woff]>=4.59.2->weasyprint)
+  Downloading zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.5 kB)
+Downloading fastapi-0.138.0-py3-none-any.whl (126 kB)
+Using cached uvicorn-0.49.0-py3-none-any.whl (71 kB)
+Using cached sqlalchemy-2.0.51-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.3 MB)
+Downloading alembic-1.18.4-py3-none-any.whl (263 kB)
+Downloading psycopg2_binary-2.9.12-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.3/4.3 MB 6.9 MB/s  0:00:00
+Using cached pydantic-2.13.4-py3-none-any.whl (472 kB)
+Using cached pydantic_core-2.46.4-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Downloading pydantic_settings-2.14.2-py3-none-any.whl (61 kB)
+Using cached python_multipart-0.0.32-py3-none-any.whl (30 kB)
+Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+Downloading python_jose-3.5.0-py2.py3-none-any.whl (34 kB)
+Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+Downloading passlib-1.7.4-py2.py3-none-any.whl (525 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 525.6/525.6 kB 4.1 MB/s  0:00:00
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading weasyprint-69.0-py3-none-any.whl (322 kB)
+Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pytest_asyncio-1.4.0-py3-none-any.whl (16 kB)
+Using cached annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Using cached bcrypt-5.0.0-cp39-abi3-manylinux_2_34_x86_64.whl (278 kB)
+Using cached cffi-2.0.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (219 kB)
+Using cached click-8.4.1-py3-none-any.whl (116 kB)
+Using cached cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl (4.7 MB)
+Downloading cssselect2-0.9.0-py3-none-any.whl (15 kB)
+Downloading ecdsa-0.19.2-py2.py3-none-any.whl (150 kB)
+Using cached fonttools-4.63.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.9 MB)
+Downloading brotli-1.2.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 5.8 MB/s  0:00:00
+Downloading greenlet-3.5.2-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (663 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 663.2/663.2 kB 4.1 MB/s  0:00:00
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached httptools-0.8.0-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (481 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Using cached markupsafe-3.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (23 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Using cached pillow-12.2.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.1 MB)
+Using cached pyasn1-0.6.3-py3-none-any.whl (83 kB)
+Downloading pydyf-0.12.1-py3-none-any.whl (8.0 kB)
+Using cached pygments-2.20.0-py3-none-any.whl (1.2 MB)
+Downloading pyphen-0.17.2-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 4.0 MB/s  0:00:00
+Using cached python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+Using cached pyyaml-6.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (794 kB)
+Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+Using cached starlette-1.3.1-py3-none-any.whl (73 kB)
+Using cached anyio-4.14.0-py3-none-any.whl (123 kB)
+Using cached idna-3.18-py3-none-any.whl (65 kB)
+Downloading tinycss2-1.5.1-py3-none-any.whl (28 kB)
+Downloading tinyhtml5-2.1.0-py3-none-any.whl (39 kB)
+Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Using cached typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Using cached uvloop-0.22.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.3 MB)
+Using cached watchfiles-1.2.0-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (453 kB)
+Downloading webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+Using cached websockets-16.0-cp314-cp314-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (185 kB)
+Downloading zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (829 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 829.4/829.4 kB 4.5 MB/s  0:00:00
+Using cached certifi-2026.6.17-py3-none-any.whl (133 kB)
+Using cached mako-1.3.12-py3-none-any.whl (78 kB)
+Using cached pycparser-3.0-py3-none-any.whl (48 kB)
+Installing collected packages: webencodings, passlib, brotli, zopfli, websockets, uvloop, typing-extensions, tinyhtml5, tinycss2, six, pyyaml, python-multipart, python-dotenv, Pyphen, pygments, pydyf, pycparser, pyasn1, psycopg2-binary, pluggy, Pillow, packaging, MarkupSafe, iniconfig, idna, httptools, h11, greenlet, fonttools, click, certifi, bcrypt, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, rsa, pytest, pydantic-core, Mako, jinja2, httpcore, ecdsa, cssselect2, cffi, anyio, weasyprint, watchfiles, starlette, python-jose, pytest-asyncio, pydantic, httpx, cryptography, alembic, pydantic-settings, fastapi
+Successfully installed Mako-1.3.12 MarkupSafe-3.0.3 Pillow-12.2.0 Pyphen-0.17.2 alembic-1.18.4 annotated-doc-0.0.4 annotated-types-0.7.0 anyio-4.14.0 bcrypt-5.0.0 brotli-1.2.0 certifi-2026.6.17 cffi-2.0.0 click-8.4.1 cryptography-49.0.0 cssselect2-0.9.0 ecdsa-0.19.2 fastapi-0.138.0 fonttools-4.63.0 greenlet-3.5.2 h11-0.16.0 httpcore-1.0.9 httptools-0.8.0 httpx-0.28.1 idna-3.18 iniconfig-2.3.0 jinja2-3.1.6 packaging-26.2 passlib-1.7.4 pluggy-1.6.0 psycopg2-binary-2.9.12 pyasn1-0.6.3 pycparser-3.0 pydantic-2.13.4 pydantic-core-2.46.4 pydantic-settings-2.14.2 pydyf-0.12.1 pygments-2.20.0 pytest-9.1.1 pytest-asyncio-1.4.0 python-dotenv-1.2.2 python-jose-3.5.0 python-multipart-0.0.32 pyyaml-6.0.3 rsa-4.9.1 six-1.17.0 sqlalchemy-2.0.51 starlette-1.3.1 tinycss2-1.5.1 tinyhtml5-2.1.0 typing-extensions-4.15.0 typing-inspection-0.4.2 uvicorn-0.49.0 uvloop-0.22.1 watchfiles-1.2.0 weasyprint-69.0 webencodings-0.5.1 websockets-16.0 zopfli-0.4.3
+(venv) [mani@maxim backend]$ pip freeze > requirements.txt
+(venv) [mani@maxim backend]$ python -c "import fastapi; print('FastAPI:', fastapi.__version__)"
+python -c "import sqlalchemy; print('SQLAlchemy:', sqlalchemy.__version__)"
+python -c "import alembic; print('Alembic:', alembic.__version__)"
+FastAPI: 0.138.0
+SQLAlchemy: 2.0.51
+Alembic: 1.18.4
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add backend/.env.example
+git commit -m "chore: add .env.example with all required variables"
+[main b142aa0] chore: add .env.example with all required variables
+ 1 file changed, 16 insertions(+)
+ create mode 100644 backend/.env.example
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (4/4), 633 bytes | 633.00 KiB/s, done.
+Total 4 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/max-mani/ZeroRespond.git
+   2814d3e..b142aa0  main -> main
+(venv) [mani@maxim ZeroRespond]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+(venv) [mani@maxim ZeroRespond]$ # Update system
+sudo pacman -Syu
+[sudo] password for mani: 
+:: Synchronizing package databases...
+ core                               126.6 KiB   500 KiB/s 00:00 [##################################] 100%
+ extra                                8.3 MiB  2.36 MiB/s 00:04 [##################################] 100%
+:: Starting full system upgrade...
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (73) brltty-6.9.1-3  cabextract-1.11-3  containerd-2.3.2-1  cpupower-7.1.1-1  docker-1:29.6.0-1
+              ffmpeg-2:8.1.2-6  glslang-1:1.4.350.1-1  gst-devtools-libs-1.28.4-2
+              gst-editing-services-1.28.4-2  gst-plugin-gtk-1.28.4-2  gst-plugins-bad-1.28.4-2
+              gst-plugins-bad-libs-1.28.4-2  gst-plugins-base-1.28.4-2  gst-plugins-base-libs-1.28.4-2
+              gst-plugins-good-1.28.4-2  gst-python-1.28.4-2  gstreamer-1.28.4-2  imagemagick-7.1.2.26-1
+              libdovi-3.3.2-2  libheif-1.23.0-2  libplacebo-7.360.1-3  libvlc-3.0.23_2-8  lsof-4.99.7-1
+              nodejs-26.3.1-1  openexr-3.4.13-2  openjph-0.30.1-1  python-brltty-6.9.1-3
+              python-tqdm-4.68.3-1  shaderc-2026.2-2  spirv-tools-1:1.4.350.1-1  vapoursynth-77-2
+              vid.stab-1.1.1-3  vim-9.2.0699-1  vim-runtime-9.2.0699-1  vlc-3.0.23_2-8
+              vlc-cli-3.0.23_2-8  vlc-gui-qt-3.0.23_2-8  vlc-plugin-a52dec-3.0.23_2-8
+              vlc-plugin-alsa-3.0.23_2-8  vlc-plugin-archive-3.0.23_2-8  vlc-plugin-dav1d-3.0.23_2-8
+              vlc-plugin-dbus-3.0.23_2-8  vlc-plugin-dbus-screensaver-3.0.23_2-8
+              vlc-plugin-faad2-3.0.23_2-8  vlc-plugin-ffmpeg-3.0.23_2-8  vlc-plugin-flac-3.0.23_2-8
+              vlc-plugin-gnutls-3.0.23_2-8  vlc-plugin-inflate-3.0.23_2-8  vlc-plugin-journal-3.0.23_2-8
+              vlc-plugin-jpeg-3.0.23_2-8  vlc-plugin-lua-3.0.23_2-8  vlc-plugin-matroska-3.0.23_2-8
+              vlc-plugin-mpg123-3.0.23_2-8  vlc-plugin-ogg-3.0.23_2-8  vlc-plugin-opus-3.0.23_2-8
+              vlc-plugin-png-3.0.23_2-8  vlc-plugin-pulse-3.0.23_2-8  vlc-plugin-shout-3.0.23_2-8
+              vlc-plugin-speex-3.0.23_2-8  vlc-plugin-tag-3.0.23_2-8  vlc-plugin-theora-3.0.23_2-8
+              vlc-plugin-twolame-3.0.23_2-8  vlc-plugin-vorbis-3.0.23_2-8  vlc-plugin-vpx-3.0.23_2-8
+              vlc-plugin-xml-3.0.23_2-8  vlc-plugins-base-3.0.23_2-8
+              vlc-plugins-video-output-3.0.23_2-8  vulkan-icd-loader-1.4.350.1-1  x265-4.2-2
+              xdg-desktop-portal-1.22.1-2  xkeyboard-config-2.48-1  xvidcore-1.3.7-4  zbar-0.23.93-6
+
+Total Download Size:   135.98 MiB
+Total Installed Size:  574.10 MiB
+Net Upgrade Size:        4.07 MiB
+
+:: Proceed with installation? [Y/n] y
+:: Retrieving packages...
+ imagemagick-7.1.2.26-1-x86_64        8.9 MiB  1208 KiB/s 00:08 [##################################] 100%
+ vim-runtime-9.2.0699-1-x86_64        7.6 MiB  1193 KiB/s 00:07 [##################################] 100%
+ nodejs-26.3.1-1-x86_64              16.0 MiB   835 KiB/s 00:20 [##################################] 100%
+ vlc-3.0.23_2-8-x86_64                6.4 MiB  1233 KiB/s 00:05 [##################################] 100%
+ containerd-2.3.2-1-x86_64           19.5 MiB   985 KiB/s 00:20 [##################################] 100%
+ gst-plugins-bad-libs-1.28.4-2...     3.2 MiB   675 KiB/s 00:05 [##################################] 100%
+ vim-9.2.0699-1-x86_64                2.5 MiB   568 KiB/s 00:05 [##################################] 100%
+ glslang-1:1.4.350.1-1-x86_64         2.5 MiB   584 KiB/s 00:04 [##################################] 100%
+ docker-1:29.6.0-1-x86_64            27.8 MiB  1119 KiB/s 00:25 [##################################] 100%
+ gst-plugins-base-libs-1.28.4-...     2.5 MiB  1276 KiB/s 00:02 [##################################] 100%
+ gst-plugins-good-1.28.4-2-x86_64     2.3 MiB  1016 KiB/s 00:02 [##################################] 100%
+ gstreamer-1.28.4-2-x86_64            2.1 MiB  1052 KiB/s 00:02 [##################################] 100%
+ x265-4.2-2-x86_64                    2.1 MiB  1117 KiB/s 00:02 [##################################] 100%
+ ffmpeg-2:8.1.2-6-x86_64             14.8 MiB   551 KiB/s 00:28 [##################################] 100%
+ spirv-tools-1:1.4.350.1-1-x86_64     2.1 MiB  1710 KiB/s 00:01 [##################################] 100%
+ openexr-3.4.13-2-x86_64           1212.1 KiB   772 KiB/s 00:02 [##################################] 100%
+ gst-plugins-bad-1.28.4-2-x86_64   1163.4 KiB   753 KiB/s 00:02 [##################################] 100%
+ brltty-6.9.1-3-x86_64             1808.0 KiB  1010 KiB/s 00:02 [##################################] 100%
+ vlc-plugins-base-3.0.23_2-8-x...     2.0 MiB  1133 KiB/s 00:02 [##################################] 100%
+ vlc-gui-qt-3.0.23_2-8-x86_64      1078.9 KiB  1199 KiB/s 00:01 [##################################] 100%
+ libvlc-3.0.23_2-8-x86_64           702.5 KiB  1084 KiB/s 00:01 [##################################] 100%
+ libheif-1.23.0-2-x86_64            857.0 KiB  1283 KiB/s 00:01 [##################################] 100%
+ gst-editing-services-1.28.4-2...   551.4 KiB   847 KiB/s 00:01 [##################################] 100%
+ vapoursynth-77-2-x86_64           1067.6 KiB  1508 KiB/s 00:01 [##################################] 100%
+ xkeyboard-config-2.48-1-any        888.9 KiB  1254 KiB/s 00:01 [##################################] 100%
+ libplacebo-7.360.1-3-x86_64        527.3 KiB  4.48 MiB/s 00:00 [##################################] 100%
+ xdg-desktop-portal-1.22.1-2-x...   448.4 KiB  1456 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-lua-3.0.23_2-8-x86_64   323.4 KiB  1085 KiB/s 00:00 [##################################] 100%
+ zbar-0.23.93-6-x86_64              256.1 KiB   883 KiB/s 00:00 [##################################] 100%
+ openjph-0.30.1-1-x86_64            231.5 KiB   874 KiB/s 00:00 [##################################] 100%
+ gst-devtools-libs-1.28.4-2-x86_64  223.7 KiB  2.23 MiB/s 00:00 [##################################] 100%
+ xvidcore-1.3.7-4-x86_64            221.1 KiB  2.48 MiB/s 00:00 [##################################] 100%
+ gst-plugins-base-1.28.4-2-x86_64   217.6 KiB  2.21 MiB/s 00:00 [##################################] 100%
+ libdovi-3.3.2-2-x86_64             216.4 KiB  2.78 MiB/s 00:00 [##################################] 100%
+ vlc-plugin-matroska-3.0.23_2-...   209.0 KiB  1900 KiB/s 00:00 [##################################] 100%
+ cpupower-7.1.1-1-x86_64            212.4 KiB  1379 KiB/s 00:00 [##################################] 100%
+ shaderc-2026.2-2-x86_64            165.5 KiB  2.49 MiB/s 00:00 [##################################] 100%
+ vlc-plugins-video-output-3.0....   165.5 KiB  1452 KiB/s 00:00 [##################################] 100%
+ vulkan-icd-loader-1.4.350.1-1...   160.9 KiB  1308 KiB/s 00:00 [##################################] 100%
+ lsof-4.99.7-1-x86_64               154.6 KiB  1278 KiB/s 00:00 [##################################] 100%
+ python-tqdm-4.68.3-1-any           130.8 KiB  2.06 MiB/s 00:00 [##################################] 100%
+ python-brltty-6.9.1-3-x86_64        99.2 KiB  1340 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-ffmpeg-3.0.23_2-8-...    82.9 KiB  1359 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-ogg-3.0.23_2-8-x86_64    62.9 KiB   676 KiB/s 00:00 [##################################] 100%
+ gst-python-1.28.4-2-x86_64          62.2 KiB  1152 KiB/s 00:00 [##################################] 100%
+ vid.stab-1.1.1-3-x86_64             50.6 KiB   993 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-tag-3.0.23_2-8-x86_64    41.1 KiB   490 KiB/s 00:00 [##################################] 100%
+ cabextract-1.11-3-x86_64            39.5 KiB   692 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-dbus-3.0.23_2-8-x86_64   38.9 KiB   671 KiB/s 00:00 [##################################] 100%
+ gst-plugin-gtk-1.28.4-2-x86_64      38.2 KiB   695 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-pulse-3.0.23_2-8-x...    23.0 KiB   307 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-alsa-3.0.23_2-8-x86_64   18.7 KiB   335 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-speex-3.0.23_2-8-x...    16.7 KiB   380 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-vorbis-3.0.23_2-8-...    16.6 KiB   189 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-opus-3.0.23_2-8-x86_64   15.8 KiB   330 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-gnutls-3.0.23_2-8-...    14.8 KiB   302 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-theora-3.0.23_2-8-...    15.1 KiB   204 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-flac-3.0.23_2-8-x86_64   13.5 KiB   281 KiB/s 00:00 [##################################] 100%
+ vlc-cli-3.0.23_2-8-x86_64           13.4 KiB   303 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-faad2-3.0.23_2-8-x...    12.6 KiB   191 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-jpeg-3.0.23_2-8-x86_64   12.5 KiB   196 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-archive-3.0.23_2-8...    11.9 KiB   225 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-vpx-3.0.23_2-8-x86_64    10.9 KiB   176 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-shout-3.0.23_2-8-x...    10.8 KiB   163 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-twolame-3.0.23_2-8...     9.8 KiB   223 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-png-3.0.23_2-8-x86_64     9.9 KiB   163 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-mpg123-3.0.23_2-8-...     9.7 KiB   147 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-dav1d-3.0.23_2-8-x...     9.7 KiB   145 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-a52dec-3.0.23_2-8-...     9.3 KiB   216 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-dbus-screensaver-3...     8.7 KiB   181 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-inflate-3.0.23_2-8...     8.3 KiB   119 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-xml-3.0.23_2-8-x86_64     8.3 KiB   123 KiB/s 00:00 [##################################] 100%
+ vlc-plugin-journal-3.0.23_2-8...     7.7 KiB  43.5 KiB/s 00:00 [##################################] 100%
+ Total (73/73)                      136.0 MiB  4.24 MiB/s 00:32 [##################################] 100%
+(73/73) checking keys in keyring                                [##################################] 100%
+(73/73) checking package integrity                              [##################################] 100%
+(73/73) loading package files                                   [##################################] 100%
+(73/73) checking for file conflicts                             [##################################] 100%
+(73/73) checking available disk space                           [##################################] 100%
+:: Processing package changes...
+( 1/73) upgrading brltty                                        [##################################] 100%
+Please add your user to the brlapi group.
+( 2/73) upgrading cabextract                                    [##################################] 100%
+( 3/73) upgrading containerd                                    [##################################] 100%
+( 4/73) upgrading cpupower                                      [##################################] 100%
+( 5/73) upgrading docker                                        [##################################] 100%
+( 6/73) upgrading spirv-tools                                   [##################################] 100%
+( 7/73) upgrading glslang                                       [##################################] 100%
+( 8/73) upgrading vulkan-icd-loader                             [##################################] 100%
+( 9/73) upgrading shaderc                                       [##################################] 100%
+(10/73) upgrading libdovi                                       [##################################] 100%
+(11/73) upgrading libplacebo                                    [##################################] 100%
+(12/73) upgrading vapoursynth                                   [##################################] 100%
+(13/73) upgrading vid.stab                                      [##################################] 100%
+(14/73) upgrading x265                                          [##################################] 100%
+(15/73) upgrading xvidcore                                      [##################################] 100%
+(16/73) upgrading ffmpeg                                        [##################################] 100%
+(17/73) upgrading gstreamer                                     [##################################] 100%
+(18/73) upgrading gst-plugins-base-libs                         [##################################] 100%
+(19/73) upgrading gst-devtools-libs                             [##################################] 100%
+(20/73) upgrading gst-python                                    [##################################] 100%
+(21/73) upgrading gst-editing-services                          [##################################] 100%
+(22/73) upgrading xkeyboard-config                              [##################################] 100%
+(23/73) upgrading gst-plugins-bad-libs                          [##################################] 100%
+(24/73) upgrading gst-plugin-gtk                                [##################################] 100%
+(25/73) upgrading openjph                                       [##################################] 100%
+(26/73) upgrading openexr                                       [##################################] 100%
+(27/73) upgrading imagemagick                                   [##################################] 100%
+(28/73) upgrading zbar                                          [##################################] 100%
+(29/73) upgrading gst-plugins-bad                               [##################################] 100%
+(30/73) upgrading gst-plugins-base                              [##################################] 100%
+(31/73) upgrading gst-plugins-good                              [##################################] 100%
+(32/73) upgrading libheif                                       [##################################] 100%
+(33/73) upgrading libvlc                                        [##################################] 100%
+(34/73) upgrading lsof                                          [##################################] 100%
+(35/73) upgrading nodejs                                        [##################################] 100%
+(36/73) upgrading python-brltty                                 [##################################] 100%
+(37/73) upgrading python-tqdm                                   [##################################] 100%
+(38/73) upgrading vim-runtime                                   [##################################] 100%
+(39/73) upgrading vim                                           [##################################] 100%
+(40/73) upgrading vlc-plugin-alsa                               [##################################] 100%
+(41/73) upgrading vlc-plugin-a52dec                             [##################################] 100%
+(42/73) upgrading vlc-plugin-archive                            [##################################] 100%
+(43/73) upgrading vlc-plugin-dav1d                              [##################################] 100%
+(44/73) upgrading vlc-plugin-dbus                               [##################################] 100%
+(45/73) upgrading vlc-plugin-dbus-screensaver                   [##################################] 100%
+(46/73) upgrading vlc-plugin-faad2                              [##################################] 100%
+(47/73) upgrading vlc-plugin-flac                               [##################################] 100%
+(48/73) upgrading vlc-plugin-gnutls                             [##################################] 100%
+(49/73) upgrading vlc-plugin-inflate                            [##################################] 100%
+(50/73) upgrading vlc-plugin-jpeg                               [##################################] 100%
+(51/73) upgrading vlc-plugin-journal                            [##################################] 100%
+(52/73) upgrading vlc-plugin-matroska                           [##################################] 100%
+(53/73) upgrading vlc-plugin-mpg123                             [##################################] 100%
+(54/73) upgrading vlc-plugin-ogg                                [##################################] 100%
+(55/73) upgrading vlc-plugin-opus                               [##################################] 100%
+(56/73) upgrading vlc-plugin-png                                [##################################] 100%
+(57/73) upgrading vlc-plugin-shout                              [##################################] 100%
+(58/73) upgrading vlc-plugin-speex                              [##################################] 100%
+(59/73) upgrading vlc-plugin-tag                                [##################################] 100%
+(60/73) upgrading vlc-plugin-theora                             [##################################] 100%
+(61/73) upgrading vlc-plugin-twolame                            [##################################] 100%
+(62/73) upgrading vlc-plugin-vorbis                             [##################################] 100%
+(63/73) upgrading vlc-plugin-vpx                                [##################################] 100%
+(64/73) upgrading vlc-plugin-xml                                [##################################] 100%
+(65/73) upgrading vlc-plugins-base                              [##################################] 100%
+(66/73) upgrading vlc-cli                                       [##################################] 100%
+(67/73) upgrading vlc-plugin-lua                                [##################################] 100%
+(68/73) upgrading vlc-plugin-pulse                              [##################################] 100%
+(69/73) upgrading vlc-plugins-video-output                      [##################################] 100%
+(70/73) upgrading vlc-gui-qt                                    [##################################] 100%
+(71/73) upgrading vlc                                           [##################################] 100%
+(72/73) upgrading vlc-plugin-ffmpeg                             [##################################] 100%
+(73/73) upgrading xdg-desktop-portal                            [##################################] 100%
+:: Running post-transaction hooks...
+( 1/13) Creating system user accounts...
+( 2/13) Creating temporary files...
+( 3/13) Reloading system manager configuration...
+( 4/13) Reloading user manager configuration...
+( 5/13) Updating the MIME type database...
+( 6/13) Enqueuing marked services...
+( 7/13) Reloading device manager configuration...
+( 8/13) Arming ConditionNeedsUpdate...
+( 9/13) Reloading system bus configuration...
+(10/13) Checking for old perl modules...
+(11/13) Updating icon theme caches...
+(12/13) Updating the desktop file MIME type cache...
+(13/13) Updating the vlc plugin cache...
+(venv) [mani@maxim ZeroRespond]$ sudo pacman -S docker docker-compose
+warning: docker-1:29.6.0-1 is up to date -- reinstalling
+warning: docker-compose-5.1.4-1 is up to date -- reinstalling
+resolving dependencies...
+looking for conflicting packages...
+
+Packages (2) docker-1:29.6.0-1  docker-compose-5.1.4-1
+
+Total Installed Size:  142.53 MiB
+Net Upgrade Size:        0.00 MiB
+
+:: Proceed with installation? [Y/n] y
+(2/2) checking keys in keyring                                  [##################################] 100%
+(2/2) checking package integrity                                [##################################] 100%
+(2/2) loading package files                                     [##################################] 100%
+(2/2) checking for file conflicts                               [##################################] 100%
+(2/2) checking available disk space                             [##################################] 100%
+:: Processing package changes...
+(1/2) reinstalling docker                                       [##################################] 100%
+(2/2) reinstalling docker-compose                               [##################################] 100%
+:: Running post-transaction hooks...
+(1/4) Creating system user accounts...
+(2/4) Reloading system manager configuration...
+(3/4) Enqueuing marked services...
+(4/4) Arming ConditionNeedsUpdate...
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl start docker
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl enable docker
+(venv) [mani@maxim ZeroRespond]$ sudo usermod -aG docker $USER
+(venv) [mani@maxim ZeroRespond]$ newgrp docker
+[mani@maxim ZeroRespond]$ source venv/bin/activate
+bash: venv/bin/activate: No such file or directory
+[mani@maxim ZeroRespond]$ docker --version
+docker compose version
+Docker version 29.6.0, build fb59821d45
+Docker Compose version 5.1.4
+[mani@maxim ZeroRespond]$ docker run -d \
+  --name zr-postgres \
+  -e POSTGRES_DB=zerorespondnd \
+  -e POSTGRES_USER=zr \
+  -e POSTGRES_PASSWORD=secret \
+  -p 5432:5432 \
+  -v zr_pgdata:/var/lib/postgresql/data \
+  postgres:15-alpine
+Unable to find image 'postgres:15-alpine' locally
+15-alpine: Pulling from library/postgres
+55afa1ecc21d: Pulling fs layer 
+55afa1ecc21d: Downloading  2.097MB/3.846MB
+55afa1ecc21d: Downloading  2.097MB/3.846MB
+c6efd2a4e3d4: Pull complete 
+9a5bf1ac6163: Pull complete 
+e3a354ba7f6e: Pull complete 
+4608fab9e712: Pull complete 
+7bc76471c3c7: Pull complete 
+50e97e707df1: Pull complete 
+f2e385447d2c: Pull complete 
+22e56b5bebbf: Pull complete 
+6d17d809c137: Download complete 
+f7e03b28372d: Download complete 
+Digest: sha256:cd17e2ac98240fce1541ad2a803b34009b4eea5aec8a832363cdc7eca62e722e
+Status: Downloaded newer image for postgres:15-alpine
+e05a380b78ad0dedd0e5a7e0173a19a1d0e3401b15a14928c3fb3c41197fd845
+[mani@maxim ZeroRespond]$ docker ps
+CONTAINER ID   IMAGE                COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+e05a380b78ad   postgres:15-alpine   "docker-entrypoint.s…"   15 seconds ago   Up 14 seconds   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp   zr-postgres
+[mani@maxim ZeroRespond]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\conninfo"
+You are connected to database "zerorespondnd" as user "zr" via socket in "/var/run/postgresql" at port "5432".
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+python -c "
+import psycopg2
+conn = psycopg2.connect(
+    dbname='zerorespondnd',
+    user='zr',
+    password='secret',
+    host='localhost',
+    port=5432
+)
+print('Connection successful:', conn.status)
+conn.close()
+"
+Connection successful: 1
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ touch backend/app/__init__.py
+touch backend/app/models/__init__.py
+touch backend/app/routers/__init__.py
+touch backend/app/services/__init__.py
+touch backend/app/schemas/__init__.py
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload
+INFO:     Will watch for changes in these directories: ['/home/mani/Projects/ZeroRespond/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [74131] using WatchFiles
+INFO:     Started server process [74136]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:57178 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40224 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40224 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40230 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40230 - "GET /openapi.json HTTP/1.1" 200 OK
+^CINFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [74136]
+INFO:     Stopping reloader process [74131]
+(venv) [mani@maxim backend]$ git add backend/
+git commit -m "feat: fastapi skeleton with health endpoint and db config"
+warning: could not open directory 'backend/backend/': No such file or directory
+fatal: pathspec 'backend/' did not match any files
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    ../ZeroRespond_Week1_Tasks.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        app/
+        requirements.txt
+        ../weekly tasks/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+(venv) [mani@maxim backend]$ git add .
+(venv) [mani@maxim backend]$ git commit -m "feat: fastapi skeleton with health endpoint and db config"
+[main fa6d6c0] feat: fastapi skeleton with health endpoint and db config
+ 9 files changed, 128 insertions(+)
+ create mode 100644 backend/app/__init__.py
+ create mode 100644 backend/app/config.py
+ create mode 100644 backend/app/database.py
+ create mode 100644 backend/app/main.py
+ create mode 100644 backend/app/models/__init__.py
+ create mode 100644 backend/app/routers/__init__.py
+ create mode 100644 backend/app/schemas/__init__.py
+ create mode 100644 backend/app/services/__init__.py
+ create mode 100644 backend/requirements.txt
+(venv) [mani@maxim backend]$ git push origin main
+Enumerating objects: 12, done.
+Counting objects: 100% (12/12), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (10/10), 2.21 KiB | 2.21 MiB/s, done.
+Total 10 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/max-mani/ZeroRespond.git
+   b142aa0..fa6d6c0  main -> main
+(venv) [mani@maxim backend]$ 
