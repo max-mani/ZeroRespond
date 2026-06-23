@@ -789,3 +789,99 @@ remote: Resolving deltas: 100% (2/2), completed with 1 local object.
 To https://github.com/max-mani/ZeroRespond.git
    5132e1b..feaa7c4  main -> main
 (venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ curl -fsSL https://ollama.ai/install.sh | sh
+>>> Installing ollama to /usr/local
+[sudo] password for mani: 
+>>> Downloading ollama-linux-amd64.tar.zst
+######################################################################## 100.0%
+>>> Adding ollama user to render group...
+>>> Adding ollama user to video group...
+>>> Adding current user to ollama group...
+>>> Creating ollama systemd service...
+>>> Enabling and starting ollama service...
+Created symlink '/etc/systemd/system/default.target.wants/ollama.service' → '/etc/systemd/system/ollama.service'.
+>>> NVIDIA GPU installed.
+(venv) [mani@maxim backend]$ ollama --version
+ollama version is 0.30.10
+(venv) [mani@maxim backend]$ ollama pull qwen2.5:7b
+pulling manifest 
+pulling 2bada8a74506: 100% ▕███████████████████████████████████████████▏ 4.7 GB                         
+pulling 66b9ea09bd5b: 100% ▕███████████████████████████████████████████▏   68 B                         
+pulling eb4402837c78: 100% ▕███████████████████████████████████████████▏ 1.5 KB                         
+pulling 832dd9e00a68: 100% ▕███████████████████████████████████████████▏  11 KB                         
+pulling 2f15b3218f05: 100% ▕███████████████████████████████████████████▏  487 B                         
+verifying sha256 digest 
+writing manifest 
+success 
+(venv) [mani@maxim backend]$ ollama serve & 
+[1] 92269
+(venv) [mani@maxim backend]$ Error: listen tcp 127.0.0.1:11434: bind: address already in use
+^C
+[1]+  Exit 1                     ollama serve
+(venv) [mani@maxim backend]$ ollama serve & 
+[1] 92385
+(venv) [mani@maxim backend]$ Error: listen tcp 127.0.0.1:11434: bind: address already in use
+
+[1]+  Exit 1                     ollama serve
+(venv) [mani@maxim backend]$ curl http://localhost:11434/api/tags
+{"models":[{"name":"qwen2.5:7b","model":"qwen2.5:7b","modified_at":"2026-06-23T17:04:11.771943696+05:30","size":4683087332,"digest":"845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e","details":{"parent_model":"","format":"gguf","family":"qwen2","families":["qwen2"],"parameter_size":"7.6B","quantization_level":"Q4_K_M","context_length":32768,"embedding_length":3584},"capabilities":["completion","tools"]}]}(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ curl http://localhost:11434/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen2.5:7b",
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a cybersecurity AI. Respond ONLY with valid JSON, no markdown."
+      },
+      {
+        "role": "user",
+        "content": "Alert: SSH brute force, 500 failed logins in 2 minutes from IP 203.0.113.42 on host webserver01. Rule level 12. Classify this. Return JSON with keys: attack_type, severity_score, summary, confidence."
+      }
+    ],
+    "options": { "temperature": 0.1 }
+  }'
+{"model":"qwen2.5:7b","created_at":"2026-06-23T11:36:31.045680534Z","message":{"role":"assistant","content":"{\n  \"attack_type\": \"SSH Brute Force Attack\",\n  \"severity_score\": 8,\n  \"summary\": \"An SSH brute force attack is detected on webserver01 with 500 failed login attempts from IP 203.0.113.42 in the last two minutes.\",\n  \"confidence\": 95\n}"},"done":true,"done_reason":"stop","total_duration":71612691592,"load_duration":32310180593,"prompt_eval_count":92,"prompt_eval_duration":26905021000,"eval_count":77,"eval_duration":12391137000}(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ 
+(venv) [mani@maxim backend]$ python -c "
+import asyncio
+from app.services.ollama_client import call_ollama, parse_llm_json
+
+async def test():
+    raw = await call_ollama(
+        'You are a cybersecurity AI. Respond ONLY with valid JSON.',
+        'SSH brute force attack, 500 logins in 2 minutes. Return JSON with: attack_type, severity_score (1-10), summary, confidence (0-100).'
+    )
+    print('Raw:', raw[:200])
+    parsed = parse_llm_json(raw)
+    print('Parsed:', parsed)
+
+asyncio.run(test())
+"
+Raw: ```json
+{
+  "attack_type": "SSH Brute Force Attack",
+  "severity_score": 8,
+  "summary": "An SSH brute force attack has been detected with 500 login attempts in a span of 2 minutes. This indicates an 
+Parsed: {'attack_type': 'SSH Brute Force Attack', 'severity_score': 8, 'summary': 'An SSH brute force attack has been detected with 500 login attempts in a span of 2 minutes. This indicates an aggressive and persistent attempt to gain unauthorized access.', 'confidence': 95}
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: ollama client with JSON parsing and markdown stripping"
+[main 5a8e042] feat: ollama client with JSON parsing and markdown stripping
+ 3 files changed, 208 insertions(+), 14 deletions(-)
+ create mode 100644 backend/app/services/ollama_client.py
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 18, done.
+Counting objects: 100% (18/18), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (10/10), 3.50 KiB | 1.75 MiB/s, done.
+Total 10 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   feaa7c4..5a8e042  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
