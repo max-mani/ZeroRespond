@@ -81,3 +81,20 @@ async def health_check():
         "version": "1.0.0",
         "environment": "development"
     }
+
+# Add to backend/app/main.py
+
+from app.services.ai_agent import check_ollama_health
+
+@app.get("/health/ai", tags=["System"])
+async def ai_health_check():
+    """
+    Check AI agent status — Ollama running, model available, queue depth.
+    Use this to verify the AI enrichment pipeline is healthy.
+    """
+    ai_status = await check_ollama_health()
+    return {
+        "status": "ok" if ai_status["status"] == "ready" else "degraded",
+        "ai_agent": ai_status,
+        "fallback": "rule-based classifier active when AI unavailable"
+    }

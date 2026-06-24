@@ -113,3 +113,43 @@ def _validate_and_normalise(result: dict) -> dict:
     result["immediate_action"] = str(result.get("immediate_action", "Review the alert and take appropriate action."))
 
     return result
+
+# Add to backend/app/services/ai_agent.py
+
+import httpx
+from app.config import settings
+
+async def check_ollama_health() -> dict:
+    """
+    Check if Ollama is running and the required model is available.
+    Returns a status dict for the /health/ai endpoint.
+    """
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(f"{settings.ollama_url}/api/tags")
+            resp.raise_for_status()
+            models = resp.json().get("models", [])
+            model_names = [m["name"] for m in models]
+
+            required_model = settings.ollama_model
+            model_available = any(
+                m == required_model or m.startswith(required_model.split(":")[0])
+                for m in model_names
+            )
+
+            return {
+                "ollama_running": True,
+                "model_available": model_available,
+                "model": required_model,
+                "available_models": model_names,
+                "status": "ready" if model_available else "model_not_found"
+            }
+    except Exception as e:
+        return {
+            "ollama_running": False,
+            "model_available": False,
+            "model": settings.ollama_model,
+            "available_models": [],
+            "status": "unreachable",
+            "error": str(e)
+        }

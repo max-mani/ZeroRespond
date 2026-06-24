@@ -114,4 +114,7 @@ ollama list
 cd backend
 source venv/bin/activate
 uvicorn app.main:app --reload
+(or)
+uvicorn app.main:app --reload --log-level info
 ```
+

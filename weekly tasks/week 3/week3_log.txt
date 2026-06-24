@@ -1,0 +1,309 @@
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl http://localhost:11434/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen2.5:7b",
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a cybersecurity incident response AI for Indian organisations. You classify Wazuh SIEM alerts and return structured JSON only. No markdown, no explanation, no preamble. Return only a valid JSON object.\n\nYou must classify every alert into exactly one attack_type from this list:\n- ransomware: file encryption, ransom demand, crypto-locker behaviour\n- phishing: malicious URLs, email-based attacks, credential harvesting\n- unauthorized_access: brute force, failed logins, authentication bypass\n- exfiltration: large data transfers, unusual outbound traffic, data theft\n- insider: privilege misuse, after-hours access, internal policy violations\n\nSeverity must be one of: critical, high, medium, low\nMITRE technique must be a real ATT&CK ID (T followed by digits)\nConfidence is your certainty score from 0 to 100\nSummary must be plain English that a hospital administrator can understand\nImmediate action must be one specific thing the responder should do right now"
+      },
+      {
+        "role": "user",
+        "content": "Classify this Wazuh alert:\nRule ID: 5710\nLevel: 12\nDescription: SSH brute force — multiple authentication failures\nSource IP: 203.0.113.42\nHost: webserver01\nGroups: authentication_failed, sshd\n\nReturn JSON with keys: attack_type, severity, confidence, summary, mitre_technique, immediate_action"
+      }
+    ],
+    "options": { "temperature": 0.1, "num_predict": 500 }
+  }'
+{"model":"qwen2.5:7b","created_at":"2026-06-24T09:15:11.518385343Z","message":{"role":"assistant","content":"{\n  \"attack_type\": \"unauthorized_access\",\n  \"severity\": \"high\",\n  \"confidence\": 85,\n  \"summary\": \"Multiple failed login attempts detected from IP 203.0.113.42 on webserver01.\",\n  \"mitre_technique\": \"T1078\",\n  \"immediate_action\": \"Block the IP address 203.0.113.42 to prevent further unauthorized access attempts.\"\n}"},"done":true,"done_reason":"stop","total_duration":31916272710,"load_duration":21706424087,"prompt_eval_count":298,"prompt_eval_duration":672679000,"eval_count":105,"eval_duration":9523357000}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ # Test: Ransomware alert
+curl http://localhost:11434/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen2.5:7b",
+    "stream": false,
+    "messages": [
+      {"role": "system", "content": "You are a cybersecurity AI. Return only valid JSON."},
+      {"role": "user", "content": "Classify this Wazuh alert:\nRule ID: 92001\nLevel: 15\nDescription: Ransomware signature detected — files being encrypted\nHost: fileserver01\nGroups: ransomware, encrypt\n\nReturn JSON with keys: attack_type, severity, confidence, summary, mitre_technique, immediate_action"}
+    ],
+    "options": {"temperature": 0.1}
+  }'
+
+# Test: Phishing alert
+curl http://localhost:11434/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen2.5:7b",
+    "stream": false,
+    "messages": [
+      {"role": "system", "content": "You are a cybersecurity AI. Return only valid JSON."},
+      {"role": "user", "content": "Classify this Wazuh alert:\nRule ID: 87105\nLevel: 14\nDescription: Malicious URL detected in email attachment\nSource IP: 198.51.100.7\nHost: workstation-finance-03\nGroups: phish, malicious_url\n\nReturn JSON with keys: attack_type, severity, confidence, summary, mitre_technique, immediate_action"}
+    ],
+    "options": {"temperature": 0.1}
+  }'
+{"model":"qwen2.5:7b","created_at":"2026-06-24T09:16:01.284222524Z","message":{"role":"assistant","content":"```json\n{\n  \"attack_type\": \"Ransomware\",\n  \"severity\": \"High\",\n  \"confidence\": \"Certain\",\n  \"summary\": \"A ransomware signature was detected on fileserver01. The alert indicates that files are being encrypted.\",\n  \"mitre_technique\": \"T1486 (Data Encrypted)\",\n  \"immediate_action\": \"Isolate the affected host, notify incident response team, and initiate backup verification.\"\n}\n```"},"done":true,"done_reason":"stop","total_duration":10353945454,"load_duration":471206994,"prompt_eval_count":96,"prompt_eval_duration":424673000,"eval_count":99,"eval_duration":9431119000}{"model":"qwen2.5:7b","created_at":"2026-06-24T09:16:12.890268806Z","message":{"role":"assistant","content":"{\n  \"attack_type\": \"Phishing\",\n  \"severity\": \"High\",\n  \"confidence\": \"Medium\",\n  \"summary\": \"A Wazuh alert has been triggered due to the detection of a malicious URL in an email attachment. This was identified on the workstation-finance-03 with IP address 198.51.100.7.\",\n  \"mitre_technique\": \"T1566 (Social Engineering)\",\n  \"immediate_action\": \"Isolate affected host, notify user of potential phishing attempt, and perform a security assessment.\"\n}"},"done":true,"done_reason":"stop","total_duration":11597181070,"load_duration":203857226,"prompt_eval_count":114,"prompt_eval_duration":365054000,"eval_count":123,"eval_duration":11021031000}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+python -c "
+import asyncio
+from app.services.ai_agent import classify_alert_ai
+
+async def test():
+    # Test 1: SSH brute force
+    result = await classify_alert_ai(
+        wazuh_rule_id=5710,
+        level=12,
+        description='SSH brute force — 500 failed logins in 2 minutes',
+        source_ip='203.0.113.42',
+        host='webserver01',
+        groups=['authentication_failed', 'sshd']
+    )
+    print('Test 1 — SSH brute force:')
+    for k, v in result.items():
+        print(f'  {k}: {v}')
+
+    print()
+
+    # Test 2: Ransomware
+    result = await classify_alert_ai(
+        wazuh_rule_id=92001,
+        level=15,
+        description='Ransomware signature detected — files being encrypted',
+        source_ip=None,
+        host='fileserver01',
+        groups=['ransomware', 'encrypt']
+    )
+    print('Test 2 — Ransomware:')
+    for k, v in result.items():
+        print(f'  {k}: {v}')
+
+asyncio.run(test())
+"
+Test 1 — SSH brute force:
+  attack_type: unauthorized_access
+  severity: high
+  confidence: 95.0
+  summary: Webserver01 is experiencing a brute force attack with multiple failed login attempts from an external IP address.
+  mitre_technique: T1077.003
+  immediate_action: Block the source IP address and review SSH logs for suspicious activity.
+
+Test 2 — Ransomware:
+  attack_type: ransomware
+  severity: critical
+  confidence: 95.0
+  summary: File encryption activity detected on fileserver01, indicating potential ransomware infection.
+  mitre_technique: T1486
+  immediate_action: Isolate fileserver01 from the network to prevent further spread.
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: ai agent with Ollama classification, prompt engineering, field validation"
+[main 5b66c83] feat: ai agent with Ollama classification, prompt engineering, field validation
+ 4 files changed, 1505 insertions(+)
+ create mode 100644 backend/app/services/ai_agent.py
+ create mode 100644 weekly tasks/week 3/ZeroRespond_Week3_Tasks.md
+ create mode 100644 weekly tasks/week 3/week3_log.txt
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 18, done.
+Counting objects: 100% (18/18), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (11/11), done.
+Writing objects: 100% (11/11), 16.72 KiB | 8.36 MiB/s, done.
+Total 11 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   bd45265..5b66c83  main -> main
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: async priority queue, AI agent wired into alert ingestion pipeline"
+[main ac99e90] feat: async priority queue, AI agent wired into alert ingestion pipeline
+ 4 files changed, 241 insertions(+), 51 deletions(-)
+ create mode 100644 backend/app/services/alert_queue.py
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 18, done.
+Counting objects: 100% (18/18), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 4.59 KiB | 4.59 MiB/s, done.
+Total 10 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   5b66c83..ac99e90  main -> main
+(venv) [mani@maxim ZeroRespond]$ uvicorn app.main:app --reload --log-level info
+INFO:     Will watch for changes in these directories: ['/home/mani/Projects/ZeroRespond']
+Traceback (most recent call last):
+  File "/home/mani/Projects/ZeroRespond/backend/venv/bin/uvicorn", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 1524, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 1445, in main
+    rv = self.invoke(ctx)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 1308, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 877, in invoke
+    return callback(*args, **kwargs)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/main.py", line 441, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<48 lines>...
+        reset_contextvars=reset_contextvars,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/main.py", line 609, in run
+    config.load_app()
+    ~~~~~~~~~~~~~~~^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/config.py", line 415, in load_app
+    return import_from_string(self.app)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1314, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1335, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'app'
+(venv) [mani@maxim ZeroRespond]$ uvicorn app.main:app --reload --log-level info
+INFO:     Will watch for changes in these directories: ['/home/mani/Projects/ZeroRespond']
+Traceback (most recent call last):
+  File "/home/mani/Projects/ZeroRespond/backend/venv/bin/uvicorn", line 6, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 1524, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 1445, in main
+    rv = self.invoke(ctx)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 1308, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/click/core.py", line 877, in invoke
+    return callback(*args, **kwargs)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/main.py", line 441, in main
+    run(
+    ~~~^
+        app,
+        ^^^^
+    ...<48 lines>...
+        reset_contextvars=reset_contextvars,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/main.py", line 609, in run
+    config.load_app()
+    ~~~~~~~~~~~~~~~^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/config.py", line 415, in load_app
+    return import_from_string(self.app)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/usr/lib/python3.14/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1314, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1335, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'app'
+(venv) [mani@maxim ZeroRespond]$ cd backend/
+(venv) [mani@maxim backend]$ uvicorn app.main:app --reload --log-level info
+INFO:     Will watch for changes in these directories: ['/home/mani/Projects/ZeroRespond/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [85521] using WatchFiles
+INFO:     Started server process [85535]
+INFO:     Waiting for application startup.
+2026-06-24 15:51:24,898 [INFO] app.main: ZeroRespond API started — queue worker running.
+2026-06-24 15:51:24,898 [INFO] app.services.alert_queue: Alert queue worker started.
+INFO:     Application startup complete.
+^CINFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-06-24 15:51:32,624 [INFO] app.services.alert_queue: Queue worker received cancel signal — shutting down.
+2026-06-24 15:51:32,624 [INFO] app.main: ZeroRespond API shutting down — queue worker stopped.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [85535]
+INFO:     Stopping reloader process [85521]
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "week3-test-001",
+    "wazuh_rule_id": 5710,
+    "level": 12,
+    "description": "SSH brute force — multiple authentication failures",
+    "source_ip": "203.0.113.42",
+    "host": "webserver01",
+    "groups": ["authentication_failed", "sshd"],
+    "raw_json": {
+      "rule_id": "5710",
+      "level": 12,
+      "description": "SSH brute force",
+      "source_ip": "203.0.113.42",
+      "host": "webserver01"
+    }
+  }'
+{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"webserver01","source_ip":"203.0.113.42","alert_id":"week3-test-001","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:22:09.390324Z","resolved_at":null,"created_at":"2026-06-24T10:22:09.390324Z","updated_at":null}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl http://localhost:8000/cases/IR-20260624-0001
+{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"webserver01","source_ip":"203.0.113.42","alert_id":"week3-test-001","playbook_id":null,"assigned_to":null,"ai_summary":"Multiple failed login attempts detected from an external IP address on the webserver.","ai_confidence":85.0,"ai_mitre":"T1077.003","immediate_action":"Block the source IP address and review SSH logs for suspicious activity.","notes":null,"detected_at":"2026-06-24T10:22:09.390324Z","resolved_at":null,"created_at":"2026-06-24T10:22:09.390324Z","updated_at":"2026-06-24T10:22:09.436982Z"}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ # Low priority (level 5) — should be processed last
+curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"priority-test-low","wazuh_rule_id":1001,"level":5,"description":"Info: user login","source_ip":null,"host":"workstation-01","groups":["authentication_success"],"raw_json":{}}'
+
+# Medium priority (level 9) — should be processed second
+curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"priority-test-med","wazuh_rule_id":2001,"level":9,"description":"Privileged access outside hours","source_ip":"10.0.0.12","host":"hr-workstation","groups":["insider","privilege"],"raw_json":{}}'
+
+# High priority (level 14) — should be processed first
+curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"priority-test-high","wazuh_rule_id":3001,"level":14,"description":"Ransomware detected","source_ip":null,"host":"fileserver01","groups":["ransomware","encrypt"],"raw_json":{}}'
+(venv) [mani@maxim ZeroRespond]$ # Low priority (level 5) — should be processed last
+curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"priority-test-low","wazuh_rule_id":1001,"level":5,"description":"Info: user login","source_ip":null,"host":"workstation-01","groups":["authentication_success"],"raw_json":{}}'
+
+# Medium priority (level 9) — should be processed second
+curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"priority-test-med","wazuh_rule_id":2001,"level":9,"description":"Privileged access outside hours","source_ip":"10.0.0.12","host":"hr-workstation","groups":["insider","privilege"],"raw_json":{}}'
+
+# High priority (level 14) — should be processed first
+curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"priority-test-high","wazuh_rule_id":3001,"level":14,"description":"Ransomware detected","source_ip":null,"host":"fileserver01","groups":["ransomware","encrypt"],"raw_json":{}}'
+{"id":"IR-20260624-0002","title":"Unauthorized Access on workstation-01","severity":"low","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"workstation-01","source_ip":null,"alert_id":"priority-test-low","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:23:10.059840Z","resolved_at":null,"created_at":"2026-06-24T10:23:10.059840Z","updated_at":null}{"id":"IR-20260624-0003","title":"Insider on hr-workstation","severity":"medium","status":"open","breach_type":"insider","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"hr-workstation","source_ip":"10.0.0.12","alert_id":"priority-test-med","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:23:10.112439Z","resolved_at":null,"created_at":"2026-06-24T10:23:10.112439Z","updated_at":null}{"id":"IR-20260624-0004","title":"Ransomware on fileserver01","severity":"high","status":"open","breach_type":"ransomware","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"fileserver01","source_ip":null,"alert_id":"priority-test-high","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:23:10.150681Z","resolved_at":null,"created_at":"2026-06-24T10:23:10.150681Z","updated_at":null}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl stop ollama
+[sudo] password for mani: 
+(venv) [mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"fallback-test-001","wazuh_rule_id":5710,"level":12,"description":"SSH brute force","source_ip":"10.0.0.1","host":"server01","groups":["sshd","authentication_failed"],"raw_json":{}}'
+{"id":"IR-20260624-0005","title":"Unauthorized Access on server01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"server01","source_ip":"10.0.0.1","alert_id":"fallback-test-001","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:24:50.594711Z","resolved_at":null,"created_at":"2026-06-24T10:24:50.594711Z","updated_at":null}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts   -H "Content-Type: application/json"   -d '{"id":"fallback-test-001","wazuh_rule_id":5710,"level":12,"description":"SSH brute force","source_ip":"10.0.0.1","host":"server01","groups":["sshd","authentication_failed"],"raw_json":{}}'
+{"detail":"Alert fallback-test-001 already ingested. Duplicate ignored."}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl http://localhost:8000/cases/IR-20260624-0005
+{"id":"IR-20260624-0005","title":"Unauthorized Access on server01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"server01","source_ip":"10.0.0.1","alert_id":"fallback-test-001","playbook_id":null,"assigned_to":null,"ai_summary":"AI classification unavailable. Rule-based classification applied: unauthorized_access.","ai_confidence":0.0,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:24:50.594711Z","resolved_at":null,"created_at":"2026-06-24T10:24:50.594711Z","updated_at":"2026-06-24T10:24:50.607923Z"}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl start ollama
+(venv) [mani@maxim ZeroRespond]$ 

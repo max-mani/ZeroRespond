@@ -1,0 +1,623 @@
+(venv) [mani@maxim backend]$ uvicorn app.main:app --reload --log-level info
+INFO:     Will watch for changes in these directories: ['/home/mani/Projects/ZeroRespond/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [90981] using WatchFiles
+INFO:     Started server process [90990]
+INFO:     Waiting for application startup.
+2026-06-24 15:51:39,077 [INFO] app.main: ZeroRespond API started — queue worker running.
+2026-06-24 15:51:39,077 [INFO] app.services.alert_queue: Alert queue worker started.
+INFO:     Application startup complete.
+2026-06-24 15:52:09,362 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-06-24 15:52:09,362 [INFO] sqlalchemy.engine.Engine: select pg_catalog.version()
+2026-06-24 15:52:09,363 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-24 15:52:09,363 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2026-06-24 15:52:09,365 INFO sqlalchemy.engine.Engine select current_schema()
+2026-06-24 15:52:09,365 [INFO] sqlalchemy.engine.Engine: select current_schema()
+2026-06-24 15:52:09,365 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-24 15:52:09,365 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2026-06-24 15:52:09,366 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-06-24 15:52:09,366 [INFO] sqlalchemy.engine.Engine: show standard_conforming_strings
+2026-06-24 15:52:09,366 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-24 15:52:09,366 [INFO] sqlalchemy.engine.Engine: [raw sql] {}
+2026-06-24 15:52:09,368 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:52:09,368 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:52:09,371 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:09,371 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:09,372 INFO sqlalchemy.engine.Engine [generated in 0.00023s] {'id_1': 'week3-test-001', 'param_1': 1}
+2026-06-24 15:52:09,372 [INFO] sqlalchemy.engine.Engine: [generated in 0.00023s] {'id_1': 'week3-test-001', 'param_1': 1}
+2026-06-24 15:52:09,380 INFO sqlalchemy.engine.Engine INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:52:09,380 [INFO] sqlalchemy.engine.Engine: INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:52:09,380 INFO sqlalchemy.engine.Engine [generated in 0.00027s] {'id': 'week3-test-001', 'wazuh_rule_id': 5710, 'level': 12, 'description': 'SSH brute force — multiple authentication failures', 'source_ip': '203.0.113.42', 'host': 'webserver01', 'groups': '["authentication_failed", "sshd"]', 'attack_type': None, 'raw_json': '{"rule_id": "5710", "level": 12, "description": "SSH brute force", "source_ip": "203.0.113.42", "host": "webserver01"}'}
+2026-06-24 15:52:09,380 [INFO] sqlalchemy.engine.Engine: [generated in 0.00027s] {'id': 'week3-test-001', 'wazuh_rule_id': 5710, 'level': 12, 'description': 'SSH brute force — multiple authentication failures', 'source_ip': '203.0.113.42', 'host': 'webserver01', 'groups': '["authentication_failed", "sshd"]', 'attack_type': None, 'raw_json': '{"rule_id": "5710", "level": 12, "description": "SSH brute force", "source_ip": "203.0.113.42", "host": "webserver01"}'}
+2026-06-24 15:52:09,384 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:52:09,384 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:52:09,388 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:52:09,388 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:52:09,389 INFO sqlalchemy.engine.Engine SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:52:09,389 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:52:09,390 INFO sqlalchemy.engine.Engine [generated in 0.00017s] {'pk_1': 'week3-test-001'}
+2026-06-24 15:52:09,390 [INFO] sqlalchemy.engine.Engine: [generated in 0.00017s] {'pk_1': 'week3-test-001'}
+2026-06-24 15:52:09,394 INFO sqlalchemy.engine.Engine SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:52:09,394 [INFO] sqlalchemy.engine.Engine: SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:52:09,394 INFO sqlalchemy.engine.Engine [generated in 0.00016s] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:52:09,394 [INFO] sqlalchemy.engine.Engine: [generated in 0.00016s] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:52:09,400 INFO sqlalchemy.engine.Engine INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:52:09,400 [INFO] sqlalchemy.engine.Engine: INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:52:09,400 INFO sqlalchemy.engine.Engine [generated in 0.00029s] {'id': 'IR-20260624-0001', 'title': 'Unauthorized Access on webserver01', 'severity': 'high', 'status': 'open', 'breach_type': 'unauthorized_access', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'webserver01', 'source_ip': '203.0.113.42', 'alert_id': 'week3-test-001', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:52:09,400 [INFO] sqlalchemy.engine.Engine: [generated in 0.00029s] {'id': 'IR-20260624-0001', 'title': 'Unauthorized Access on webserver01', 'severity': 'high', 'status': 'open', 'breach_type': 'unauthorized_access', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'webserver01', 'source_ip': '203.0.113.42', 'alert_id': 'week3-test-001', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:52:09,404 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:52:09,404 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:52:09,407 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:52:09,407 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:52:09,410 INFO sqlalchemy.engine.Engine SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:52:09,410 [INFO] sqlalchemy.engine.Engine: SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:52:09,410 INFO sqlalchemy.engine.Engine [generated in 0.00018s] {'pk_1': 'IR-20260624-0001'}
+2026-06-24 15:52:09,410 [INFO] sqlalchemy.engine.Engine: [generated in 0.00018s] {'pk_1': 'IR-20260624-0001'}
+2026-06-24 15:52:09,413 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:52:09,413 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:52:09,413 INFO sqlalchemy.engine.Engine [generated in 0.00028s] {'pk_1': 'week3-test-001'}
+2026-06-24 15:52:09,413 [INFO] sqlalchemy.engine.Engine: [generated in 0.00028s] {'pk_1': 'week3-test-001'}
+2026-06-24 15:52:09,414 [INFO] app.services.alert_queue: Enqueued alert week3-test-001 with priority 1 (level 12)
+INFO:     127.0.0.1:33702 - "POST /alerts HTTP/1.1" 201 Created
+2026-06-24 15:52:09,418 [INFO] app.services.alert_queue: Processing alert week3-test-001 from queue (priority 1)
+2026-06-24 15:52:09,435 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:52:09,435 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:52:09,436 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:09,436 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:09,436 INFO sqlalchemy.engine.Engine [cached since 0.06478s ago] {'id_1': 'week3-test-001', 'param_1': 1}
+2026-06-24 15:52:09,436 [INFO] sqlalchemy.engine.Engine: [cached since 0.06478s ago] {'id_1': 'week3-test-001', 'param_1': 1}
+2026-06-24 15:52:09,447 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:09,447 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:09,448 INFO sqlalchemy.engine.Engine [generated in 0.00035s] {'alert_id_1': 'week3-test-001', 'param_1': 1}
+2026-06-24 15:52:09,448 [INFO] sqlalchemy.engine.Engine: [generated in 0.00035s] {'alert_id_1': 'week3-test-001', 'param_1': 1}
+2026-06-24 15:52:09,451 [INFO] app.services.alert_queue: Starting AI enrichment for alert week3-test-001 → case IR-20260624-0001
+2026-06-24 15:52:09,524 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:52:09,524 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:52:32,296 [INFO] httpx: HTTP Request: POST http://localhost:11434/api/chat "HTTP/1.1 200 OK"
+2026-06-24 15:52:32,298 INFO sqlalchemy.engine.Engine UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:52:32,298 [INFO] sqlalchemy.engine.Engine: UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:52:32,298 INFO sqlalchemy.engine.Engine [generated in 0.00015s] {'attack_type': 'unauthorized_access', 'alerts_id': 'week3-test-001'}
+2026-06-24 15:52:32,298 [INFO] sqlalchemy.engine.Engine: [generated in 0.00015s] {'attack_type': 'unauthorized_access', 'alerts_id': 'week3-test-001'}
+2026-06-24 15:52:32,302 INFO sqlalchemy.engine.Engine UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:52:32,302 [INFO] sqlalchemy.engine.Engine: UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:52:32,302 INFO sqlalchemy.engine.Engine [generated in 0.00016s] {'ai_summary': 'Multiple failed login attempts detected from an external IP address on the webserver.', 'ai_confidence': 85.0, 'ai_mitre': 'T1077.003', 'immediate_action': 'Block the source IP address and review SSH logs for suspicious activity.', 'cases_id': 'IR-20260624-0001'}
+2026-06-24 15:52:32,302 [INFO] sqlalchemy.engine.Engine: [generated in 0.00016s] {'ai_summary': 'Multiple failed login attempts detected from an external IP address on the webserver.', 'ai_confidence': 85.0, 'ai_mitre': 'T1077.003', 'immediate_action': 'Block the source IP address and review SSH logs for suspicious activity.', 'cases_id': 'IR-20260624-0001'}
+2026-06-24 15:52:32,303 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:52:32,303 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:52:32,306 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:52:32,306 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:52:32,307 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:52:32,307 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:52:32,307 INFO sqlalchemy.engine.Engine [generated in 0.00011s] {'pk_1': 'IR-20260624-0001'}
+2026-06-24 15:52:32,307 [INFO] sqlalchemy.engine.Engine: [generated in 0.00011s] {'pk_1': 'IR-20260624-0001'}
+2026-06-24 15:52:32,308 [INFO] app.services.alert_queue: AI enrichment complete for case IR-20260624-0001: unauthorized_access / high / confidence=85.0
+2026-06-24 15:52:32,308 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:52:32,308 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:52:55,679 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:52:55,679 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:52:55,681 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:55,681 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:52:55,681 INFO sqlalchemy.engine.Engine [generated in 0.00032s] {'id_1': 'IR-20260624-0001', 'param_1': 1}
+2026-06-24 15:52:55,681 [INFO] sqlalchemy.engine.Engine: [generated in 0.00032s] {'id_1': 'IR-20260624-0001', 'param_1': 1}
+INFO:     127.0.0.1:48036 - "GET /cases/IR-20260624-0001 HTTP/1.1" 200 OK
+2026-06-24 15:52:55,686 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:52:55,686 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:53:10,049 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,049 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,049 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,049 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,049 INFO sqlalchemy.engine.Engine [cached since 60.68s ago] {'id_1': 'priority-test-low', 'param_1': 1}
+2026-06-24 15:53:10,049 [INFO] sqlalchemy.engine.Engine: [cached since 60.68s ago] {'id_1': 'priority-test-low', 'param_1': 1}
+2026-06-24 15:53:10,052 INFO sqlalchemy.engine.Engine INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:53:10,052 [INFO] sqlalchemy.engine.Engine: INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:53:10,052 INFO sqlalchemy.engine.Engine [cached since 60.67s ago] {'id': 'priority-test-low', 'wazuh_rule_id': 1001, 'level': 5, 'description': 'Info: user login', 'source_ip': None, 'host': 'workstation-01', 'groups': '["authentication_success"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:53:10,052 [INFO] sqlalchemy.engine.Engine: [cached since 60.67s ago] {'id': 'priority-test-low', 'wazuh_rule_id': 1001, 'level': 5, 'description': 'Info: user login', 'source_ip': None, 'host': 'workstation-01', 'groups': '["authentication_success"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:53:10,054 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:10,054 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:10,058 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,058 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,059 INFO sqlalchemy.engine.Engine SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,059 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,059 INFO sqlalchemy.engine.Engine [cached since 60.67s ago] {'pk_1': 'priority-test-low'}
+2026-06-24 15:53:10,059 [INFO] sqlalchemy.engine.Engine: [cached since 60.67s ago] {'pk_1': 'priority-test-low'}
+2026-06-24 15:53:10,062 INFO sqlalchemy.engine.Engine SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:53:10,062 [INFO] sqlalchemy.engine.Engine: SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:53:10,062 INFO sqlalchemy.engine.Engine [cached since 60.67s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:53:10,062 [INFO] sqlalchemy.engine.Engine: [cached since 60.67s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:53:10,065 INFO sqlalchemy.engine.Engine INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:53:10,065 [INFO] sqlalchemy.engine.Engine: INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:53:10,066 INFO sqlalchemy.engine.Engine [cached since 60.67s ago] {'id': 'IR-20260624-0002', 'title': 'Unauthorized Access on workstation-01', 'severity': 'low', 'status': 'open', 'breach_type': 'unauthorized_access', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'workstation-01', 'source_ip': None, 'alert_id': 'priority-test-low', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:53:10,066 [INFO] sqlalchemy.engine.Engine: [cached since 60.67s ago] {'id': 'IR-20260624-0002', 'title': 'Unauthorized Access on workstation-01', 'severity': 'low', 'status': 'open', 'breach_type': 'unauthorized_access', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'workstation-01', 'source_ip': None, 'alert_id': 'priority-test-low', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:53:10,068 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:10,068 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:10,072 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,072 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,072 INFO sqlalchemy.engine.Engine SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:10,072 [INFO] sqlalchemy.engine.Engine: SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:10,072 INFO sqlalchemy.engine.Engine [cached since 60.66s ago] {'pk_1': 'IR-20260624-0002'}
+2026-06-24 15:53:10,072 [INFO] sqlalchemy.engine.Engine: [cached since 60.66s ago] {'pk_1': 'IR-20260624-0002'}
+2026-06-24 15:53:10,075 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,075 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,075 INFO sqlalchemy.engine.Engine [cached since 60.66s ago] {'pk_1': 'priority-test-low'}
+2026-06-24 15:53:10,075 [INFO] sqlalchemy.engine.Engine: [cached since 60.66s ago] {'pk_1': 'priority-test-low'}
+2026-06-24 15:53:10,076 [INFO] app.services.alert_queue: Enqueued alert priority-test-low with priority 3 (level 5)
+INFO:     127.0.0.1:54992 - "POST /alerts HTTP/1.1" 201 Created
+2026-06-24 15:53:10,077 [INFO] app.services.alert_queue: Processing alert priority-test-low from queue (priority 3)
+2026-06-24 15:53:10,079 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,079 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,079 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,079 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,079 INFO sqlalchemy.engine.Engine [cached since 60.71s ago] {'id_1': 'priority-test-low', 'param_1': 1}
+2026-06-24 15:53:10,079 [INFO] sqlalchemy.engine.Engine: [cached since 60.71s ago] {'id_1': 'priority-test-low', 'param_1': 1}
+2026-06-24 15:53:10,081 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,081 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,081 INFO sqlalchemy.engine.Engine [cached since 60.63s ago] {'alert_id_1': 'priority-test-low', 'param_1': 1}
+2026-06-24 15:53:10,081 [INFO] sqlalchemy.engine.Engine: [cached since 60.63s ago] {'alert_id_1': 'priority-test-low', 'param_1': 1}
+2026-06-24 15:53:10,083 [INFO] app.services.alert_queue: Starting AI enrichment for alert priority-test-low → case IR-20260624-0002
+2026-06-24 15:53:10,095 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:53:10,095 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:53:10,104 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,104 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,104 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,104 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,104 INFO sqlalchemy.engine.Engine [cached since 60.73s ago] {'id_1': 'priority-test-med', 'param_1': 1}
+2026-06-24 15:53:10,104 [INFO] sqlalchemy.engine.Engine: [cached since 60.73s ago] {'id_1': 'priority-test-med', 'param_1': 1}
+2026-06-24 15:53:10,107 INFO sqlalchemy.engine.Engine INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:53:10,107 [INFO] sqlalchemy.engine.Engine: INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:53:10,107 INFO sqlalchemy.engine.Engine [cached since 60.73s ago] {'id': 'priority-test-med', 'wazuh_rule_id': 2001, 'level': 9, 'description': 'Privileged access outside hours', 'source_ip': '10.0.0.12', 'host': 'hr-workstation', 'groups': '["insider", "privilege"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:53:10,107 [INFO] sqlalchemy.engine.Engine: [cached since 60.73s ago] {'id': 'priority-test-med', 'wazuh_rule_id': 2001, 'level': 9, 'description': 'Privileged access outside hours', 'source_ip': '10.0.0.12', 'host': 'hr-workstation', 'groups': '["insider", "privilege"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:53:10,108 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:10,108 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:10,111 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,111 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,112 INFO sqlalchemy.engine.Engine SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,112 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,112 INFO sqlalchemy.engine.Engine [cached since 60.72s ago] {'pk_1': 'priority-test-med'}
+2026-06-24 15:53:10,112 [INFO] sqlalchemy.engine.Engine: [cached since 60.72s ago] {'pk_1': 'priority-test-med'}
+2026-06-24 15:53:10,114 INFO sqlalchemy.engine.Engine SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:53:10,114 [INFO] sqlalchemy.engine.Engine: SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:53:10,114 INFO sqlalchemy.engine.Engine [cached since 60.72s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:53:10,114 [INFO] sqlalchemy.engine.Engine: [cached since 60.72s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:53:10,116 INFO sqlalchemy.engine.Engine INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:53:10,116 [INFO] sqlalchemy.engine.Engine: INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:53:10,116 INFO sqlalchemy.engine.Engine [cached since 60.72s ago] {'id': 'IR-20260624-0003', 'title': 'Insider on hr-workstation', 'severity': 'medium', 'status': 'open', 'breach_type': 'insider', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'hr-workstation', 'source_ip': '10.0.0.12', 'alert_id': 'priority-test-med', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:53:10,116 [INFO] sqlalchemy.engine.Engine: [cached since 60.72s ago] {'id': 'IR-20260624-0003', 'title': 'Insider on hr-workstation', 'severity': 'medium', 'status': 'open', 'breach_type': 'insider', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'hr-workstation', 'source_ip': '10.0.0.12', 'alert_id': 'priority-test-med', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:53:10,118 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:10,118 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:10,121 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,121 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,121 INFO sqlalchemy.engine.Engine SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:10,121 [INFO] sqlalchemy.engine.Engine: SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:10,121 INFO sqlalchemy.engine.Engine [cached since 60.71s ago] {'pk_1': 'IR-20260624-0003'}
+2026-06-24 15:53:10,121 [INFO] sqlalchemy.engine.Engine: [cached since 60.71s ago] {'pk_1': 'IR-20260624-0003'}
+2026-06-24 15:53:10,123 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,123 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,123 INFO sqlalchemy.engine.Engine [cached since 60.71s ago] {'pk_1': 'priority-test-med'}
+2026-06-24 15:53:10,123 [INFO] sqlalchemy.engine.Engine: [cached since 60.71s ago] {'pk_1': 'priority-test-med'}
+2026-06-24 15:53:10,124 [INFO] app.services.alert_queue: Enqueued alert priority-test-med with priority 2 (level 9)
+INFO:     127.0.0.1:55008 - "POST /alerts HTTP/1.1" 201 Created
+2026-06-24 15:53:10,125 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:53:10,125 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:53:10,141 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,141 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,141 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,141 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:10,141 INFO sqlalchemy.engine.Engine [cached since 60.77s ago] {'id_1': 'priority-test-high', 'param_1': 1}
+2026-06-24 15:53:10,141 [INFO] sqlalchemy.engine.Engine: [cached since 60.77s ago] {'id_1': 'priority-test-high', 'param_1': 1}
+2026-06-24 15:53:10,144 INFO sqlalchemy.engine.Engine INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:53:10,144 [INFO] sqlalchemy.engine.Engine: INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:53:10,144 INFO sqlalchemy.engine.Engine [cached since 60.76s ago] {'id': 'priority-test-high', 'wazuh_rule_id': 3001, 'level': 14, 'description': 'Ransomware detected', 'source_ip': None, 'host': 'fileserver01', 'groups': '["ransomware", "encrypt"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:53:10,144 [INFO] sqlalchemy.engine.Engine: [cached since 60.76s ago] {'id': 'priority-test-high', 'wazuh_rule_id': 3001, 'level': 14, 'description': 'Ransomware detected', 'source_ip': None, 'host': 'fileserver01', 'groups': '["ransomware", "encrypt"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:53:10,146 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:10,146 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:10,149 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,149 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,150 INFO sqlalchemy.engine.Engine SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,150 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,150 INFO sqlalchemy.engine.Engine [cached since 60.76s ago] {'pk_1': 'priority-test-high'}
+2026-06-24 15:53:10,150 [INFO] sqlalchemy.engine.Engine: [cached since 60.76s ago] {'pk_1': 'priority-test-high'}
+2026-06-24 15:53:10,153 INFO sqlalchemy.engine.Engine SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:53:10,153 [INFO] sqlalchemy.engine.Engine: SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:53:10,153 INFO sqlalchemy.engine.Engine [cached since 60.76s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:53:10,153 [INFO] sqlalchemy.engine.Engine: [cached since 60.76s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:53:10,155 INFO sqlalchemy.engine.Engine INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:53:10,155 [INFO] sqlalchemy.engine.Engine: INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:53:10,155 INFO sqlalchemy.engine.Engine [cached since 60.76s ago] {'id': 'IR-20260624-0004', 'title': 'Ransomware on fileserver01', 'severity': 'high', 'status': 'open', 'breach_type': 'ransomware', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'fileserver01', 'source_ip': None, 'alert_id': 'priority-test-high', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:53:10,155 [INFO] sqlalchemy.engine.Engine: [cached since 60.76s ago] {'id': 'IR-20260624-0004', 'title': 'Ransomware on fileserver01', 'severity': 'high', 'status': 'open', 'breach_type': 'ransomware', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'fileserver01', 'source_ip': None, 'alert_id': 'priority-test-high', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:53:10,157 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:10,157 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:10,160 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:10,160 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:10,160 INFO sqlalchemy.engine.Engine SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:10,160 [INFO] sqlalchemy.engine.Engine: SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:10,161 INFO sqlalchemy.engine.Engine [cached since 60.75s ago] {'pk_1': 'IR-20260624-0004'}
+2026-06-24 15:53:10,161 [INFO] sqlalchemy.engine.Engine: [cached since 60.75s ago] {'pk_1': 'IR-20260624-0004'}
+2026-06-24 15:53:10,163 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,163 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:53:10,163 INFO sqlalchemy.engine.Engine [cached since 60.75s ago] {'pk_1': 'priority-test-high'}
+2026-06-24 15:53:10,163 [INFO] sqlalchemy.engine.Engine: [cached since 60.75s ago] {'pk_1': 'priority-test-high'}
+2026-06-24 15:53:10,164 [INFO] app.services.alert_queue: Enqueued alert priority-test-high with priority 1 (level 14)
+INFO:     127.0.0.1:55018 - "POST /alerts HTTP/1.1" 201 Created
+2026-06-24 15:53:10,165 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:53:10,165 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:53:20,428 [INFO] httpx: HTTP Request: POST http://localhost:11434/api/chat "HTTP/1.1 200 OK"
+2026-06-24 15:53:20,430 INFO sqlalchemy.engine.Engine UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:53:20,430 [INFO] sqlalchemy.engine.Engine: UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:53:20,430 INFO sqlalchemy.engine.Engine [cached since 48.13s ago] {'attack_type': 'unauthorized_access', 'alerts_id': 'priority-test-low'}
+2026-06-24 15:53:20,430 [INFO] sqlalchemy.engine.Engine: [cached since 48.13s ago] {'attack_type': 'unauthorized_access', 'alerts_id': 'priority-test-low'}
+2026-06-24 15:53:20,431 INFO sqlalchemy.engine.Engine UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:53:20,431 [INFO] sqlalchemy.engine.Engine: UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:53:20,431 INFO sqlalchemy.engine.Engine [cached since 48.13s ago] {'ai_summary': 'A login attempt was made from an unknown source IP address. This could indicate a brute force attack or unauthorized access.', 'ai_confidence': 75.0, 'ai_mitre': 'T1078.004', 'immediate_action': 'Review recent login attempts for workstation-01 and block suspicious IPs.', 'cases_id': 'IR-20260624-0002'}
+2026-06-24 15:53:20,431 [INFO] sqlalchemy.engine.Engine: [cached since 48.13s ago] {'ai_summary': 'A login attempt was made from an unknown source IP address. This could indicate a brute force attack or unauthorized access.', 'ai_confidence': 75.0, 'ai_mitre': 'T1078.004', 'immediate_action': 'Review recent login attempts for workstation-01 and block suspicious IPs.', 'cases_id': 'IR-20260624-0002'}
+2026-06-24 15:53:20,432 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:20,432 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:20,434 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:20,434 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:20,435 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:20,435 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:20,435 INFO sqlalchemy.engine.Engine [cached since 48.13s ago] {'pk_1': 'IR-20260624-0002'}
+2026-06-24 15:53:20,435 [INFO] sqlalchemy.engine.Engine: [cached since 48.13s ago] {'pk_1': 'IR-20260624-0002'}
+2026-06-24 15:53:20,436 [INFO] app.services.alert_queue: AI enrichment complete for case IR-20260624-0002: unauthorized_access / low / confidence=75.0
+2026-06-24 15:53:20,436 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:53:20,436 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:53:20,436 [INFO] app.services.alert_queue: Processing alert priority-test-high from queue (priority 1)
+2026-06-24 15:53:20,437 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:20,437 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:20,437 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:20,437 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:20,437 INFO sqlalchemy.engine.Engine [cached since 71.07s ago] {'id_1': 'priority-test-high', 'param_1': 1}
+2026-06-24 15:53:20,437 [INFO] sqlalchemy.engine.Engine: [cached since 71.07s ago] {'id_1': 'priority-test-high', 'param_1': 1}
+2026-06-24 15:53:20,438 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:20,438 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:20,439 INFO sqlalchemy.engine.Engine [cached since 70.99s ago] {'alert_id_1': 'priority-test-high', 'param_1': 1}
+2026-06-24 15:53:20,439 [INFO] sqlalchemy.engine.Engine: [cached since 70.99s ago] {'alert_id_1': 'priority-test-high', 'param_1': 1}
+2026-06-24 15:53:20,439 [INFO] app.services.alert_queue: Starting AI enrichment for alert priority-test-high → case IR-20260624-0004
+2026-06-24 15:53:30,142 [INFO] httpx: HTTP Request: POST http://localhost:11434/api/chat "HTTP/1.1 200 OK"
+2026-06-24 15:53:30,144 INFO sqlalchemy.engine.Engine UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:53:30,144 [INFO] sqlalchemy.engine.Engine: UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:53:30,144 INFO sqlalchemy.engine.Engine [cached since 57.85s ago] {'attack_type': 'ransomware', 'alerts_id': 'priority-test-high'}
+2026-06-24 15:53:30,144 [INFO] sqlalchemy.engine.Engine: [cached since 57.85s ago] {'attack_type': 'ransomware', 'alerts_id': 'priority-test-high'}
+2026-06-24 15:53:30,145 INFO sqlalchemy.engine.Engine UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:53:30,145 [INFO] sqlalchemy.engine.Engine: UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:53:30,145 INFO sqlalchemy.engine.Engine [cached since 57.84s ago] {'ai_summary': 'Ransomware has been detected on the fileserver01. Immediate action is required to prevent data encryption and potential ransom demands.', 'ai_confidence': 95.0, 'ai_mitre': 'T1486', 'immediate_action': 'Isolate the fileserver01 from the network to contain the threat and initiate a forensic analysis.', 'cases_id': 'IR-20260624-0004'}
+2026-06-24 15:53:30,145 [INFO] sqlalchemy.engine.Engine: [cached since 57.84s ago] {'ai_summary': 'Ransomware has been detected on the fileserver01. Immediate action is required to prevent data encryption and potential ransom demands.', 'ai_confidence': 95.0, 'ai_mitre': 'T1486', 'immediate_action': 'Isolate the fileserver01 from the network to contain the threat and initiate a forensic analysis.', 'cases_id': 'IR-20260624-0004'}
+2026-06-24 15:53:30,146 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:30,146 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:30,150 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:30,150 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:30,150 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:30,150 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:30,150 INFO sqlalchemy.engine.Engine [cached since 57.84s ago] {'pk_1': 'IR-20260624-0004'}
+2026-06-24 15:53:30,150 [INFO] sqlalchemy.engine.Engine: [cached since 57.84s ago] {'pk_1': 'IR-20260624-0004'}
+2026-06-24 15:53:30,151 [INFO] app.services.alert_queue: AI enrichment complete for case IR-20260624-0004: ransomware / high / confidence=95.0
+2026-06-24 15:53:30,151 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:53:30,151 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:53:30,152 [INFO] app.services.alert_queue: Processing alert priority-test-med from queue (priority 2)
+2026-06-24 15:53:30,152 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:30,152 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:30,153 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:30,153 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:30,153 INFO sqlalchemy.engine.Engine [cached since 80.78s ago] {'id_1': 'priority-test-med', 'param_1': 1}
+2026-06-24 15:53:30,153 [INFO] sqlalchemy.engine.Engine: [cached since 80.78s ago] {'id_1': 'priority-test-med', 'param_1': 1}
+2026-06-24 15:53:30,154 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:30,154 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:53:30,154 INFO sqlalchemy.engine.Engine [cached since 80.71s ago] {'alert_id_1': 'priority-test-med', 'param_1': 1}
+2026-06-24 15:53:30,154 [INFO] sqlalchemy.engine.Engine: [cached since 80.71s ago] {'alert_id_1': 'priority-test-med', 'param_1': 1}
+2026-06-24 15:53:30,155 [INFO] app.services.alert_queue: Starting AI enrichment for alert priority-test-med → case IR-20260624-0003
+2026-06-24 15:53:38,042 [INFO] httpx: HTTP Request: POST http://localhost:11434/api/chat "HTTP/1.1 200 OK"
+2026-06-24 15:53:38,044 INFO sqlalchemy.engine.Engine UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:53:38,044 [INFO] sqlalchemy.engine.Engine: UPDATE alerts SET attack_type=%(attack_type)s WHERE alerts.id = %(alerts_id)s
+2026-06-24 15:53:38,044 INFO sqlalchemy.engine.Engine [cached since 65.75s ago] {'attack_type': 'insider', 'alerts_id': 'priority-test-med'}
+2026-06-24 15:53:38,044 [INFO] sqlalchemy.engine.Engine: [cached since 65.75s ago] {'attack_type': 'insider', 'alerts_id': 'priority-test-med'}
+2026-06-24 15:53:38,046 INFO sqlalchemy.engine.Engine UPDATE cases SET severity=%(severity)s, ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:53:38,046 [INFO] sqlalchemy.engine.Engine: UPDATE cases SET severity=%(severity)s, ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, ai_mitre=%(ai_mitre)s, immediate_action=%(immediate_action)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:53:38,046 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {'severity': 'high', 'ai_summary': 'An HR workstation accessed privileged accounts outside normal working hours.', 'ai_confidence': 85.0, 'ai_mitre': 'T1078.004', 'immediate_action': 'Review recent activities on the hr-workstation for unauthorized access.', 'cases_id': 'IR-20260624-0003'}
+2026-06-24 15:53:38,046 [INFO] sqlalchemy.engine.Engine: [generated in 0.00021s] {'severity': 'high', 'ai_summary': 'An HR workstation accessed privileged accounts outside normal working hours.', 'ai_confidence': 85.0, 'ai_mitre': 'T1078.004', 'immediate_action': 'Review recent activities on the hr-workstation for unauthorized access.', 'cases_id': 'IR-20260624-0003'}
+2026-06-24 15:53:38,047 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:53:38,047 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:53:38,049 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:53:38,049 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:53:38,049 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:38,049 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:53:38,049 INFO sqlalchemy.engine.Engine [cached since 65.74s ago] {'pk_1': 'IR-20260624-0003'}
+2026-06-24 15:53:38,049 [INFO] sqlalchemy.engine.Engine: [cached since 65.74s ago] {'pk_1': 'IR-20260624-0003'}
+2026-06-24 15:53:38,050 [INFO] app.services.alert_queue: AI enrichment complete for case IR-20260624-0003: insider / high / confidence=85.0
+2026-06-24 15:53:38,050 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:53:38,050 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:54:50,585 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:54:50,585 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:54:50,586 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:54:50,586 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:54:50,586 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:54:50,586 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:54:50,589 INFO sqlalchemy.engine.Engine INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:54:50,589 [INFO] sqlalchemy.engine.Engine: INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id)s, %(wazuh_rule_id)s, %(level)s, %(description)s, %(source_ip)s, %(host)s, %(groups)s::JSON, %(attack_type)s, %(raw_json)s::JSON) RETURNING alerts.received_at
+2026-06-24 15:54:50,589 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'id': 'fallback-test-001', 'wazuh_rule_id': 5710, 'level': 12, 'description': 'SSH brute force', 'source_ip': '10.0.0.1', 'host': 'server01', 'groups': '["sshd", "authentication_failed"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:54:50,589 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'id': 'fallback-test-001', 'wazuh_rule_id': 5710, 'level': 12, 'description': 'SSH brute force', 'source_ip': '10.0.0.1', 'host': 'server01', 'groups': '["sshd", "authentication_failed"]', 'attack_type': None, 'raw_json': '{}'}
+2026-06-24 15:54:50,590 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:54:50,590 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:54:50,593 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:54:50,593 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:54:50,594 INFO sqlalchemy.engine.Engine SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:54:50,594 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id, alerts.wazuh_rule_id, alerts.level, alerts.description, alerts.source_ip, alerts.host, alerts.groups, alerts.attack_type, alerts.raw_json, alerts.received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:54:50,594 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'pk_1': 'fallback-test-001'}
+2026-06-24 15:54:50,594 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'pk_1': 'fallback-test-001'}
+2026-06-24 15:54:50,596 INFO sqlalchemy.engine.Engine SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:54:50,596 [INFO] sqlalchemy.engine.Engine: SELECT count(cases.id) AS count_1 
+FROM cases 
+WHERE cases.id LIKE %(id_1)s
+2026-06-24 15:54:50,596 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:54:50,596 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'id_1': 'IR-20260624-%'}
+2026-06-24 15:54:50,597 INFO sqlalchemy.engine.Engine INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:54:50,597 [INFO] sqlalchemy.engine.Engine: INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, resolved_at, updated_at) VALUES (%(id)s, %(title)s, %(severity)s, %(status)s, %(breach_type)s, %(data_categories)s, %(persons_affected)s, %(breach_est_at)s, %(source_host)s, %(source_ip)s, %(alert_id)s, %(playbook_id)s, %(assigned_to)s, %(ai_summary)s, %(ai_confidence)s, %(ai_mitre)s, %(immediate_action)s, %(notes)s, %(resolved_at)s, %(updated_at)s) RETURNING cases.detected_at, cases.created_at
+2026-06-24 15:54:50,597 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'id': 'IR-20260624-0005', 'title': 'Unauthorized Access on server01', 'severity': 'high', 'status': 'open', 'breach_type': 'unauthorized_access', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'server01', 'source_ip': '10.0.0.1', 'alert_id': 'fallback-test-001', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:54:50,597 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'id': 'IR-20260624-0005', 'title': 'Unauthorized Access on server01', 'severity': 'high', 'status': 'open', 'breach_type': 'unauthorized_access', 'data_categories': None, 'persons_affected': None, 'breach_est_at': None, 'source_host': 'server01', 'source_ip': '10.0.0.1', 'alert_id': 'fallback-test-001', 'playbook_id': None, 'assigned_to': None, 'ai_summary': None, 'ai_confidence': None, 'ai_mitre': None, 'immediate_action': None, 'notes': None, 'resolved_at': None, 'updated_at': None}
+2026-06-24 15:54:50,599 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:54:50,599 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:54:50,602 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:54:50,602 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:54:50,602 INFO sqlalchemy.engine.Engine SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:54:50,602 [INFO] sqlalchemy.engine.Engine: SELECT cases.id, cases.title, cases.severity, cases.status, cases.breach_type, cases.data_categories, cases.persons_affected, cases.breach_est_at, cases.source_host, cases.source_ip, cases.alert_id, cases.playbook_id, cases.assigned_to, cases.ai_summary, cases.ai_confidence, cases.ai_mitre, cases.immediate_action, cases.notes, cases.detected_at, cases.resolved_at, cases.created_at, cases.updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:54:50,602 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'pk_1': 'IR-20260624-0005'}
+2026-06-24 15:54:50,602 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'pk_1': 'IR-20260624-0005'}
+2026-06-24 15:54:50,604 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:54:50,604 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(pk_1)s
+2026-06-24 15:54:50,604 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'pk_1': 'fallback-test-001'}
+2026-06-24 15:54:50,604 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'pk_1': 'fallback-test-001'}
+2026-06-24 15:54:50,605 [INFO] app.services.alert_queue: Enqueued alert fallback-test-001 with priority 1 (level 12)
+INFO:     127.0.0.1:43190 - "POST /alerts HTTP/1.1" 201 Created
+2026-06-24 15:54:50,605 [INFO] app.services.alert_queue: Processing alert fallback-test-001 from queue (priority 1)
+2026-06-24 15:54:50,606 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:54:50,606 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:54:50,607 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:54:50,607 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:54:50,607 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:54:50,607 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:54:50,609 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:54:50,609 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.alert_id = %(alert_id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:54:50,609 INFO sqlalchemy.engine.Engine [cached since 161.2s ago] {'alert_id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:54:50,609 [INFO] sqlalchemy.engine.Engine: [cached since 161.2s ago] {'alert_id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:54:50,610 [INFO] app.services.alert_queue: Starting AI enrichment for alert fallback-test-001 → case IR-20260624-0005
+2026-06-24 15:54:50,620 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:54:50,620 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:54:50,621 [ERROR] app.services.alert_queue: AI enrichment failed for alert fallback-test-001: All connection attempts failed — using rule-based fallback
+2026-06-24 15:54:50,622 INFO sqlalchemy.engine.Engine UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:54:50,622 [INFO] sqlalchemy.engine.Engine: UPDATE cases SET ai_summary=%(ai_summary)s, ai_confidence=%(ai_confidence)s, updated_at=now() WHERE cases.id = %(cases_id)s
+2026-06-24 15:54:50,622 INFO sqlalchemy.engine.Engine [generated in 0.00022s] {'ai_summary': 'AI classification unavailable. Rule-based classification applied: unauthorized_access.', 'ai_confidence': 0.0, 'cases_id': 'IR-20260624-0005'}
+2026-06-24 15:54:50,622 [INFO] sqlalchemy.engine.Engine: [generated in 0.00022s] {'ai_summary': 'AI classification unavailable. Rule-based classification applied: unauthorized_access.', 'ai_confidence': 0.0, 'cases_id': 'IR-20260624-0005'}
+2026-06-24 15:54:50,624 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-24 15:54:50,624 [INFO] sqlalchemy.engine.Engine: COMMIT
+2026-06-24 15:54:50,627 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:54:50,627 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:54:50,627 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:54:50,627 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 15:54:50,627 INFO sqlalchemy.engine.Engine [cached since 138.3s ago] {'pk_1': 'IR-20260624-0005'}
+2026-06-24 15:54:50,627 [INFO] sqlalchemy.engine.Engine: [cached since 138.3s ago] {'pk_1': 'IR-20260624-0005'}
+2026-06-24 15:54:50,629 [INFO] app.services.alert_queue: Fallback classification applied to case IR-20260624-0005: unauthorized_access / high
+2026-06-24 15:54:50,630 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:54:50,630 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+2026-06-24 15:55:23,538 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:55:23,538 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:55:23,539 INFO sqlalchemy.engine.Engine SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:55:23,539 [INFO] sqlalchemy.engine.Engine: SELECT alerts.id AS alerts_id, alerts.wazuh_rule_id AS alerts_wazuh_rule_id, alerts.level AS alerts_level, alerts.description AS alerts_description, alerts.source_ip AS alerts_source_ip, alerts.host AS alerts_host, alerts.groups AS alerts_groups, alerts.attack_type AS alerts_attack_type, alerts.raw_json AS alerts_raw_json, alerts.received_at AS alerts_received_at 
+FROM alerts 
+WHERE alerts.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:55:23,539 INFO sqlalchemy.engine.Engine [cached since 194.2s ago] {'id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:55:23,539 [INFO] sqlalchemy.engine.Engine: [cached since 194.2s ago] {'id_1': 'fallback-test-001', 'param_1': 1}
+2026-06-24 15:55:23,541 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:55:23,541 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+INFO:     127.0.0.1:42094 - "POST /alerts HTTP/1.1" 409 Conflict
+2026-06-24 15:55:54,981 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 15:55:54,981 [INFO] sqlalchemy.engine.Engine: BEGIN (implicit)
+2026-06-24 15:55:54,982 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:55:54,982 [INFO] sqlalchemy.engine.Engine: SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(id_1)s 
+ LIMIT %(param_1)s
+2026-06-24 15:55:54,982 INFO sqlalchemy.engine.Engine [cached since 179.3s ago] {'id_1': 'IR-20260624-0005', 'param_1': 1}
+2026-06-24 15:55:54,982 [INFO] sqlalchemy.engine.Engine: [cached since 179.3s ago] {'id_1': 'IR-20260624-0005', 'param_1': 1}
+INFO:     127.0.0.1:34246 - "GET /cases/IR-20260624-0005 HTTP/1.1" 200 OK
+2026-06-24 15:55:54,985 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-06-24 15:55:54,985 [INFO] sqlalchemy.engine.Engine: ROLLBACK
+
