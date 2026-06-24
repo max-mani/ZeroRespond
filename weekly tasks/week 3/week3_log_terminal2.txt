@@ -621,3 +621,102 @@ INFO:     127.0.0.1:34246 - "GET /cases/IR-20260624-0005 HTTP/1.1" 200 OK
 2026-06-24 15:55:54,985 INFO sqlalchemy.engine.Engine ROLLBACK
 2026-06-24 15:55:54,985 [INFO] sqlalchemy.engine.Engine: ROLLBACK
 
+
+
+
+////log of day 7
+
+(venv) [mani@maxim ZeroRespond]$ curl -s http://localhost:8000/health/ai | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['status'] == 'ok', f'AI status is not ok: {d}'
+assert d['ai_agent']['ollama_running'] == True
+assert d['ai_agent']['model_available'] == True
+print('✓ Ollama is running and model is available')
+"
+✓ Ollama is running and model is available
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl -s -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"check-week3-001","wazuh_rule_id":92001,"level":15,"description":"Ransomware signature detected","source_ip":null,"host":"fileserver02","groups":["ransomware","encrypt"],"raw_json":{}}' \
+  > /tmp/case_response.json
+
+CASE_ID=$(python3 -c "import json; print(json.load(open('/tmp/case_response.json'))['id'])")
+echo "Case created: $CASE_ID"
+
+# Wait for AI enrichment
+echo "Waiting 30 seconds for AI enrichment..."
+sleep 30
+
+curl -s http://localhost:8000/cases/$CASE_ID | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['ai_summary'] is not None, 'ai_summary is null — enrichment did not run'
+assert d['ai_confidence'] is not None and d['ai_confidence'] > 0, 'ai_confidence is 0 or null'
+assert d['ai_mitre'] is not None, 'ai_mitre is null'
+assert d['immediate_action'] is not None, 'immediate_action is null'
+print(f'✓ AI enrichment complete: {d[\"attack_type\"]} / {d[\"severity\"]} / confidence={d[\"ai_confidence\"]}')
+print(f'  MITRE: {d[\"ai_mitre\"]}')
+print(f'  Summary: {d[\"ai_summary\"][:80]}...')
+"
+Case created: IR-20260624-0001
+Waiting 30 seconds for AI enrichment...
+Traceback (most recent call last):
+  File "<string>", line 8, in <module>
+    print(f'✓ AI enrichment complete: {d["attack_type"]} / {d["severity"]} / confidence={d["ai_confidence"]}')
+                                       ~^^^^^^^^^^^^^^^
+KeyError: 'attack_type'
+(venv) [mani@maxim ZeroRespond]$ curl -s http://localhost:8000/cases/$CASE_ID | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['ai_summary'] is not None, 'ai_summary is null — enrichment did not run'
+assert d['ai_confidence'] is not None and d['ai_confidence'] > 0, 'ai_confidence is 0 or null'
+assert d['ai_mitre'] is not None, 'ai_mitre is null'
+assert d['immediate_action'] is not None, 'immediate_action is null'
+print(f'✓ AI enrichment complete: {d[\"attack_type\"]} / {d[\"severity\"]} / confidence={d[\"ai_confidence\"]}')
+print(f'  MITRE: {d[\"ai_mitre\"]}')
+print(f'  Summary: {d[\"ai_summary\"][:80]}...')
+"
+Traceback (most recent call last):
+  File "<string>", line 8, in <module>
+    print(f'✓ AI enrichment complete: {d["attack_type"]} / {d["severity"]} / confidence={d["ai_confidence"]}')
+                                       ~^^^^^^^^^^^^^^^
+KeyError: 'attack_type'
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl stop ollama
+curl -s -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"check-fallback-001","wazuh_rule_id":5710,"level":12,"description":"Fallback test","source_ip":"1.2.3.4","host":"server-x","groups":["sshd"],"raw_json":{}}' \
+  > /tmp/fallback_case.json
+
+FALLBACK_ID=$(python3 -c "import json; print(json.load(open('/tmp/fallback_case.json'))['id'])")
+sleep 5
+
+curl -s http://localhost:8000/cases/$FALLBACK_ID | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['ai_confidence'] == 0.0, 'Expected confidence 0.0 for fallback'
+assert 'unavailable' in (d.get('ai_summary') or '').lower(), 'Expected fallback message in ai_summary'
+print('✓ Fallback classifier works correctly when Ollama is unreachable')
+"
+sudo systemctl start ollama
+[sudo] password for mani: 
+✓ Fallback classifier works correctly when Ollama is unreachable
+(venv) [mani@maxim ZeroRespond]$ curl -s -X POST http://localhost:8000/cases/$CASE_ID/re-enrich | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['id'] is not None
+print(f'✓ Re-enrich endpoint works for case {d[\"id\"]}')
+"
+✓ Re-enrich endpoint works for case IR-20260624-0001
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl stop ollama
+sleep 2
+curl -s http://localhost:8000/health/ai | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['status'] == 'degraded'
+print('✓ /health/ai correctly shows degraded when Ollama is stopped')
+"
+sudo systemctl start ollama
+✓ /health/ai correctly shows degraded when Ollama is stopped
+(venv) [mani@maxim ZeroRespond]$ 
