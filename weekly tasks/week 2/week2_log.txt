@@ -365,3 +365,20 @@ Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
 To https://github.com/max-mani/ZeroRespond.git
  * [new tag]         v0.2.0-week2 -> v0.2.0-week2
 (venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "Added the Log of Day 7 of Week 2"
+[main bd45265] Added the Log of Day 7 of Week 2
+ 1 file changed, 367 insertions(+)
+(venv) [mani@maxim ZeroRespond]$ git push origin main --tags
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 6.79 KiB | 3.40 MiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   2f6df99..bd45265  main -> main
+(venv) [mani@maxim ZeroRespond]$ ^C
+(venv) [mani@maxim ZeroRespond]$ ^C
+(venv) [mani@maxim ZeroRespond]$ 
