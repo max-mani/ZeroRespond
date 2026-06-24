@@ -153,3 +153,36 @@ def classify_alert_basic(level: int, groups: list[str] | None) -> tuple[BreachTy
         breach_type = BreachTypeEnum.unauthorized_access
 
     return breach_type, severity
+
+    
+    # Add to backend/app/services/case_service.py
+
+def update_case_ai_fields(
+    db: Session,
+    case_id: str,
+    ai_summary: str,
+    ai_confidence: float,
+    ai_mitre: str,
+    immediate_action: str,
+    breach_type: BreachTypeEnum,
+    severity: SeverityEnum,
+) -> Case | None:
+    """
+    Update a case with AI enrichment results.
+    Called by the queue worker after Ollama classification completes.
+    Returns None if case not found.
+    """
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if not case:
+        return None
+
+    case.ai_summary      = ai_summary
+    case.ai_confidence   = ai_confidence
+    case.ai_mitre        = ai_mitre
+    case.immediate_action = immediate_action
+    case.breach_type     = breach_type
+    case.severity        = severity
+
+    db.commit()
+    db.refresh(case)
+    return case

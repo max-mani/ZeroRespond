@@ -8,6 +8,7 @@ from app.models.alert import Alert
 from app.schemas.alert import AlertCreate, AlertOut
 from app.schemas.case import CaseDetail
 from app.services.case_service import create_case_from_alert, classify_alert_basic
+from app.services.alert_queue import enqueue_alert
 
 router = APIRouter(prefix="/alerts", tags=["Alerts"])
 
@@ -17,30 +18,26 @@ router = APIRouter(prefix="/alerts", tags=["Alerts"])
     status_code=status.HTTP_201_CREATED,
     summary="Ingest a Wazuh alert and create an incident case",
     description="""
-    This is the main entry point for alert ingestion.
-    Called by the alert-processor service when Wazuh fires an alert.
+    Ingests a Wazuh alert and immediately creates an incident case.
 
     What this endpoint does:
-    1. Validates the incoming JSON against AlertCreate schema
-    2. Checks for duplicate alert ID (idempotent — safe to retry)
+    1. Validates the incoming JSON
+    2. Checks for duplicate alert ID (idempotent)
     3. Stores the raw alert in the alerts table
-    4. Classifies breach_type and severity using rule-based logic (AI in Week 3)
-    5. Creates an incident case linked to this alert
-    6. Returns the created case
+    4. Creates a case using rule-based classification (instant response)
+    5. Enqueues the alert for async AI enrichment (non-blocking)
+    6. Returns the case immediately — AI fields are populated within seconds
 
-    Severity mapping:
-    - Wazuh level 15    → critical
-    - Wazuh level 12-14 → high
-    - Wazuh level 8-11  → medium
-    - Wazuh level 1-7   → low
+    The case is returned before AI enrichment is complete.
+    Poll GET /cases/{id} to get the enriched case with AI summary and MITRE technique.
     """
 )
-def ingest_alert(
+async def ingest_alert(
     payload: AlertCreate,
     db: Session = Depends(get_db)
 ) -> CaseDetail:
 
-    # Step 1: Check for duplicate (Wazuh can retry webhook deliveries)
+    # Step 1: Duplicate check
     existing = db.query(Alert).filter(Alert.id == payload.id).first()
     if existing:
         raise HTTPException(
@@ -63,16 +60,21 @@ def ingest_alert(
     db.commit()
     db.refresh(alert)
 
-    # Step 3: Classify alert (rule-based for now, AI replaces this in Week 3)
+    # Step 3: Rule-based classification for immediate case creation
+    # This runs in < 1ms and gives the case a valid breach_type and severity instantly.
+    # The AI agent will override these values once it finishes async enrichment.
     breach_type, severity = classify_alert_basic(alert.level, alert.groups)
 
-    # Step 4: Create incident case
+    # Step 4: Create the case
     case = create_case_from_alert(
         db=db,
         alert=alert,
         breach_type=breach_type,
         severity=severity
     )
+
+    # Step 5: Enqueue for async AI enrichment (non-blocking — returns immediately)
+    await enqueue_alert(alert.id, alert.level)
 
     return case
 
@@ -88,11 +90,9 @@ def list_alerts(
     host: Optional[str] = None,
     db: Session = Depends(get_db)
 ) -> List[Alert]:
-
     query = db.query(Alert)
     if host:
         query = query.filter(Alert.host == host)
-
     return query.order_by(Alert.received_at.desc()).offset(skip).limit(limit).all()
 
 

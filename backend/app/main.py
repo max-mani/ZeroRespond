@@ -1,7 +1,19 @@
 # backend/app/main.py
-from fastapi import FastAPI
+import asyncio
+import logging
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import alerts, cases   # import routers
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import IntegrityError
+from app.routers import alerts, cases
+from app.services.alert_queue import queue_worker
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="ZeroRespond API",
@@ -19,18 +31,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add to backend/app/main.py (after the middleware block)
-from fastapi import Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
-from sqlalchemy.exc import IntegrityError
+# ─── Exception handlers ───────────────────────────────────────────────────────
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    """
-    Return a clean, structured error when Pydantic validation fails.
-    Default FastAPI errors are verbose and hard to parse.
-    """
     errors = []
     for error in exc.errors():
         errors.append({
@@ -38,29 +42,35 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "message": error["msg"],
             "type": error["type"]
         })
-    return JSONResponse(
-        status_code=422,
-        content={
-            "error": "Validation failed",
-            "detail": errors
-        }
-    )
+    return JSONResponse(status_code=422, content={"error": "Validation failed", "detail": errors})
 
 @app.exception_handler(IntegrityError)
 async def integrity_exception_handler(request: Request, exc: IntegrityError):
-    """
-    Return a clean error when a DB constraint is violated
-    (e.g. duplicate primary key, FK violation).
-    """
-    return JSONResponse(
-        status_code=409,
-        content={
-            "error": "Database constraint violation",
-            "detail": str(exc.orig)
-        }
-    )
-    
-# Register routers
+    return JSONResponse(status_code=409, content={"error": "Database constraint violation", "detail": str(exc.orig)})
+
+# ─── Lifespan: start queue worker on boot ────────────────────────────────────
+
+_worker_task = None
+
+@app.on_event("startup")
+async def startup_event():
+    global _worker_task
+    _worker_task = asyncio.create_task(queue_worker())
+    logger.info("ZeroRespond API started — queue worker running.")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    global _worker_task
+    if _worker_task:
+        _worker_task.cancel()
+        try:
+            await _worker_task
+        except asyncio.CancelledError:
+            pass
+    logger.info("ZeroRespond API shutting down — queue worker stopped.")
+
+# ─── Routers ─────────────────────────────────────────────────────────────────
+
 app.include_router(alerts.router)
 app.include_router(cases.router)
 
