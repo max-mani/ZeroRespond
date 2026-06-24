@@ -1,0 +1,367 @@
+[mani@maxim ZeroRespond]$ git add .                   
+git commit -m "feat: pydantic schemas for alerts and cases (create, update, list, detail)"
+[main 9af2e45] feat: pydantic schemas for alerts and cases (create, update, list, detail)
+ 3 files changed, 161 insertions(+)
+ create mode 100644 backend/app/schemas/alert.py
+ create mode 100644 backend/app/schemas/case.py
+ create mode 100644 weekly tasks/week 2/week2_log.txt
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 15, done.
+Counting objects: 100% (15/15), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (9/9), 2.73 KiB | 1.36 MiB/s, done.
+Total 9 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   121e033..9af2e45  main -> main
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: case service — ID generator, create from alert, update, rule-based classifier"
+[main 711e872] feat: case service — ID generator, create from alert, update, rule-based classifier
+ 1 file changed, 108 insertions(+)
+ create mode 100644 backend/app/services/case_service.py
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 10, done.
+Counting objects: 100% (10/10), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 1.85 KiB | 1.85 MiB/s, done.
+Total 6 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   9af2e45..711e872  main -> main
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: alerts router — POST /alerts, GET /alerts, GET /alerts/{id}"
+[main 9713c4c] feat: alerts router — POST /alerts, GET /alerts, GET /alerts/{id}
+ 4 files changed, 169 insertions(+), 4 deletions(-)
+ create mode 100644 backend/app/routers/alerts.py
+ create mode 100644 backend/app/routers/cases.py
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 17, done.
+Counting objects: 100% (17/17), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 2.90 KiB | 1.45 MiB/s, done.
+Total 10 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   711e872..9713c4c  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "1750123456.88321",
+    "wazuh_rule_id": 5710,
+    "level": 12,
+    "description": "SSH brute force — multiple authentication failures",
+    "source_ip": "203.0.113.42",
+    "host": "webserver01",
+    "groups": ["authentication_failed", "sshd"],
+    "raw_json": {
+      "rule_id": "5710",
+      "level": 12,
+      "description": "SSH brute force",
+      "source_ip": "203.0.113.42",
+      "host": "webserver01",
+      "timestamp": "2026-06-23T10:15:30Z"
+    }
+  }'
+{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"webserver01","source_ip":"203.0.113.42","alert_id":"1750123456.88321","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T07:10:00.064712Z","resolved_at":null,"created_at":"2026-06-24T07:10:00.064712Z","updated_at":null}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts   -H "Content-Type: application/json"   -d '{
+    "id": "1750123456.88321",
+    "wazuh_rule_id": 5710,
+    "level": 12,
+    "description": "SSH brute force — multiple authentication failures",
+    "source_ip": "203.0.113.42",
+    "host": "webserver01",
+    "groups": ["authentication_failed", "sshd"],
+    "raw_json": {
+      "rule_id": "5710",
+      "level": 12,
+      "description": "SSH brute force",
+      "source_ip": "203.0.113.42",
+      "host": "webserver01",
+      "timestamp": "2026-06-23T10:15:30Z"
+    }
+  }'
+{"detail":"Alert 1750123456.88321 already ingested. Duplicate ignored."}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd \
+  -c "SELECT id, wazuh_rule_id, level, host, attack_type FROM alerts;"
+        id        | wazuh_rule_id | level |    host     | attack_type 
+------------------+---------------+-------+-------------+-------------
+ 1750123456.88321 |          5710 |    12 | webserver01 | 
+(1 row)
+
+[mani@maxim ZeroRespond]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd \
+  -c "SELECT id, title, severity, status, breach_type, alert_id FROM cases;"
+        id        |               title                | severity | status |     breach_type     |     alert_id     
+------------------+------------------------------------+----------+--------+---------------------+------------------
+ IR-20260624-0001 | Unauthorized Access on webserver01 | high     | open   | unauthorized_access | 1750123456.88321
+(1 row)
+
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: cases router — GET /cases, GET /cases/{id}, POST /cases, PATCH /cases/{id}"
+[main 213cde6] feat: cases router — GET /cases, GET /cases/{id}, POST /cases, PATCH /cases/{id}
+ 1 file changed, 134 insertions(+), 3 deletions(-)
+[mani@maxim ZeroRespond]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd   -c "SELECT id, wazuh_rule_id, level, host, attack_type FROM alerts;"
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts   -H "Content-Type: application/json"   -d '{
+    "id": "1750123456.88321",
+    "wazuh_rule_id": 5710,
+    "level": 12,
+    "description": "SSH brute force — multiple authentication failures",
+    "source_ip": "203.0.113.42",
+    "host": "webserver01",
+    "groups": ["authentication_failed", "sshd"],
+    "raw_json": {
+      "rule_id": "5710",
+      "level": 12,
+      "description": "SSH brute force",
+      "source_ip": "203.0.113.42",
+      "host": "webserver01",
+      "timestamp": "2026-06-23T10:15:30Z"
+    }
+  }'
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts   -H "Content-Type: application/json"   -d '{
+[mani@maxim ZeroRespond]$ git push origin main
+
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 1.82 KiB | 1.82 MiB/s, done.
+Total 6 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   9713c4c..213cde6  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/cases
+[{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","source_ip":"203.0.113.42","source_host":"webserver01","assigned_to":null,"ai_confidence":null,"detected_at":"2026-06-24T07:10:00.064712Z"}][mani@maxim ZeroRespond]$ curl htcurl http://localhost:8000/cases/IR-20260623-0001
+{"detail":"Case IR-20260623-0001 not found"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/cases/IR-20260624-0001
+{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"webserver01","source_ip":"203.0.113.42","alert_id":"1750123456.88321","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T07:10:00.064712Z","resolved_at":null,"created_at":"2026-06-24T07:10:00.064712Z","updated_at":null}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl "http://localhost:8000/cases?severity=high"
+[{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","source_ip":"203.0.113.42","source_host":"webserver01","assigned_to":null,"ai_confidence":null,"detected_at":"2026-06-24T07:10:00.064712Z"}][mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl "http://localhost:8000/cases?status=open"
+[{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","source_ip":"203.0.113.42","source_host":"webserver01","assigned_to":null,"ai_confidence":null,"detected_at":"2026-06-24T07:10:00.064712Z"}][mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/cases \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Phishing email targeting finance team",
+    "severity": "high",
+    "breach_type": "phishing",
+    "data_categories": "Credentials, PII",
+    "persons_affected": 12,
+    "assigned_to": "manikandan@org.in"
+  }'
+{"id":"IR-20260624-0002","title":"Phishing email targeting finance team","severity":"high","status":"open","breach_type":"phishing","data_categories":"Credentials, PII","persons_affected":12,"breach_est_at":null,"source_host":null,"source_ip":null,"alert_id":null,"playbook_id":null,"assigned_to":"manikandan@org.in","ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T07:16:35.166877Z","resolved_at":null,"created_at":"2026-06-24T07:16:35.166877Z","updated_at":null}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X PATCH http://localhost:8000/cases/IR-20260623-0001 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "investigating",
+    "assigned_to": "manikandan@org.in",
+    "notes": "Blocked the source IP at firewall. Investigating affected host."
+  }'
+{"detail":"Case IR-20260623-0001 not found"}[mani@maxim ZeroRespond]$ curl -X PATCH http://localhost:8000/cases/IR-20260623-0001   -H "Content-Type: application/json"   -
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X PATCH http://localhost:8000/cases/IR-20260624-0001 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "investigating",
+    "assigned_to": "manikandan@org.in",
+    "notes": "Blocked the source IP at firewall. Investigating affected host."
+  }'
+{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"investigating","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"webserver01","source_ip":"203.0.113.42","alert_id":"1750123456.88321","playbook_id":null,"assigned_to":"manikandan@org.in","ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":"Blocked the source IP at firewall. Investigating affected host.","detected_at":"2026-06-24T07:10:00.064712Z","resolved_at":null,"created_at":"2026-06-24T07:10:00.064712Z","updated_at":"2026-06-24T07:17:24.223372Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/cases/IR-20260624-0001
+{"id":"IR-20260624-0001","title":"Unauthorized Access on webserver01","severity":"high","status":"investigating","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"webserver01","source_ip":"203.0.113.42","alert_id":"1750123456.88321","playbook_id":null,"assigned_to":"manikandan@org.in","ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":"Blocked the source IP at firewall. Investigating affected host.","detected_at":"2026-06-24T07:10:00.064712Z","resolved_at":null,"created_at":"2026-06-24T07:10:00.064712Z","updated_at":"2026-06-24T07:17:24.223372Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/cases \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Test"}'
+{"error":"Validation failed","detail":[{"field":"body → title","message":"String should have at least 5 characters","type":"string_too_short"},{"field":"body → breach_type","message":"Field required","type":"missing"}]}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/cases \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Test", "breach_type": "ransomware", "severity": "extreme"}'
+{"error":"Validation failed","detail":[{"field":"body → title","message":"String should have at least 5 characters","type":"string_too_short"},{"field":"body → severity","message":"Input should be 'critical', 'high', 'medium' or 'low'","type":"enum"}]}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/cases \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Test", "breach_type": "phishing", "source_ip": "not-an-ip"}'
+{"error":"Validation failed","detail":[{"field":"body → title","message":"String should have at least 5 characters","type":"string_too_short"},{"field":"body → source_ip","message":"Value error, 'not-an-ip' is not a valid IP address format","type":"value_error"}]}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/cases \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Test", "breach_type": "phishing", "data_categories": "CreditCards"}'
+{"error":"Validation failed","detail":[{"field":"body → title","message":"String should have at least 5 characters","type":"string_too_short"},{"field":"body → data_categories","message":"Value error, Unknown data categories: {'CreditCards'}. Allowed: {'Biometric', 'Credentials', 'Financial', 'Children', 'Health', 'PII'}","type":"value_error"}]}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/cases/IR-99991231-9999
+{"detail":"Case IR-99991231-9999 not found"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: global exception handlers, field validators for IP and DPDP data categories"
+[main 4b7b672] feat: global exception handlers, field validators for IP and DPDP data categories
+ 2 files changed, 74 insertions(+)
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 1.96 KiB | 1.96 MiB/s, done.
+Total 7 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   213cde6..4b7b672  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+python scripts/seed_data.py
+2026-06-24 13:10:00,288 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-06-24 13:10:00,288 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-24 13:10:00,290 INFO sqlalchemy.engine.Engine select current_schema()
+2026-06-24 13:10:00,291 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-24 13:10:00,292 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-06-24 13:10:00,293 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-24 13:10:00,294 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 13:10:00,296 INFO sqlalchemy.engine.Engine DELETE FROM cases
+2026-06-24 13:10:00,296 INFO sqlalchemy.engine.Engine [generated in 0.00024s] {}
+2026-06-24 13:10:00,307 INFO sqlalchemy.engine.Engine DELETE FROM alerts
+2026-06-24 13:10:00,307 INFO sqlalchemy.engine.Engine [generated in 0.00044s] {}
+2026-06-24 13:10:00,311 INFO sqlalchemy.engine.Engine COMMIT
+Cleared existing cases and alerts.
+2026-06-24 13:10:00,316 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 13:10:00,321 INFO sqlalchemy.engine.Engine INSERT INTO alerts (id, wazuh_rule_id, level, description, source_ip, host, groups, attack_type, raw_json) VALUES (%(id__0)s, %(wazuh_rule_id__0)s, %(level__0)s, %(description__0)s, %(source_ip__0)s, %(host__0)s, %(groups__0)s::JSON, %(attack_type__0 ... 622 characters truncated ... roups__4)s::JSON, %(attack_type__4)s, %(raw_json__4)s::JSON) RETURNING alerts.received_at, alerts.id
+2026-06-24 13:10:00,321 INFO sqlalchemy.engine.Engine [generated in 0.00041s (insertmanyvalues) 1/1 (ordered)] {'host__0': 'webserver01', 'attack_type__0': None, 'source_ip__0': '203.0.113.42', 'raw_json__0': '{"rule_id": "5710", "level": 12, "host": "webserver01"}', 'wazuh_rule_id__0': 5710, 'description__0': 'SSH brute force — 500 failed logins in 2 minutes', 'level__0': 12, 'id__0': 'seed-alert-001', 'groups__0': '["authentication_failed", "sshd"]', 'host__1': 'workstation-finance-03', 'attack_type__1': None, 'source_ip__1': '198.51.100.7', 'raw_json__1': '{"rule_id": "87105", "level": 14, "host": "workstation-finance-03"}', 'wazuh_rule_id__1': 87105, 'description__1': 'Malicious URL detected in email attachment', 'level__1': 14, 'id__1': 'seed-alert-002', 'groups__1': '["phish", "malicious_url"]', 'host__2': 'fileserver01', 'attack_type__2': None, 'source_ip__2': None, 'raw_json__2': '{"rule_id": "92001", "level": 15, "host": "fileserver01"}', 'wazuh_rule_id__2': 92001, 'description__2': 'Ransomware signature detected — files being encrypted', 'level__2': 15, 'id__2': 'seed-alert-003', 'groups__2': '["ransomware", "encrypt"]', 'host__3': 'db-server-01', 'attack_type__3': None, 'source_ip__3': '10.0.0.45', 'raw_json__3': '{"rule_id": "61002", "level": 10, "host": "db-server-01"}', 'wazuh_rule_id__3': 61002, 'description__3': 'Large outbound data transfer detected — potential exfiltration', 'level__3': 10, 'id__3': 'seed-alert-004', 'groups__3': '["exfil", "data_leak"]', 'host__4': 'hr-workstation-02', 'attack_type__4': None, 'source_ip__4': '10.0.0.12', 'raw_json__4': '{"rule_id": "40111", "level": 9, "host": "hr-workstation-02"}', 'wazuh_rule_id__4': 40111, 'description__4': 'Privileged account access outside business hours', 'level__4': 9, 'id__4': 'seed-alert-005', 'groups__4': '["insider", "privilege"]'}
+2026-06-24 13:10:00,325 INFO sqlalchemy.engine.Engine COMMIT
+Seeded 5 alerts.
+2026-06-24 13:10:00,330 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 13:10:00,336 INFO sqlalchemy.engine.Engine INSERT INTO cases (id, title, severity, status, breach_type, data_categories, persons_affected, breach_est_at, source_host, source_ip, alert_id, playbook_id, assigned_to, ai_summary, ai_confidence, ai_mitre, immediate_action, notes, detected_at, reso ... 1968 characters truncated ... 4)s, %(detected_at__4)s, %(resolved_at__4)s, %(updated_at__4)s) RETURNING cases.created_at, cases.id
+2026-06-24 13:10:00,336 INFO sqlalchemy.engine.Engine [generated in 0.00034s (insertmanyvalues) 1/1 (ordered)] {'status__0': 'investigating', 'immediate_action__0': 'Block IP 203.0.113.42 at firewall. Review /var/log/auth.log on webserver01.', 'breach_est_at__0': None, 'resolved_at__0': None, 'detected_at__0': datetime.datetime(2026, 6, 24, 4, 40, 0, 327502, tzinfo=datetime.timezone.utc), 'playbook_id__0': None, 'source_host__0': 'webserver01', 'ai_summary__0': 'Sustained brute force attack from single IP. 500 failed SSH attempts in 2 minutes suggests automated tooling (Hydra or Medusa). No successful login detected.', 'ai_mitre__0': 'T1110.001', 'alert_id__0': 'seed-alert-001', 'data_categories__0': 'Credentials', 'title__0': 'SSH Brute Force on webserver01', 'persons_affected__0': 0, 'assigned_to__0': 'manikandan@org.in', 'notes__0': None, 'id__0': 'IR-20260623-0001', 'severity__0': 'high', 'ai_confidence__0': 91.5, 'source_ip__0': '203.0.113.42', 'breach_type__0': 'unauthorized_access', 'updated_at__0': None, 'status__1': 'open', 'immediate_action__1': 'Isolate workstation-finance-03. Notify finance team to change passwords immediately.', 'breach_est_at__1': None, 'resolved_at__1': None, 'detected_at__1': datetime.datetime(2026, 6, 24, 6, 40, 0, 327502, tzinfo=datetime.timezone.utc), 'playbook_id__1': None, 'source_host__1': 'workstation-finance-03', 'ai_summary__1': 'Malicious URL embedded in email attachment. Finance team targeted. Credential harvesting page detected.', 'ai_mitre__1': 'T1566.001', 'alert_id__1': 'seed-alert-002', 'data_categories__1': 'Credentials, PII', 'title__1': 'Phishing Attack on Finance Team', 'persons_affected__1': 12, 'assigned_to__1': None, 'notes__1': None, 'id__1': 'IR-20260623-0002', 'severity__1': 'high', 'ai_confidence__1': 87.0, 'source_ip__1': '198.51.100.7', 'breach_type__1': 'phishing', 'updated_at__1': None, 'status__2': 'contained', 'immediate_action__2': 'IMMEDIATELY isolate fileserver01 from network. Do NOT shut down — preserve RAM for forensics. Activate backup restore plan.', 'breach_est_at__2': None, 'resolved_at__2': None, 'detected_at__2': datetime.datetime(2026, 6, 24, 1, 40, 0, 327502, tzinfo=datetime.timezone.utc), 'playbook_id__2': None, 'source_host__2': 'fileserver01', 'ai_summary__2': 'Ransomware signatures detected. Files actively being encrypted. Lateral movement risk from fileserver01 to backup systems.' ... 5 parameters truncated ... 'assigned_to__2': 'manikandan@org.in', 'notes__2': None, 'id__2': 'IR-20260623-0003', 'severity__2': 'critical', 'ai_confidence__2': 97.2, 'source_ip__2': None, 'breach_type__2': 'ransomware', 'updated_at__2': None, 'status__3': 'open', 'immediate_action__3': 'Capture network traffic dump. Block outbound connections from db-server-01. Audit database access logs.', 'breach_est_at__3': None, 'resolved_at__3': None, 'detected_at__3': datetime.datetime(2026, 6, 24, 6, 55, 0, 327502, tzinfo=datetime.timezone.utc), 'playbook_id__3': None, 'source_host__3': 'db-server-01', 'ai_summary__3': 'Anomalous outbound traffic (4.2GB in 15 minutes) from database server to external IP. Pattern consistent with automated exfiltration tool.', 'ai_mitre__3': 'T1041', 'alert_id__3': 'seed-alert-004', 'data_categories__3': 'PII, Health', 'title__3': 'Suspected Data Exfiltration from DB Server', 'persons_affected__3': None, 'assigned_to__3': None, 'notes__3': None, 'id__3': 'IR-20260623-0004', 'severity__3': 'high', 'ai_confidence__3': 78.5, 'source_ip__3': '10.0.0.45', 'breach_type__3': 'exfiltration', 'updated_at__3': None, 'status__4': 'open', 'immediate_action__4': 'Review access logs for hr-workstation-02. Suspend privileged account pending investigation. Check if badge access matches digital access.', 'breach_est_at__4': None, 'resolved_at__4': None, 'detected_at__4': datetime.datetime(2026, 6, 24, 7, 20, 0, 327502, tzinfo=datetime.timezone.utc), 'playbook_id__4': None, 'source_host__4': 'hr-workstation-02', 'ai_summary__4': 'Privileged account accessed sensitive HR records at 2:30 AM — outside business hours. No scheduled maintenance active. Possible insider threat or compromised credential.', 'ai_mitre__4': 'T1078', 'alert_id__4': 'seed-alert-005', 'data_categories__4': 'PII', 'title__4': 'Insider Access Anomaly — HR Workstation', 'persons_affected__4': None, 'assigned_to__4': None, 'notes__4': None, 'id__4': 'IR-20260623-0005', 'severity__4': 'medium', 'ai_confidence__4': 65.0, 'source_ip__4': '10.0.0.12', 'breach_type__4': 'insider', 'updated_at__4': None}
+2026-06-24 13:10:00,342 INFO sqlalchemy.engine.Engine COMMIT
+Seeded 5 cases.
+
+Seed complete. Cases created:
+2026-06-24 13:10:00,346 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-24 13:10:00,353 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 13:10:00,353 INFO sqlalchemy.engine.Engine [generated in 0.00079s] {'pk_1': 'IR-20260623-0001'}
+  IR-20260623-0001 — SSH Brute Force on webserver01 [HIGH] [investigating]
+2026-06-24 13:10:00,360 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 13:10:00,360 INFO sqlalchemy.engine.Engine [cached since 0.007362s ago] {'pk_1': 'IR-20260623-0002'}
+  IR-20260623-0002 — Phishing Attack on Finance Team [HIGH] [open]
+2026-06-24 13:10:00,362 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 13:10:00,362 INFO sqlalchemy.engine.Engine [cached since 0.009421s ago] {'pk_1': 'IR-20260623-0003'}
+  IR-20260623-0003 — Ransomware Detected on fileserver01 [CRITICAL] [contained]
+2026-06-24 13:10:00,363 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 13:10:00,363 INFO sqlalchemy.engine.Engine [cached since 0.01075s ago] {'pk_1': 'IR-20260623-0004'}
+  IR-20260623-0004 — Suspected Data Exfiltration from DB Server [HIGH] [open]
+2026-06-24 13:10:00,364 INFO sqlalchemy.engine.Engine SELECT cases.id AS cases_id, cases.title AS cases_title, cases.severity AS cases_severity, cases.status AS cases_status, cases.breach_type AS cases_breach_type, cases.data_categories AS cases_data_categories, cases.persons_affected AS cases_persons_affected, cases.breach_est_at AS cases_breach_est_at, cases.source_host AS cases_source_host, cases.source_ip AS cases_source_ip, cases.alert_id AS cases_alert_id, cases.playbook_id AS cases_playbook_id, cases.assigned_to AS cases_assigned_to, cases.ai_summary AS cases_ai_summary, cases.ai_confidence AS cases_ai_confidence, cases.ai_mitre AS cases_ai_mitre, cases.immediate_action AS cases_immediate_action, cases.notes AS cases_notes, cases.detected_at AS cases_detected_at, cases.resolved_at AS cases_resolved_at, cases.created_at AS cases_created_at, cases.updated_at AS cases_updated_at 
+FROM cases 
+WHERE cases.id = %(pk_1)s
+2026-06-24 13:10:00,364 INFO sqlalchemy.engine.Engine [cached since 0.01197s ago] {'pk_1': 'IR-20260623-0005'}
+  IR-20260623-0005 — Insider Access Anomaly — HR Workstation [MEDIUM] [open]
+2026-06-24 13:10:00,366 INFO sqlalchemy.engine.Engine ROLLBACK
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd \
+  -c "SELECT id, title, severity, status FROM cases ORDER BY detected_at;"
+        id        |                   title                    | severity |    status     
+------------------+--------------------------------------------+----------+---------------
+ IR-20260623-0003 | Ransomware Detected on fileserver01        | critical | contained
+ IR-20260623-0001 | SSH Brute Force on webserver01             | high     | investigating
+ IR-20260623-0002 | Phishing Attack on Finance Team            | high     | open
+ IR-20260623-0004 | Suspected Data Exfiltration from DB Server | high     | open
+ IR-20260623-0005 | Insider Access Anomaly — HR Workstation    | medium   | open
+(5 rows)
+
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd \
+  -c "SELECT a.id, a.level, a.host, c.id as case_id
+      FROM alerts a
+      LEFT JOIN cases c ON c.alert_id = a.id
+      ORDER BY a.received_at;"
+       id       | level |          host          |     case_id      
+----------------+-------+------------------------+------------------
+ seed-alert-001 |    12 | webserver01            | IR-20260623-0001
+ seed-alert-002 |    14 | workstation-finance-03 | IR-20260623-0002
+ seed-alert-003 |    15 | fileserver01           | IR-20260623-0003
+ seed-alert-004 |    10 | db-server-01           | IR-20260623-0004
+ seed-alert-005 |     9 | hr-workstation-02      | IR-20260623-0005
+(5 rows)
+
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd \
+  -c "SELECT id, severity, persons_affected, data_categories, ai_confidence
+      FROM cases WHERE severity = 'critical';"
+        id        | severity | persons_affected |    data_categories     | ai_confidence 
+------------------+----------+------------------+------------------------+---------------
+ IR-20260623-0003 | critical |              450 | PII, Financial, Health |          97.2
+(1 row)
+
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: seed script with 5 sample cases covering all breach types"
+[main 2f6df99] feat: seed script with 5 sample cases covering all breach types
+ 1 file changed, 135 insertions(+)
+ create mode 100644 backend/scripts/seed_data.py
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (5/5), 2.62 KiB | 2.62 MiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   4b7b672..2f6df99  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl -s http://localhost:8000/health | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['status']=='ok'; print('✓ Health OK')"
+curl -s http://localhost:8000/cases | python3 -c "import sys,json; d=json.load(sys.stdin); assert len(d)==5; print('✓ GET /cases returns 5 cases')"
+curl -s http://localhost:8000/cases/IR-20260623-0003 | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['severity']=='critical'; print('✓ GET /cases/{id} returns correct case')"
+curl -s http://localhost:8000/alerts | python3 -c "import sys,json; d=json.load(sys.stdin); assert len(d)==5; print('✓ GET /alerts returns 5 alerts')"
+✓ Health OK
+✓ GET /cases returns 5 cases
+✓ GET /cases/{id} returns correct case
+✓ GET /alerts returns 5 alerts
+(venv) [mani@maxim ZeroRespond]$ curl -s http://localhost:8000/cases | python3 -c "
+import sys, json, re
+cases = json.load(sys.stdin)
+for c in cases:
+    assert re.match(r'IR-\d{8}-\d{4}', c['id']), f'Bad ID: {c[\"id\"]}'
+print('✓ All case IDs follow IR-YYYYMMDD-XXXX format')
+"
+✓ All case IDs follow IR-YYYYMMDD-XXXX format
+(venv) [mani@maxim ZeroRespond]$ RESP=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{"id":"seed-alert-001","wazuh_rule_id":5710,"level":12,"description":"test","host":"test","raw_json":{}}')
+[ "$RESP" = "409" ] && echo "✓ Duplicate alert correctly rejected (409)" || echo "✗ Expected 409, got $RESP"
+✓ Duplicate alert correctly rejected (409)
+(venv) [mani@maxim ZeroRespond]$ COUNT=$(curl -s "http://localhost:8000/cases?severity=critical" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))")
+[ "$COUNT" = "1" ] && echo "✓ Severity filter works" || echo "✗ Expected 1 critical case, got $COUNT"
+✓ Severity filter works
+(venv) [mani@maxim ZeroRespond]$ curl -s -X PATCH http://localhost:8000/cases/IR-20260623-0005 \
+  -H "Content-Type: application/json" \
+  -d '{"status": "investigating", "notes": "Week 2 test"}' > /dev/null
+STATUS=$(curl -s http://localhost:8000/cases/IR-20260623-0005 | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])")
+[ "$STATUS" = "investigating" ] && echo "✓ PATCH /cases/{id} persists correctly" || echo "✗ Status was $STATUS"
+✓ PATCH /cases/{id} persists correctly
+(venv) [mani@maxim ZeroRespond]$ RESP=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:8000/cases \
+  -H "Content-Type: application/json" \
+  -d '{"title": "x"}')
+[ "$RESP" = "422" ] && echo "✓ Validation correctly rejects incomplete input" || echo "✗ Expected 422, got $RESP"
+✓ Validation correctly rejects incomplete input
+(venv) [mani@maxim ZeroRespond]$ git add .
+git commit -m "feat: week 2 complete — case manager REST API, alert ingestion, seed data"
+git tag v0.2.0-week2
+git push origin main --tags
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/max-mani/ZeroRespond.git
+ * [new tag]         v0.2.0-week2 -> v0.2.0-week2
+(venv) [mani@maxim ZeroRespond]$ 
