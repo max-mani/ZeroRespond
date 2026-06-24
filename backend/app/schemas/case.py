@@ -3,6 +3,8 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 from app.models.case import SeverityEnum, StatusEnum, BreachTypeEnum
+from pydantic import field_validator
+import re
 
 # ─── Input: Creating a case manually (not from an alert) ──────────────────────
 
@@ -35,6 +37,37 @@ class CaseCreate(BaseModel):
                 "assigned_to": "manikandan@zerorespondnd.in"
             }
         }
+    @field_validator("source_ip")
+    @classmethod
+    def validate_ip(cls, v):
+        """Allow None, IPv4, or IPv6. Reject obviously wrong values."""
+        if v is None:
+            return v
+        # Basic IP format check (does not validate all edge cases — good enough for now)
+        ipv4 = re.match(r"^\d{1,3}(\.\d{1,3}){3}$", v)
+        ipv6 = ":" in v
+        if not ipv4 and not ipv6:
+            raise ValueError(f"'{v}' is not a valid IP address format")
+        return v
+
+    @field_validator("data_categories")
+    @classmethod
+    def validate_data_categories(cls, v):
+        """
+        Ensure data_categories only contains known DPDP category names.
+        This matters for DPDP Act 2023 compliance.
+        """
+        if v is None:
+            return v
+        allowed = {"PII", "Financial", "Health", "Credentials", "Biometric", "Children"}
+        submitted = {cat.strip() for cat in v.split(",")}
+        unknown = submitted - allowed
+        if unknown:
+            raise ValueError(
+                f"Unknown data categories: {unknown}. "
+                f"Allowed: {allowed}"
+            )
+        return v
 
 # ─── Input: Updating a case (partial update) ──────────────────────────────────
 
