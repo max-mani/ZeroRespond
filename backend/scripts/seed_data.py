@@ -133,3 +133,99 @@ def seed():
 
 if __name__ == "__main__":
     seed()
+
+# Add to the bottom of backend/scripts/seed_data.py
+
+def seed_without_ai():
+    """
+    Seed cases WITHOUT AI fields so you can test the enrichment pipeline.
+    Usage: python scripts/seed_data.py --no-ai
+    """
+    db = SessionLocal()
+    try:
+        db.query(Case).delete()
+        db.query(Alert).delete()
+        db.commit()
+
+        # Same alerts as the main seed function
+        alerts = [
+            Alert(id="seed-alert-001", wazuh_rule_id=5710, level=12,
+                  description="SSH brute force — 500 failed logins in 2 minutes",
+                  source_ip="203.0.113.42", host="webserver01",
+                  groups=["authentication_failed", "sshd"],
+                  raw_json={"rule_id": "5710", "level": 12, "host": "webserver01"}),
+            Alert(id="seed-alert-002", wazuh_rule_id=87105, level=14,
+                  description="Malicious URL detected in email attachment",
+                  source_ip="198.51.100.7", host="workstation-finance-03",
+                  groups=["phish", "malicious_url"],
+                  raw_json={"rule_id": "87105", "level": 14}),
+            Alert(id="seed-alert-003", wazuh_rule_id=92001, level=15,
+                  description="Ransomware signature detected — files being encrypted",
+                  source_ip=None, host="fileserver01",
+                  groups=["ransomware", "encrypt"],
+                  raw_json={"rule_id": "92001", "level": 15}),
+            Alert(id="seed-alert-004", wazuh_rule_id=61002, level=10,
+                  description="Large outbound data transfer detected",
+                  source_ip="10.0.0.45", host="db-server-01",
+                  groups=["exfil", "data_leak"],
+                  raw_json={"rule_id": "61002", "level": 10}),
+            Alert(id="seed-alert-005", wazuh_rule_id=40111, level=9,
+                  description="Privileged account access outside business hours",
+                  source_ip="10.0.0.12", host="hr-workstation-02",
+                  groups=["insider", "privilege"],
+                  raw_json={"rule_id": "40111", "level": 9}),
+        ]
+        for alert in alerts:
+            db.add(alert)
+        db.commit()
+
+        # Cases WITHOUT AI fields
+        now = datetime.now(timezone.utc)
+        cases = [
+            Case(id="IR-20260623-0001", title="SSH Brute Force on webserver01",
+                 severity=SeverityEnum.high, status=StatusEnum.open,
+                 breach_type=BreachTypeEnum.unauthorized_access,
+                 source_ip="203.0.113.42", source_host="webserver01",
+                 alert_id="seed-alert-001",
+                 detected_at=now - timedelta(hours=3)),
+            Case(id="IR-20260623-0002", title="Phishing Attack on Finance Team",
+                 severity=SeverityEnum.high, status=StatusEnum.open,
+                 breach_type=BreachTypeEnum.phishing,
+                 source_ip="198.51.100.7", source_host="workstation-finance-03",
+                 alert_id="seed-alert-002",
+                 detected_at=now - timedelta(hours=1)),
+            Case(id="IR-20260623-0003", title="Ransomware Detected on fileserver01",
+                 severity=SeverityEnum.critical, status=StatusEnum.open,
+                 breach_type=BreachTypeEnum.ransomware,
+                 source_ip=None, source_host="fileserver01",
+                 alert_id="seed-alert-003",
+                 detected_at=now - timedelta(hours=6)),
+            Case(id="IR-20260623-0004", title="Suspected Data Exfiltration from DB Server",
+                 severity=SeverityEnum.high, status=StatusEnum.open,
+                 breach_type=BreachTypeEnum.exfiltration,
+                 source_ip="10.0.0.45", source_host="db-server-01",
+                 alert_id="seed-alert-004",
+                 detected_at=now - timedelta(minutes=45)),
+            Case(id="IR-20260623-0005", title="Insider Access Anomaly — HR Workstation",
+                 severity=SeverityEnum.medium, status=StatusEnum.open,
+                 breach_type=BreachTypeEnum.insider,
+                 source_ip="10.0.0.12", source_host="hr-workstation-02",
+                 alert_id="seed-alert-005",
+                 detected_at=now - timedelta(minutes=20)),
+        ]
+        for case in cases:
+            db.add(case)
+        db.commit()
+        print("Seeded 5 cases WITHOUT AI fields.")
+        print("Now call POST /cases/{id}/re-enrich on each case to trigger AI enrichment.")
+        for c in cases:
+            print(f"  curl -X POST http://localhost:8000/cases/{c.id}/re-enrich")
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    import sys
+    if "--no-ai" in sys.argv:
+        seed_without_ai()
+    else:
+        seed()

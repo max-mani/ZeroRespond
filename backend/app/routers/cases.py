@@ -132,3 +132,37 @@ def delete_case(case_id: str, db: Session = Depends(get_db)):
         )
     db.delete(case)
     db.commit()
+
+# Add to backend/app/routers/cases.py
+
+from app.services.alert_queue import enqueue_alert
+from app.models.alert import Alert
+
+@router.post(
+    "/{case_id}/re-enrich",
+    response_model=CaseDetail,
+    summary="Re-run AI enrichment on an existing case",
+    description="Queues the linked alert for re-processing by the AI agent. Useful after prompt updates or model changes."
+)
+async def re_enrich_case(case_id: str, db: Session = Depends(get_db)) -> Case:
+    case = get_case(db, case_id)
+    if not case:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Case {case_id} not found"
+        )
+    if not case.alert_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Case {case_id} has no linked alert — cannot re-enrich"
+        )
+
+    alert = db.query(Alert).filter(Alert.id == case.alert_id).first()
+    if not alert:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Linked alert {case.alert_id} not found"
+        )
+
+    await enqueue_alert(alert.id, alert.level)
+    return case

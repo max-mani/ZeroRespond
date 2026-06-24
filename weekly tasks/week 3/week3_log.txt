@@ -307,3 +307,27 @@ curl -X POST http://localhost:8000/alerts \
 {"id":"IR-20260624-0005","title":"Unauthorized Access on server01","severity":"high","status":"open","breach_type":"unauthorized_access","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"server01","source_ip":"10.0.0.1","alert_id":"fallback-test-001","playbook_id":null,"assigned_to":null,"ai_summary":"AI classification unavailable. Rule-based classification applied: unauthorized_access.","ai_confidence":0.0,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-24T10:24:50.594711Z","resolved_at":null,"created_at":"2026-06-24T10:24:50.594711Z","updated_at":"2026-06-24T10:24:50.607923Z"}(venv) [mani@maxim ZeroRespond]$ 
 (venv) [mani@maxim ZeroRespond]$ sudo systemctl start ollama
 (venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ curl http://localhost:8000/health/ai
+{"status":"ok","ai_agent":{"ollama_running":true,"model_available":true,"model":"qwen2.5:7b","available_models":["qwen2.5:7b"],"status":"ready"},"fallback":"rule-based classifier active when AI unavailable"}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl stop ollama
+curl http://localhost:8000/health/ai
+[sudo] password for mani: 
+{"status":"degraded","ai_agent":{"ollama_running":false,"model_available":false,"model":"qwen2.5:7b","available_models":[],"status":"unreachable","error":"All connection attempts failed"},"fallback":"rule-based classifier active when AI unavailable"}(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ sudo systemctl start ollama
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: Ollama health check endpoint, AI status at /health/ai"
+[main 77cf7b8] feat: Ollama health check endpoint, AI status at /health/ai
+ 5 files changed, 993 insertions(+), 1 deletion(-)
+ create mode 100644 weekly tasks/week 3/week3_log_terminal2.txt
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 22, done.
+Counting objects: 100% (22/22), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (12/12), done.
+Writing objects: 100% (12/12), 12.97 KiB | 6.49 MiB/s, done.
+Total 12 (delta 8), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (8/8), completed with 8 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   ac99e90..77cf7b8  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+
