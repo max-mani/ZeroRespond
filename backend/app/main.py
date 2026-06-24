@@ -1,6 +1,7 @@
 # backend/app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import alerts, cases   # import routers
 
 app = FastAPI(
     title="ZeroRespond API",
@@ -18,11 +19,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health")
+# Register routers
+app.include_router(alerts.router)
+app.include_router(cases.router)
+
+@app.get("/health", tags=["System"])
 async def health_check():
     return {
         "status": "ok",
         "version": "1.0.0",
         "environment": "development"
     }
-

@@ -106,3 +106,50 @@ def list_cases(
         query = query.filter(Case.breach_type == breach_type)
 
     return query.order_by(Case.detected_at.desc()).offset(skip).limit(limit).all()
+
+
+
+    # Add this to backend/app/services/case_service.py
+
+def classify_alert_basic(level: int, groups: list[str] | None) -> tuple[BreachTypeEnum, SeverityEnum]:
+    """
+    Rule-based classifier — placeholder until AI agent is wired in Week 3.
+    Maps Wazuh level + rule groups to BreachTypeEnum + SeverityEnum.
+
+    Wazuh levels:
+      1-3:   Informational
+      4-7:   Low priority
+      8-11:  Medium severity
+      12-14: High severity
+      15:    Critical
+
+    Returns (breach_type, severity)
+    """
+    groups = groups or []
+
+    # Map severity from Wazuh level
+    if level >= 15:
+        severity = SeverityEnum.critical
+    elif level >= 12:
+        severity = SeverityEnum.high
+    elif level >= 8:
+        severity = SeverityEnum.medium
+    else:
+        severity = SeverityEnum.low
+
+    # Map breach_type from Wazuh rule groups
+    group_str = " ".join(groups).lower()
+
+    if any(kw in group_str for kw in ["ransomware", "encrypt", "ransom"]):
+        breach_type = BreachTypeEnum.ransomware
+    elif any(kw in group_str for kw in ["phish", "spam", "malicious_url"]):
+        breach_type = BreachTypeEnum.phishing
+    elif any(kw in group_str for kw in ["exfil", "data_leak", "transfer"]):
+        breach_type = BreachTypeEnum.exfiltration
+    elif any(kw in group_str for kw in ["insider", "privilege", "sudo_denied"]):
+        breach_type = BreachTypeEnum.insider
+    else:
+        # Default: most Wazuh alerts relate to unauthorized access attempts
+        breach_type = BreachTypeEnum.unauthorized_access
+
+    return breach_type, severity
