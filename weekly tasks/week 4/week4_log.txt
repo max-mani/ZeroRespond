@@ -1,0 +1,138 @@
+[mani@maxim ZeroRespond]$ cd frontend
+npm create vite@latest . -- --template react-ts
+Need to install the following packages:
+create-vite@9.1.0
+Ok to proceed? (y) y
+
+> npx
+> "create-vite" . --template react-ts
+
+│
+◇  Use ESLint instead of Oxlint?
+│  No (Oxlint)
+│
+◇  Install with npm and start now?
+│  Yes
+│
+◇  Scaffolding project in /home/mani/Projects/ZeroRespond/frontend...
+│
+◇  Installing dependencies with npm...
+
+added 27 packages, and audited 28 packages in 45s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+│
+◇  Starting dev server...
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.1.0  ready in 512 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+^C
+[mani@maxim frontend]$ npm run dev
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v8.1.0  ready in 365 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+^C
+[mani@maxim frontend]$ npm install \
+  axios \
+  @tanstack/react-query \
+  react-router-dom \
+  recharts \
+  lucide-react \
+  clsx
+
+npm install -D tailwindcss postcss autoprefixer @types/node
+npx tailwindcss init -p
+
+added 74 packages, and audited 102 packages in 9s
+
+20 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+added 11 packages, and audited 113 packages in 3s
+
+25 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /home/mani/.npm/_logs/2026-06-25T05_19_14_718Z-debug-0.log
+[mani@maxim frontend]$ npm uninstall tailwindcss
+npm install -D tailwindcss@3 postcss autoprefixer
+npx tailwindcss init -p
+
+removed 1 package, and audited 112 packages in 1s
+
+25 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+added 64 packages, and audited 176 packages in 31s
+
+38 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+Created Tailwind CSS config file: tailwind.config.js
+Created PostCSS config file: postcss.config.js
+[mani@maxim frontend]$ cd ..
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: vite react ts scaffold, tailwind config, types, api client, router"
+[main f41ad1a] feat: vite react ts scaffold, tailwind config, types, api client, router
+ 27 files changed, 5560 insertions(+), 5 deletions(-)
+ create mode 100644 frontend/.gitignore
+ create mode 100644 frontend/.oxlintrc.json
+ create mode 100644 frontend/README.md
+ create mode 100644 frontend/index.html
+ create mode 100644 frontend/package-lock.json
+ create mode 100644 frontend/package.json
+ create mode 100644 frontend/postcss.config.js
+ create mode 100644 frontend/public/favicon.svg
+ create mode 100644 frontend/public/icons.svg
+ create mode 100644 frontend/src/App.css
+ create mode 100644 frontend/src/App.tsx
+ create mode 100644 frontend/src/api/client.ts
+ create mode 100644 frontend/src/assets/hero.png
+ create mode 100644 frontend/src/assets/react.svg
+ create mode 100644 frontend/src/assets/vite.svg
+ create mode 100644 frontend/src/index.css
+ create mode 100644 frontend/src/main.tsx
+ create mode 100644 frontend/src/types/index.ts
+ create mode 100644 frontend/tailwind.config.js
+ create mode 100644 frontend/tsconfig.app.json
+ create mode 100644 frontend/tsconfig.json
+ create mode 100644 frontend/tsconfig.node.json
+ create mode 100644 frontend/vite.config.ts
+ create mode 100644 weekly tasks/week 4/ZeroRespond_Week4_Tasks.md
+ create mode 100644 weekly tasks/week 4/week4_log.txt
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 46, done.
+Counting objects: 100% (46/46), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (36/36), done.
+Writing objects: 100% (38/38), 65.17 KiB | 5.43 MiB/s, done.
+Total 38 (delta 9), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (9/9), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   a331625..f41ad1a  main -> main
+[mani@maxim ZeroRespond]$ 
