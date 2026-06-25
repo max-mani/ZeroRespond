@@ -192,3 +192,68 @@ remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    d107987..7de6639  main -> main
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: dashboard with stats + breach type chart + recent cases, alert feed page"
+[main c2c4f32] feat: dashboard with stats + breach type chart + recent cases, alert feed page
+ 3 files changed, 287 insertions(+)
+ create mode 100644 frontend/src/pages/Alerts.tsx
+ create mode 100644 frontend/src/pages/Dashboard.tsx
+[mani@maxim ZeroRespond]$ git push origin main[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: vite proxy, loading skeletons, error messages, page titles"
+[main c868c84] feat: vite proxy, loading skeletons, error messages, page titles
+ 7 files changed, 59 insertions(+), 6 deletions(-)
+ create mode 100644 frontend/src/components/ui/ErrorMessage.tsx
+ create mode 100644 frontend/src/components/ui/Skeleton.tsx
+ create mode 100644 frontend/src/hooks/usePageTitle.ts
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 26, done.
+Counting objects: 100% (26/26), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (16/16), 2.13 KiB | 1.06 MiB/s, done.
+Total 16 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   c2c4f32..c868c84  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/alerts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "week4-live-test-001",
+    "wazuh_rule_id": 92001,
+    "level": 15,
+    "description": "Ransomware signature detected — live frontend test",
+    "source_ip": null,
+    "host": "test-server-01",
+    "groups": ["ransomware", "encrypt"],
+    "raw_json": {"rule_id": "92001", "level": 15}
+  }'
+{"id":"IR-20260625-0001","title":"Ransomware on test-server-01","severity":"critical","status":"open","breach_type":"ransomware","data_categories":null,"persons_affected":null,"breach_est_at":null,"source_host":"test-server-01","source_ip":null,"alert_id":"week4-live-test-001","playbook_id":null,"assigned_to":null,"ai_summary":null,"ai_confidence":null,"ai_mitre":null,"immediate_action":null,"notes":null,"detected_at":"2026-06-25T06:26:56.815709Z","resolved_at":null,"created_at":"2026-06-25T06:26:56.815709Z","updated_at":null}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+git commit -m "feat: week 4 complete — react dashboard, case list, case detail, alert feed"
+git tag v0.4.0-week4
+git push origin main --tags
+[main 591fc7f] feat: week 4 complete — react dashboard, case list, case detail, alert feed
+ 1 file changed, 24 insertions(+), 8 deletions(-)
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 744 bytes | 744.00 KiB/s, done.
+Total 5 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   c868c84..591fc7f  main -> main
+ * [new tag]         v0.4.0-week4 -> v0.4.0-week4
+[mani@maxim ZeroRespond]$ 
+Enumerating objects: 17, done.
+Counting objects: 100% (17/17), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 4.28 KiB | 4.28 MiB/s, done.
+Total 10 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   7de6639..c2c4f32  main -> main
+[mani@maxim ZeroRespond]$ 
+
