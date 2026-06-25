@@ -7,6 +7,7 @@ import { SeverityBadge, StatusBadge, BreachTypeBadge } from "./StatusBadge";
 import type { Severity, Status, BreachType } from "../../types";
 import { formatDistanceToNow } from "../utils/time";
 import { ChevronRight, RefreshCw } from "lucide-react";
+import ErrorMessage from "../ui/ErrorMessage";
 
 export default function CaseList() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function CaseList() {
   const [statusFilter, setStatusFilter]     = useState<Status | "">("");
   const [breachFilter, setBreachFilter]     = useState<BreachType | "">("");
 
-  const { data: cases, isLoading, refetch, isFetching } = useQuery({
+  const { data: cases, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ["cases", severityFilter, statusFilter, breachFilter],
     queryFn: () => getCases({
       severity:    severityFilter    || undefined,
@@ -23,6 +24,10 @@ export default function CaseList() {
       limit: 100,
     }),
   });
+
+  {isError && (
+    <ErrorMessage message="Could not connect to the ZeroRespond API. Is the backend running on port 8000?" />
+  )}
 
   return (
     <div>

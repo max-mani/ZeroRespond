@@ -20,7 +20,7 @@ const BREACH_COLORS: Record<string, string> = {
 export default function Dashboard() {
   const navigate = useNavigate();
   usePageTitle("Dashboard");
-  const { data: cases, isLoading } = useQuery({
+  const { data: cases, isLoading, isError } = useQuery({
     queryKey: ["cases"],
     queryFn: () => getCases({ limit: 100 }),
     refetchInterval: 30_000,
@@ -29,7 +29,11 @@ export default function Dashboard() {
   if (isLoading) {
     return <div className="text-center text-slate-500 py-16">Loading...</div>;
   }
-
+  if (isError) {
+    return (
+      <ErrorMessage message="Could not connect to the ZeroRespond API. Is the backend running on port 8000?" />
+    );
+  }
   const allCases = cases ?? [];
 
   // Compute stats
