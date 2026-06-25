@@ -1,5 +1,6 @@
 // src/pages/Cases.tsx
 import CaseList from "../components/cases/CaseList";
+import ErrorMessage from "../components/ui/ErrorMessage";
 
 export default function Cases() {
   return (

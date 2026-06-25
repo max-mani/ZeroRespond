@@ -3,7 +3,7 @@ import axios from "axios";
 import type { CaseListItem, CaseDetail, CaseUpdate, AlertOut } from "../types";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: import.meta.env.DEV ? "/api" : "http://localhost:8000",
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
 });

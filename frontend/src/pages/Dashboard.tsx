@@ -6,6 +6,8 @@ import { SeverityBadge, StatusBadge } from "../components/cases/StatusBadge";
 import { formatDistanceToNow } from "../components/utils/time";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { AlertTriangle, FolderOpen, Shield, Activity } from "lucide-react";
+import ErrorMessage from "../components/ui/ErrorMessage";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const BREACH_COLORS: Record<string, string> = {
   ransomware:          "#ef4444",
@@ -17,7 +19,7 @@ const BREACH_COLORS: Record<string, string> = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
+  usePageTitle("Dashboard");
   const { data: cases, isLoading } = useQuery({
     queryKey: ["cases"],
     queryFn: () => getCases({ limit: 100 }),
