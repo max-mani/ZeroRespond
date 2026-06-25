@@ -136,3 +136,42 @@ remote: Resolving deltas: 100% (9/9), completed with 7 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    a331625..f41ad1a  main -> main
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: sidebar, topbar with AI status indicator, severity/status/breach badges"
+[main 9319fcd] feat: sidebar, topbar with AI status indicator, severity/status/breach badges
+ 7 files changed, 461 insertions(+), 120 deletions(-)
+ create mode 100644 frontend/src/componets/cases/StatusBadge.tsx
+ create mode 100644 frontend/src/componets/layout/Sidebar.tsx
+ create mode 100644 frontend/src/componets/layout/TopBar.tsx
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 29, done.
+Counting objects: 100% (27/27), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (15/15), done.
+Writing objects: 100% (18/18), 5.87 KiB | 5.87 MiB/s, done.
+Total 18 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   f41ad1a..9319fcd  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: cases list page with severity/status/breach_type filters and confidence bar"
+[main d107987] feat: cases list page with severity/status/breach_type filters and confidence bar
+ 6 files changed, 195 insertions(+)
+ create mode 100644 frontend/src/components/cases/CaseList.tsx
+ rename frontend/src/{componets => components}/cases/StatusBadge.tsx (100%)
+ rename frontend/src/{componets => components}/layout/Sidebar.tsx (100%)
+ rename frontend/src/{componets => components}/layout/TopBar.tsx (100%)
+ create mode 100644 frontend/src/components/utils/time.ts
+ create mode 100644 frontend/src/pages/Cases.tsx
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 18, done.
+Counting objects: 100% (18/18), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (15/15), 4.99 KiB | 2.50 MiB/s, done.
+Total 15 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   9319fcd..d107987  main -> main
+[mani@maxim ZeroRespond]$ 
