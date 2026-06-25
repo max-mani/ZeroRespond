@@ -175,3 +175,20 @@ remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    9319fcd..d107987  main -> main
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: case detail page with AI analysis, immediate action, DPDP fields, update form"
+[main 7de6639] feat: case detail page with AI analysis, immediate action, DPDP fields, update form
+ 3 files changed, 327 insertions(+)
+ create mode 100644 frontend/src/components/cases/CaseDetail.tsx
+ create mode 100644 frontend/src/pages/CasePage.tsx
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 21, done.
+Counting objects: 100% (21/21), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (12/12), done.
+Writing objects: 100% (12/12), 4.70 KiB | 2.35 MiB/s, done.
+Total 12 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   d107987..7de6639  main -> main
+[mani@maxim ZeroRespond]$ 
