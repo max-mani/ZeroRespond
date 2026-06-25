@@ -547,3 +547,36 @@ print('✓ /health/ai correctly shows degraded when Ollama is stopped')
 sudo systemctl start ollama
 ✓ /health/ai correctly shows degraded when Ollama is stopped
 (venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd \
+  -c "SELECT id, breach_type, severity, ai_confidence, ai_mitre,
+             LEFT(ai_summary, 60) as summary_preview,
+             LEFT(immediate_action, 60) as action_preview
+      FROM cases
+      ORDER BY detected_at DESC
+      LIMIT 5;"
+        id        |     breach_type     | severity | ai_confidence | ai_mitre  |                       summary_preview                        |                       action_preview
+------------------+---------------------+----------+---------------+-----------+--------------------------------------------------------------+--------------------------------------------------------------
+ IR-20260624-0002 | unauthorized_access | high     |             0 |           | AI classification unavailable. Rule-based classification app | 
+ IR-20260624-0001 | ransomware          | critical |             0 | T1486     | AI classification unavailable. Rule-based classification app |Isolate the fileserver02 from the network to prevent further
+ IR-20260623-0005 | insider             | high     |            85 | T1078.004 | A privileged account accessed the HR workstation outside of  |Review recent activities on hr-workstation-02 and investigat
+ IR-20260623-0004 | exfiltration        | high     |            85 | T1041     | A significant amount of data is being transferred outwards f |Immediately review the data transfer and isolate the server
+ IR-20260623-0002 | phishing            | high     |            85 | T1566.001 | A suspicious URL was detected in an email attachment on the  |Isolate the affected workstation and notify users to be caut
+(5 rows)
+
+(venv) [mani@maxim ZeroRespond]$ git add .
+git commit -m "feat: week 3 complete — Ollama AI agent, async priority queue, fallback classifier"
+git tag v0.3.0-week3
+git push origin main --tags
+[main a331625] feat: week 3 complete — Ollama AI agent, async priority queue, fallback classifier
+ 2 files changed, 315 insertions(+)
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 11.38 KiB | 2.84 MiB/s, done.
+Total 6 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   e34abe7..a331625  main -> main
+ * [new tag]         v0.3.0-week3 -> v0.3.0-week3
+(venv) [mani@maxim ZeroRespond]$ 

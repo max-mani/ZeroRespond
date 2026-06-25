@@ -108,9 +108,6 @@ def list_cases(
     return query.order_by(Case.detected_at.desc()).offset(skip).limit(limit).all()
 
 
-
-    # Add this to backend/app/services/case_service.py
-
 def classify_alert_basic(level: int, groups: list[str] | None) -> tuple[BreachTypeEnum, SeverityEnum]:
     """
     Rule-based classifier — placeholder until AI agent is wired in Week 3.
@@ -154,8 +151,6 @@ def classify_alert_basic(level: int, groups: list[str] | None) -> tuple[BreachTy
 
     return breach_type, severity
 
-    
-    # Add to backend/app/services/case_service.py
 
 def update_case_ai_fields(
     db: Session,
