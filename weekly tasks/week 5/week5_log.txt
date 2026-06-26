@@ -71,4 +71,191 @@ remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    c48d82d..78e8a8e  main -> main
 (venv) [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+python -c "
+from app.services.auth_service import hash_password, verify_password, create_access_token, decode_access_token
+
+# Test password hashing
+hashed = hash_password('SecurePass123')
+print('Hashed:', hashed[:30], '...')
+print('Verify correct:', verify_password('SecurePass123', hashed))
+print('Verify wrong:  ', verify_password('WrongPassword', hashed))
+
+# Test JWT
+token = create_access_token(user_id=1, email='test@org.in', role='admin')
+print('Token:', token[:40], '...')
+
+payload = decode_access_token(token)
+print('Decoded:', payload)
+"
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+Traceback (most recent call last):
+  File "<string>", line 5, in <module>
+    hashed = hash_password('SecurePass123')
+  File "/home/mani/Projects/ZeroRespond/backend/app/services/auth_service.py", line 24, in hash_password
+    return pwd_context.hash(plain_password)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/context.py", line 2258, in hash
+    return record.hash(secret, **kwds)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 779, in hash
+    self.checksum = self._calc_checksum(secret)
+                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/handlers/bcrypt.py", line 591, in _calc_checksum
+    self._stub_requires_backend()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 2254, in _stub_requires_backend
+    cls.set_backend()
+    ~~~~~~~~~~~~~~~^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 2156, in set_backend
+    return owner.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 2163, in set_backend
+    return cls.set_backend(name, dryrun=dryrun)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 2188, in set_backend
+    cls._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 2311, in _set_backend
+    super(SubclassBackendMixin, cls)._set_backend(name, dryrun)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 2224, in _set_backend
+    ok = loader(**kwds)
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/handlers/bcrypt.py", line 626, in _load_backend_mixin
+    return mixin_cls._finalize_backend_mixin(name, dryrun)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/handlers/bcrypt.py", line 421, in _finalize_backend_mixin
+    if detect_wrap_bug(IDENT_2A):
+       ~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/handlers/bcrypt.py", line 380, in detect_wrap_bug
+    if verify(secret, bug_hash):
+       ~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/utils/handlers.py", line 792, in verify
+    return consteq(self._calc_checksum(secret), chk)
+                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/home/mani/Projects/ZeroRespond/backend/venv/lib/python3.14/site-packages/passlib/handlers/bcrypt.py", line 655, in _calc_checksum
+    hash = _bcrypt.hashpw(secret, config)
+ValueError: password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])
+(venv) [mani@maxim backend]$ pip install "bcrypt==4.0.1"
+Collecting bcrypt==4.0.1
+  Downloading bcrypt-4.0.1-cp36-abi3-manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+Downloading bcrypt-4.0.1-cp36-abi3-manylinux_2_28_x86_64.whl (593 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 593.7/593.7 kB 7.8 MB/s  0:00:00
+Installing collected packages: bcrypt
+  Attempting uninstall: bcrypt
+    Found existing installation: bcrypt 5.0.0
+    Uninstalling bcrypt-5.0.0:
+      Successfully uninstalled bcrypt-5.0.0
+Successfully installed bcrypt-4.0.1
+(venv) [mani@maxim backend]$ pip install "bcrypt==4.0.1"
+(venv) [mani@maxim backend]$ python -c "
+from app.services.auth_service import hash_password, verify_password, create_access_token, decode_access_token
+
+# Test password hashing
+hashed = hash_password('SecurePass123')
+print('Hashed:', hashed[:30], '...')
+print('Verify correct:', verify_password('SecurePass123', hashed))
+print('Verify wrong:  ', verify_password('WrongPassword', hashed))
+
+# Test JWT
+token = create_access_token(user_id=1, email='test@org.in', role='admin')
+print('Token:', token[:40], '...')
+
+payload = decode_access_token(token)
+print('Decoded:', payload)
+"
+Hashed: $2b$12$Rz0u.l1o2oauEkr1KSy.qOp ...
+Verify correct: True
+Verify wrong:   False
+Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ ...
+Decoded: {'sub': '1', 'email': 'test@org.in', 'role': 'admin', 'exp': 1782484948, 'iat': 1782456148}
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: auth service — bcrypt password hashing, JWT create/verify, get_current_user dependency"
+[main de575fb] feat: auth service — bcrypt password hashing, JWT create/verify, get_current_user dependency
+ 4 files changed, 265 insertions(+), 1 deletion(-)
+ create mode 100644 backend/app/schemas/auth.py
+ create mode 100644 backend/app/services/auth_service.py
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 21, done.
+Counting objects: 100% (21/21), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (12/12), done.
+Writing objects: 100% (12/12), 4.39 KiB | 2.20 MiB/s, done.
+Total 12 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   78e8a8e..de575fb  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin2@hospital.in",
+    "password": "SecurePass123",
+    "full_name": "ZeroRespond Admin 2",
+    "role": "admin"
+  }'
+# Expected: 201 with user object, role: "admin"
+{"id":2,"email":"admin2@hospital.in","full_name":"ZeroRespond Admin 2","role":"admin","is_active":true,"created_at":"2026-06-26T06:57:10.683361Z","last_login_at":null}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@hospital.in",
+    "password": "SecurePass123"
+  }'
+# Expected: {"access_token": "eyJ...", "token_type": "bearer", "expires_in": 28800}
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBob3NwaXRhbC5pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc4MjQ4NTgzOSwiaWF0IjoxNzgyNDU3MDM5fQ.eJQN-YYMUAyQKpz2wwRbbpUc0ts61uhyykxEl5hytaA","token_type":"bearer","expires_in":28800}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBob3NwaXRhbC5pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc4MjQ4NTgzOSwiaWF0IjoxNzgyNDU3MDM5fQ.eJQN-YYMUAyQKpz2wwRbbpUc0ts61uhyykxEl5hytaA"   # paste your token here
+[mani@maxim ZeroRespond]$ # Step 3: Unprotected route — should work without token
+curl http://localhost:8000/health
+# Expected: {"status": "ok", ...}
+{"status":"ok","version":"1.0.0","environment":"development"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ # Step 4: Protected route WITHOUT token — should fail
+curl http://localhost:8000/cases
+# Expected: 403 {"detail": "Not authenticated"}
+{"detail":"Not authenticated"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ # Step 5: Protected route WITH token — should work
+curl http://localhost:8000/cases \
+  -H "Authorization: Bearer $TOKEN"
+# Expected: list of cases
+[{"id":"IR-20260625-0001","title":"Ransomware on test-server-01","severity":"critical","status":"open","breach_type":"ransomware","source_ip":null,"source_host":"test-server-01","assigned_to":null,"ai_confidence":0.0,"detected_at":"2026-06-25T06:26:56.815709Z"},{"id":"IR-20260624-0002","title":"Unauthorized Access on server-x","severity":"high","status":"open","breach_type":"unauthorized_access","source_ip":"1.2.3.4","source_host":"server-x","assigned_to":null,"ai_confidence":0.0,"detected_at":"2026-06-24T10:46:16.822454Z"},{"id":"IR-20260624-0001","title":"Ransomware on fileserver02","severity":"critical","status":"open","breach_type":"ransomware","source_ip":null,"source_host":"fileserver02","assigned_to":null,"ai_confidence":0.0,"detected_at":"2026-06-24T10:42:50.872968Z"},{"id":"IR-20260623-0005","title":"Insider Access Anomaly — HR Workstation","severity":"high","status":"open","breach_type":"insider","source_ip":"10.0.0.12","source_host":"hr-workstation-02","assigned_to":null,"ai_confidence":85.0,"detected_at":"2026-06-24T10:19:21.691265Z"},{"id":"IR-20260623-0004","title":"Suspected Data Exfiltration from DB Server","severity":"high","status":"open","breach_type":"exfiltration","source_ip":"10.0.0.45","source_host":"db-server-01","assigned_to":null,"ai_confidence":85.0,"detected_at":"2026-06-24T09:54:21.691265Z"},{"id":"IR-20260623-0002","title":"Phishing Attack on Finance Team","severity":"high","status":"open","breach_type":"phishing","source_ip":"198.51.100.7","source_host":"workstation-finance-03","assigned_to":null,"ai_confidence":85.0,"detected_at":"2026-06-24T09:39:21.691265Z"},{"id":"IR-20260623-0001","title":"SSH Brute Force on webserver01","severity":"high","status":"open","breach_type":"unauthorized_access","source_ip":"203.0.113.42","source_host":"webserver01","assigned_to":null,"ai_confidence":95.0,"detected_at":"2026-06-24T07:39:21.691265Z"},{"id":"IR-20260623-0003","title":"Ransomware Detected on fileserver01","severity":"critical","status":"open","breach_type":"ransomware","source_ip":null,"source_host":"fileserver01","assigned_to":null,"ai_confidence":95.0,"detected_at":"2026-06-24T04:39:21.691265Z"}][mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ # Step 6: GET /auth/me
+curl http://localhost:8000/auth/me \
+  -H "Authorization: Bearer $TOKEN"
+# Expected: {"id": 1, "email": "admin@hospital.in", "role": "admin", ...}
+{"id":1,"email":"admin@hospital.in","full_name":"ZeroRespond Admin","role":"admin","is_active":true,"created_at":"2026-06-26T06:54:41.453231Z","last_login_at":"2026-06-26T06:57:19.435202Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/auth/me \
+  -H "Authorization: Bearer $TOKEN"
+{"id":1,"email":"admin@hospital.in","full_name":"ZeroRespond Admin","role":"admin","is_active":true,"created_at":"2026-06-26T06:54:41.453231Z","last_login_at":"2026-06-26T06:57:19.435202Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ # Step 7: Wrong password should return 401
+curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@hospital.in", "password": "WrongPassword"}'
+# Expected: 401 {"detail": "Incorrect email or password"}
+
+{"detail":"Incorrect email or password"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: auth router, JWT protection on all case and alert endpoints"
+[main 0f7b35c] feat: auth router, JWT protection on all case and alert endpoints
+ 4 files changed, 134 insertions(+), 7 deletions(-)
+ create mode 100644 backend/app/routers/auth.py
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 16, done.
+Counting objects: 100% (16/16), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (9/9), 2.27 KiB | 2.27 MiB/s, done.
+Total 9 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   de575fb..0f7b35c  main -> main
+[mani@maxim ZeroRespond]$ 
 

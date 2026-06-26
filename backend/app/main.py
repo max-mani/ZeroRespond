@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError
 from app.services.alert_queue import queue_worker
-from app.routers import alerts, cases, auth
+from app.routers import alerts, cases, auth, reports
 
 logging.basicConfig(
     level=logging.INFO,
@@ -74,6 +74,7 @@ async def shutdown_event():
 app.include_router(auth.router)
 app.include_router(alerts.router)
 app.include_router(cases.router)
+app.include_router(reports.router)
 
 @app.get("/health", tags=["System"])
 async def health_check():
