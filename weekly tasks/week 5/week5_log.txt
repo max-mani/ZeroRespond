@@ -304,4 +304,112 @@ remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    d260cc4..077fb45  main -> main
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: DPDP report download button in case detail page"
+[main 1406537] feat: DPDP report download button in case detail page
+ 2 files changed, 79 insertions(+)
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 19, done.
+Counting objects: 100% (19/19), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 2.02 KiB | 2.02 MiB/s, done.
+Total 10 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   077fb45..1406537  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ cd backend && source venv/bin/activate
+python -c "
+from app.database import SessionLocal
+from app.models.org_profile import OrgProfile
+db = SessionLocal()
+org = db.query(OrgProfile).first()
+if org:
+    org.name = 'Coimbatore Medical College Hospital'
+    org.dpo_name = 'Dr. Manikandan'
+    org.dpo_email = 'dpo@cmch.edu.in'
+    org.address = 'Coimbatore, Tamil Nadu 641 014'
+    org.cert_in_email = 'incident@cert-in.org.in'
+    db.commit()
+    print('Updated org profile')
+else:
+    from app.models.org_profile import OrgProfile
+    org = OrgProfile(
+        name='Coimbatore Medical College Hospital',
+        dpo_name='Dr. Manikandan',
+        dpo_email='dpo@cmch.edu.in',
+        address='Coimbatore, Tamil Nadu 641 014',
+        cert_in_email='incident@cert-in.org.in'
+    )
+    db.add(org)
+    db.commit()
+    print('Created org profile')
+db.close()
+"
+2026-06-26 13:10:20,453 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-06-26 13:10:20,453 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-26 13:10:20,456 INFO sqlalchemy.engine.Engine select current_schema()
+2026-06-26 13:10:20,456 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-26 13:10:20,458 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-06-26 13:10:20,458 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-26 13:10:20,459 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-26 13:10:20,465 INFO sqlalchemy.engine.Engine SELECT org_profile.id AS org_profile_id, org_profile.name AS org_profile_name, org_profile.dpo_name AS org_profile_dpo_name, org_profile.dpo_email AS org_profile_dpo_email, org_profile.address AS org_profile_address, org_profile.cert_in_email AS org_profile_cert_in_email, org_profile.cert_in_notified_at AS org_profile_cert_in_notified_at, org_profile.created_at AS org_profile_created_at, org_profile.updated_at AS org_profile_updated_at 
+FROM org_profile 
+ LIMIT %(param_1)s
+2026-06-26 13:10:20,465 INFO sqlalchemy.engine.Engine [generated in 0.00029s] {'param_1': 1}
+2026-06-26 13:10:20,472 INFO sqlalchemy.engine.Engine UPDATE org_profile SET name=%(name)s, dpo_name=%(dpo_name)s, dpo_email=%(dpo_email)s, address=%(address)s, updated_at=now() WHERE org_profile.id = %(org_profile_id)s
+2026-06-26 13:10:20,472 INFO sqlalchemy.engine.Engine [generated in 0.00041s] {'name': 'Coimbatore Medical College Hospital', 'dpo_name': 'Dr. Manikandan', 'dpo_email': 'dpo@cmch.edu.in', 'address': 'Coimbatore, Tamil Nadu 641 014', 'org_profile_id': 1}
+2026-06-26 13:10:20,474 INFO sqlalchemy.engine.Engine COMMIT
+Updated org profile
+(venv) [mani@maxim backend]$ BASE="http://localhost:8000"
+(venv) [mani@maxim backend]$ # Check 1: Register and login works
+curl -s -X POST $BASE/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"check@hospital.in","password":"CheckPass123","full_name":"Checker","role":"analyst"}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['email']=='check@hospital.in'; print('✓ Register works')"
+
+TOKEN=$(curl -s -X POST $BASE/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@hospital.in","password":"SecurePass123"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+echo "✓ Login returns token"
+✓ Register works
+✓ Login returns token
+(venv) [mani@maxim backend]$ # Check 2: Protected routes reject unauthenticated requests
+RESP=$(curl -s -o /dev/null -w "%{http_code}" $BASE/cases)
+[ "$RESP" = "403" ] && echo "✓ /cases returns 403 without token" || echo "✗ Expected 403, got $RESP"
+✗ Expected 403, got 401
+(venv) [mani@maxim backend]$ RESP=$(curl -s -o /dev/null -w "%{http_code}" $BASE/cases)
+[ "$RESP" = "403" ] && echo "✓ /cases returns 403 without token" || echo "✗ Expected 403, got $RESP"
+✗ Expected 403, got 401
+(venv) [mani@maxim backend]$ # Check 3: Protected routes work with token
+curl -s $BASE/cases -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert isinstance(d, list); print('✓ /cases works with token')"
+✓ /cases works with token
+(venv) [mani@maxim backend]$ # Check 4: GET /auth/me returns user info
+curl -s $BASE/auth/me -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert 'email' in d; print(f'✓ /auth/me returns user: {d[\"email\"]}')"
+✓ /auth/me returns user: admin@hospital.in
+(venv) [mani@maxim backend]$ # Check 5: DPDP PDF generates successfully
+curl -s -X POST $BASE/reports/IR-20260623-0003 \
+  -H "Authorization: Bearer $TOKEN" \
+  --output /tmp/test_report.pdf
+SIZE=$(wc -c < /tmp/test_report.pdf)
+[ "$SIZE" -gt "10000" ] && echo "✓ PDF generated (${SIZE} bytes)" || echo "✗ PDF too small or empty: ${SIZE} bytes"
+✓ PDF generated (28626 bytes)
+(venv) [mani@maxim backend]$ # Check 6: Analyst cannot delete cases (403)
+ANALYST_TOKEN=$(curl -s -X POST $BASE/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"check@hospital.in","password":"CheckPass123"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+RESP=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
+  $BASE/cases/IR-20260623-0005 \
+  -H "Authorization: Bearer $ANALYST_TOKEN")
+[ "$RESP" = "403" ] && echo "✓ Analyst cannot delete cases (403 as expected)" || echo "✗ Expected 403, got $RESP"
+✓ Analyst cannot delete cases (403 as expected)
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ 
 
