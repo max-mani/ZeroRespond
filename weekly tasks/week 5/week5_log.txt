@@ -1,0 +1,74 @@
+(venv) [mani@maxim ZeroRespond]$ cd backend/
+(venv) [mani@maxim backend]$ alembic revision --autogenerate -m "add_users_table"
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.schemas
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.tables
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.types
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.constraints
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.defaults
+INFO  [alembic.runtime.plugins] setting up autogenerate plugin alembic.autogenerate.comments
+INFO  [alembic.autogenerate.compare.tables] Detected added table 'users'
+INFO  [alembic.autogenerate.compare.constraints] Detected added index 'ix_users_email' on '('email',)'
+INFO  [alembic.ddl.postgresql] Detected sequence named 'org_profile_id_seq' as owned by integer column 'org_profile(id)', assuming SERIAL and omitting
+INFO  [alembic.ddl.postgresql] Detected sequence named 'evidence_id_seq' as owned by integer column 'evidence(id)', assuming SERIAL and omitting
+INFO  [alembic.ddl.postgresql] Detected sequence named 'playbook_steps_id_seq' as owned by integer column 'playbook_steps(id)', assuming SERIAL and omitting
+INFO  [alembic.ddl.postgresql] Detected sequence named 'playbooks_id_seq' as owned by integer column 'playbooks(id)', assuming SERIAL and omitting
+INFO  [alembic.ddl.postgresql] Detected sequence named 'case_steps_id_seq' as owned by integer column 'case_steps(id)', assuming SERIAL and omitting
+  Generating /home/mani/Projects/ZeroRespond/backend/alembic/versions/38420158054e_add_users_table.py ...  done
+(venv) [mani@maxim backend]$ alembic upgrade head
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 3e3424f16eb1 -> 38420158054e, add_users_table
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\dt"
+            List of relations
+ Schema |      Name       | Type  | Owner 
+--------+-----------------+-------+-------
+ public | alembic_version | table | zr
+ public | alerts          | table | zr
+ public | case_steps      | table | zr
+ public | cases           | table | zr
+ public | evidence        | table | zr
+ public | org_profile     | table | zr
+ public | playbook_steps  | table | zr
+ public | playbooks       | table | zr
+ public | users           | table | zr
+(9 rows)
+
+(venv) [mani@maxim backend]$ docker exec -it zr-postgres psql -U zr -d zerorespondnd -c "\d users"
+                                         Table "public.users"
+     Column      |           Type           | Collation | Nullable |              Default              
+-----------------+--------------------------+-----------+----------+-----------------------------------
+ id              | integer                  |           | not null | nextval('users_id_seq'::regclass)
+ email           | character varying(255)   |           | not null | 
+ hashed_password | character varying(255)   |           | not null | 
+ full_name       | character varying(255)   |           |          | 
+ role            | character varying(50)    |           | not null | 
+ is_active       | boolean                  |           | not null | 
+ created_at      | timestamp with time zone |           |          | now()
+ last_login_at   | timestamp with time zone |           |          | 
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (id)
+    "ix_users_email" UNIQUE, btree (email)
+
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: users table with role-based access, alembic migration"
+[main 78e8a8e] feat: users table with role-based access, alembic migration
+ 5 files changed, 2120 insertions(+), 2 deletions(-)
+ create mode 100644 backend/alembic/versions/38420158054e_add_users_table.py
+ create mode 100644 backend/app/models/user.py
+ create mode 100644 weekly tasks/week 5/ZeroRespond_Week5_Tasks.md
+ create mode 100644 weekly tasks/week 5/week5_log.txt
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 21, done.
+Counting objects: 100% (21/21), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (13/13), 19.51 KiB | 4.88 MiB/s, done.
+Total 13 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   c48d82d..78e8a8e  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+
