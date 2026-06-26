@@ -6,8 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError
-from app.routers import alerts, cases
 from app.services.alert_queue import queue_worker
+from app.routers import alerts, cases, auth
 
 logging.basicConfig(
     level=logging.INFO,
@@ -71,6 +71,7 @@ async def shutdown_event():
 
 # ─── Routers ─────────────────────────────────────────────────────────────────
 
+app.include_router(auth.router)
 app.include_router(alerts.router)
 app.include_router(cases.router)
 

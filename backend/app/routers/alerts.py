@@ -10,8 +10,13 @@ from app.schemas.case import CaseDetail
 from app.services.case_service import create_case_from_alert, classify_alert_basic
 from app.services.alert_queue import enqueue_alert
 
-router = APIRouter(prefix="/alerts", tags=["Alerts"])
+from app.services.auth_service import get_current_user
 
+router = APIRouter(
+    prefix="/alerts",
+    tags=["Alerts"],
+    dependencies=[Depends(get_current_user)] 
+)
 
 @router.post(
     "",

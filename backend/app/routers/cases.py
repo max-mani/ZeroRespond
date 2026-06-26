@@ -14,7 +14,14 @@ from app.services.case_service import (
 )
 from app.models.case import Case, SeverityEnum, StatusEnum, BreachTypeEnum
 
-router = APIRouter(prefix="/cases", tags=["Cases"])
+from app.services.auth_service import get_current_user, require_admin
+from app.models.user import User
+
+router = APIRouter(
+    prefix="/cases",
+    tags=["Cases"],
+    dependencies=[Depends(get_current_user)]
+)
 
 
 @router.get(
@@ -120,10 +127,13 @@ def patch_case(
 @router.delete(
     "/{case_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="Delete a case",
-    description="Hard delete. Only use in development. In production, close cases instead of deleting."
+    summary="Delete a case (admin only)"
 )
-def delete_case(case_id: str, db: Session = Depends(get_db)):
+def delete_case(
+    case_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)  # ← admin only
+):
     case = db.query(Case).filter(Case.id == case_id).first()
     if not case:
         raise HTTPException(
@@ -133,7 +143,6 @@ def delete_case(case_id: str, db: Session = Depends(get_db)):
     db.delete(case)
     db.commit()
 
-# Add to backend/app/routers/cases.py
 
 from app.services.alert_queue import enqueue_alert
 from app.models.alert import Alert
