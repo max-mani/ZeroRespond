@@ -5,6 +5,8 @@ import { updateCase, reEnrichCase } from "../../api/client";
 import { SeverityBadge, StatusBadge, BreachTypeBadge } from "./StatusBadge";
 import { formatDatetime } from "../utils/time";
 import type { CaseDetail as CaseDetailType, Status } from "../../types";
+import { generateReport } from "../../api/client";
+import { FileText } from "lucide-react";
 import {
   Brain, Shield, AlertTriangle, Clock,
   User, Database, RefreshCw, ChevronDown
@@ -16,6 +18,26 @@ interface Props {
 
 export default function CaseDetail({ caseData: c }: Props) {
   const queryClient = useQueryClient();
+  const [reportLoading, setReportLoading] = useState(false);
+
+  const handleDownloadReport = async () => {
+    setReportLoading(true);
+    try {
+      const blob = await generateReport(c.id);
+      // Create a download link and trigger it
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement("a");
+      a.href     = url;
+      a.download = `DPDP_Report_${c.id}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Failed to generate report. Please try again.");
+    } finally {
+      setReportLoading(false);
+    }
+  };
+  
   const [notesValue, setNotesValue]   = useState(c.notes ?? "");
   const [statusValue, setStatusValue] = useState<Status>(c.status);
   const [assignedTo, setAssignedTo]   = useState(c.assigned_to ?? "");
@@ -71,6 +93,17 @@ export default function CaseDetail({ caseData: c }: Props) {
             <RefreshCw size={12} className={enrichMutation.isPending ? "animate-spin" : ""} />
             Re-run AI
           </button>
+
+          <button
+    onClick={handleDownloadReport}
+    disabled={reportLoading}
+    className="flex items-center gap-2 px-3 py-1.5 text-xs
+               bg-purple-600 hover:bg-purple-700 text-white rounded-lg
+               transition-colors disabled:opacity-50"
+  >
+    <FileText size={12} />
+    {reportLoading ? "Generating..." : "DPDP Report"}
+  </button>
         </div>
 
         {/* Key metadata */}

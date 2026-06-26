@@ -258,4 +258,50 @@ remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    de575fb..0f7b35c  main -> main
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/reports/IR-20260623-0003 \
+  -H "Authorization: Bearer $TOKEN" \
+  --output DPDP_Report_ransomware.pdf
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+100  28484 100  28484   0      0  27688      0   00:01   00:01          27717
+[mani@maxim ZeroRespond]$ ls -lh DPDP_Report_ransomware.pdf
+-rw-r--r-- 1 mani mani 28K Jun 26 12:43 DPDP_Report_ransomware.pdf
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: DPDP Act 2023 PDF report generation with WeasyPrint and Jinja2 template"
+[main d260cc4] feat: DPDP Act 2023 PDF report generation with WeasyPrint and Jinja2 template
+ 6 files changed, 831 insertions(+), 1 deletion(-)
+ create mode 100644 DPDP_Report_ransomware.pdf
+ create mode 100644 backend/app/routers/reports.py
+ create mode 100644 backend/app/services/report_service.py
+ create mode 100644 backend/templates/dpdp_report.html
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 24, done.
+Counting objects: 100% (24/24), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (15/15), 37.34 KiB | 12.45 MiB/s, done.
+Total 15 (delta 8), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (8/8), completed with 8 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   0f7b35c..d260cc4  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: login page, AuthContext with JWT, ProtectedRoute, logout in TopBar"
+[main 077fb45] feat: login page, AuthContext with JWT, ProtectedRoute, logout in TopBar
+ 6 files changed, 300 insertions(+), 37 deletions(-)
+ create mode 100644 frontend/src/components/layout/ProtectedRoute.tsx
+ create mode 100644 frontend/src/context/AuthContext.tsx
+ create mode 100644 frontend/src/pages/Login.tsx
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 25, done.
+Counting objects: 100% (25/25), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (15/15), 4.85 KiB | 4.85 MiB/s, done.
+Total 15 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   d260cc4..077fb45  main -> main
+[mani@maxim ZeroRespond]$ 
 
