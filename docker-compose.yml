@@ -1,0 +1,70 @@
+# docker-compose.yml
+version: "3.9"
+
+services:
+
+  # ─── PostgreSQL Database ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: zr-postgres
+    environment:
+      POSTGRES_DB:       zerorespondnd
+      POSTGRES_USER:     zr
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - zr_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zr -d zerorespondnd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - zr-network
+
+  # ─── FastAPI Backend ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: zr-backend
+    environment:
+      DATABASE_URL: postgresql://zr:secret@postgres:5432/zerorespondnd
+      OLLAMA_URL:   http://host.docker.internal:11434   # Ollama runs on host
+      OLLAMA_MODEL: qwen2.5:7b
+      SECRET_KEY:   change-this-to-a-secure-random-string-in-production
+      ENVIRONMENT:  production
+    volumes:
+      - ./data/reports:/data/reports         # DPDP PDFs
+      - ./data/evidence:/data/evidence       # Evidence uploads
+      - ./backend/templates:/app/templates   # Jinja2 templates
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - zr-network
+    restart: unless-stopped
+
+  # ─── React Frontend + Nginx ───────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: zr-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - zr-network
+    restart: unless-stopped
+
+# ─── Volumes ──────────────────────────────────────────────────────────────────
+volumes:
+  zr_pgdata:
+    name: zr_pgdata
+
+# ─── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  zr-network:
+    name: zr-network
+    driver: bridge
