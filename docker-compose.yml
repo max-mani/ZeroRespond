@@ -40,6 +40,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "8000:8000"
     networks:
       - zr-network
     restart: unless-stopped

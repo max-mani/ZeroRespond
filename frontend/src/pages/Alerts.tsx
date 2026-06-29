@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAlerts } from "../api/client";
 import { formatDistanceToNow } from "../components/utils/time";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { clsx } from "clsx";
 
 const levelColor = (level: number) => {

@@ -1,6 +1,7 @@
 # backend/app/schemas/playbook.py
 from pydantic import BaseModel
 from typing import Optional, List
+from datetime import datetime
 
 class PlaybookStepOut(BaseModel):
     """One step in a playbook."""
@@ -42,7 +43,7 @@ class CaseStepOut(BaseModel):
     id:               int
     playbook_step_id: int
     completed_by:     Optional[str]
-    completed_at:     Optional[str]
+    completed_at:     Optional[datetime]
     playbook_step:    PlaybookStepOut
 
     model_config = {"from_attributes": True}

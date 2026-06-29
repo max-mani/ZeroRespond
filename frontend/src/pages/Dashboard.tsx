@@ -83,7 +83,7 @@ export default function Dashboard() {
                   cy="50%"
                   outerRadius={80}
                   label={({ name, percent }) =>
-                    `${name.replace("_", " ")} ${(percent * 100).toFixed(0)}%`
+                    `${(name ?? "").replace("_", " ")} ${((percent ?? 0) * 100).toFixed(0)}%`
                   }
                   labelLine={false}
                 >

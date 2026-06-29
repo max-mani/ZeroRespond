@@ -2,10 +2,10 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { completeStep } from "../../api/client";
-import type { Playbook, PlaybookStep } from "../../types";
+import type { Playbook } from "../../types";
 import {
   CheckCircle2, Circle, ChevronDown, ChevronUp,
-  Terminal, Target, AlertTriangle
+  Terminal, Target
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -181,7 +181,7 @@ export default function PlaybookRunner({ playbook, caseId, completedStepIds = []
                   {!isCompleted && (
                     <button
                       onClick={() => completeMutation.mutate({ stepId: step.id })}
-                      disabled={completeMutation.isPending}
+                      disabled={completeMutation.isPending || isBlocking}
                       className="flex items-center gap-2 px-4 py-2 text-xs
                                  bg-green-600 hover:bg-green-700 text-white rounded-lg
                                  transition-colors disabled:opacity-50"

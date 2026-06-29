@@ -116,5 +116,10 @@ source venv/bin/activate
 uvicorn app.main:app --reload
 (or)
 uvicorn app.main:app --reload --log-level info
+
+docker rm -f zr-postgres zr-backend zr-frontend
+docker compose up -d
 ```
+
+
 
