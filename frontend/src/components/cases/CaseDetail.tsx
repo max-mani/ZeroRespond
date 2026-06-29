@@ -7,6 +7,8 @@ import { formatDatetime } from "../utils/time";
 import type { CaseDetail as CaseDetailType, Status } from "../../types";
 import { generateReport } from "../../api/client";
 import { FileText } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Brain, Shield, AlertTriangle, Clock,
   User, Database, RefreshCw, ChevronDown
@@ -18,6 +20,7 @@ interface Props {
 
 export default function CaseDetail({ caseData: c }: Props) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [reportLoading, setReportLoading] = useState(false);
 
   const handleDownloadReport = async () => {
@@ -93,6 +96,16 @@ export default function CaseDetail({ caseData: c }: Props) {
             <RefreshCw size={12} className={enrichMutation.isPending ? "animate-spin" : ""} />
             Re-run AI
           </button>
+          
+          <button
+  onClick={() => navigate(`/cases/${c.id}/playbook`)}
+  className="flex items-center gap-2 px-3 py-1.5 text-xs
+             bg-green-600 hover:bg-green-700 text-white rounded-lg
+             transition-colors"
+>
+  <BookOpen size={12} />
+  Run Playbook
+</button>
 
           <button
     onClick={handleDownloadReport}

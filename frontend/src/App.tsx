@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Cases from "./pages/Cases";
 import CasePage from "./pages/CasePage";
 import Alerts from "./pages/Alerts";
+import PlaybookPage from "./pages/PlaybookPage";
 
 function AppLayout() {
   return (
@@ -23,6 +24,7 @@ function AppLayout() {
             <Route path="/cases"     element={<Cases />} />
             <Route path="/cases/:id" element={<CasePage />} />
             <Route path="/alerts"    element={<Alerts />} />
+            <Route path="/cases/:id/playbook" element={<PlaybookPage />} />
           </Routes>
         </main>
       </div>

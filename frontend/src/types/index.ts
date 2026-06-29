@@ -82,3 +82,29 @@ export interface DashboardStats {
   high: number;
   by_breach_type: Record<BreachType, number>;
 }
+
+export interface PlaybookStep {
+  id: number;
+  step_number: number;
+  title: string;
+  description: string;
+  linux_cmd: string | null;
+  windows_cmd: string | null;
+  goal: string | null;
+  is_blocking: boolean;
+}
+
+export interface Playbook {
+  id: number;
+  attack_type: string;
+  name: string;
+  description: string | null;
+  steps: PlaybookStep[];
+}
+
+export interface PlaybookListItem {
+  id: number;
+  attack_type: string;
+  name: string;
+  description: string | null;
+}

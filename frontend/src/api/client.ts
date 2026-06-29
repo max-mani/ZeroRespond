@@ -76,3 +76,43 @@ export const generateReport = async (case_id: string): Promise<Blob> => {
 
 export const getHealth    = async () => { const { data } = await api.get("/health");    return data; };
 export const getAiHealth  = async () => { const { data } = await api.get("/health/ai"); return data; };
+
+// ─── Playbooks ────────────────────────────────────────────────────────────────
+
+export const getPlaybooks = async () => {
+  const { data } = await api.get("/playbooks");
+  return data;
+};
+
+export const getPlaybook = async (attackType: string) => {
+  const { data } = await api.get(`/playbooks/${attackType}`);
+  return data;
+};
+
+export const getCasePlaybook = async (caseId: string) => {
+  const { data } = await api.get(`/cases/${caseId}/playbook`);
+  return data;
+};
+
+export const completeStep = async (caseId: string, stepId: number) => {
+  const { data } = await api.post(`/cases/${caseId}/steps/${stepId}/complete`);
+  return data;
+};
+
+// ─── Org ─────────────────────────────────────────────────────────────────────
+
+export const getOrg = async () => {
+  const { data } = await api.get("/org");
+  return data;
+};
+
+export const updateOrg = async (payload: {
+  name?: string;
+  dpo_name?: string;
+  dpo_email?: string;
+  address?: string;
+  cert_in_email?: string;
+}) => {
+  const { data } = await api.put("/org", payload);
+  return data;
+};
