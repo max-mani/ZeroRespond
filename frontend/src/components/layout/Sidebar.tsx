@@ -5,6 +5,7 @@ import {
   FolderOpen,
   Bell,
   Shield,
+  Settings,
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -12,6 +13,7 @@ const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/cases",     icon: FolderOpen,      label: "Cases"     },
   { to: "/alerts",    icon: Bell,            label: "Alerts"    },
+  { to: "/settings",  icon: Settings,        label: "Settings"  },
 ];
 
 export default function Sidebar() {

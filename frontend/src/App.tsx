@@ -10,6 +10,7 @@ import Cases from "./pages/Cases";
 import CasePage from "./pages/CasePage";
 import Alerts from "./pages/Alerts";
 import PlaybookPage from "./pages/PlaybookPage";
+import Settings from "./pages/Settings";
 
 function AppLayout() {
   return (
@@ -25,6 +26,7 @@ function AppLayout() {
             <Route path="/cases/:id" element={<CasePage />} />
             <Route path="/alerts"    element={<Alerts />} />
             <Route path="/cases/:id/playbook" element={<PlaybookPage />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </main>
       </div>
