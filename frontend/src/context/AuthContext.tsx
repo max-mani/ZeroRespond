@@ -39,10 +39,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchMe = async (tkn: string) => {
     try {
-      const { data } = await axios.get(
-        import.meta.env.DEV ? "/api/auth/me" : "http://localhost:8000/auth/me",
-        { headers: { Authorization: `Bearer ${tkn}` } }
-      );
+      const { data } = await axios.get("/api/auth/me", {
+        headers: { Authorization: `Bearer ${tkn}` }
+      });
       setUser(data);
     } catch {
       localStorage.removeItem(TOKEN_KEY);
@@ -52,8 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
-    const baseURL = import.meta.env.DEV ? "/api" : "http://localhost:8000";
-    const { data } = await axios.post(`${baseURL}/auth/login`, { email, password });
+    const { data } = await axios.post("/api/auth/login", { email, password });
     const tkn = data.access_token;
     localStorage.setItem(TOKEN_KEY, tkn);
     setToken(tkn);

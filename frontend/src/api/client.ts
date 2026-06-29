@@ -5,7 +5,7 @@ import type { CaseListItem, CaseDetail, CaseUpdate, AlertOut } from "../types";
 const TOKEN_KEY = "zr_access_token";
 
 const api = axios.create({
-  baseURL: import.meta.env.DEV ? "/api" : "http://localhost:8000",
+  baseURL: "/api",   // always use /api — Nginx proxies to backend in Docker, Vite proxies in dev
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
 });
