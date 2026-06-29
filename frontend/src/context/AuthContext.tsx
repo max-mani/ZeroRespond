@@ -1,5 +1,6 @@
 // src/context/AuthContext.tsx
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
 import axios from "axios";
 
 interface AuthUser {
@@ -26,7 +27,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token,     setToken]     = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // On mount: restore token from localStorage and fetch user
   useEffect(() => {
     const stored = localStorage.getItem(TOKEN_KEY);
     if (stored) {
@@ -45,7 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
       setUser(data);
     } catch {
-      // Token invalid or expired — clear everything
       localStorage.removeItem(TOKEN_KEY);
       setToken(null);
       setUser(null);

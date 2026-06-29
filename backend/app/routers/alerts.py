@@ -15,7 +15,7 @@ from app.services.auth_service import get_current_user
 router = APIRouter(
     prefix="/alerts",
     tags=["Alerts"],
-    dependencies=[Depends(get_current_user)] 
+    dependencies=[Depends(get_current_user)]
 )
 
 @router.post(
