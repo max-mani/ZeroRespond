@@ -1,0 +1,1691 @@
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@hospital.in",
+    "password": "SecurePass123"
+  }'
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBob3NwaXRhbC5pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc4Mjc0MzQ5MywiaWF0IjoxNzgyNzE0NjkzfQ.rLY2_0s-c1MHAH-SOqAqtE4vNQd6wIazkcEgUeD_804","token_type":"bearer","expires_in":28800}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ ^C
+[mani@maxim ZeroRespond]$ ^C
+[mani@maxim ZeroRespond]$ TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbkBob3NwaXRhbC5pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc4Mjc0MzQ5MywiaWF0IjoxNzgyNzE0NjkzfQ.rLY2_0s-c1MHAH-SOqAqtE4vNQd6wIazkcEgUeD_804"
+[mani@maxim ZeroRespond]$ curl -X PUT http://localhost:8000/org \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "name": "Coimbatore Medical College Hospital",
+    "dpo_name": "Dr. Manikandan",
+    "dpo_email": "dpo@cmch.edu.in",
+    "address": "Coimbatore, Tamil Nadu 641 014",
+    "cert_in_email": "incident@cert-in.org.in"
+  }'
+{"id":1,"name":"Coimbatore Medical College Hospital","dpo_name":"Dr. Manikandan","dpo_email":"dpo@cmch.edu.in","address":"Coimbatore, Tamil Nadu 641 014","cert_in_email":"incident@cert-in.org.in","cert_in_notified_at":null,"created_at":"2026-06-26T07:13:18.925203Z","updated_at":"2026-06-26T07:40:20.465656Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/org \
+  -H "Authorization: Bearer $TOKEN"
+{"id":1,"name":"Coimbatore Medical College Hospital","dpo_name":"Dr. Manikandan","dpo_email":"dpo@cmch.edu.in","address":"Coimbatore, Tamil Nadu 641 014","cert_in_email":"incident@cert-in.org.in","cert_in_notified_at":null,"created_at":"2026-06-26T07:13:18.925203Z","updated_at":"2026-06-26T07:40:20.465656Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/reports/IR-20260623-0003 \
+  -H "Authorization: Bearer $TOKEN" \
+  --output /tmp/report_with_org.pdf
+xdg-open /tmp/report_with_org.pdf
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+100  28590 100  28590   0      0  31330      0                              0
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "check@hospital.in",
+    "password": "CheckPass123"
+  }'
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJjaGVja0Bob3NwaXRhbC5pbiIsInJvbGUiOiJhbmFseXN0IiwiZXhwIjoxNzgyNzQzOTQxLCJpYXQiOjE3ODI3MTUxNDF9.sjf5dYGPbHPVQjiba16zevFz0iH1yk60-8BvUc4JNok","token_type":"bearer","expires_in":28800}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ ANALYST_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJjaGVja0Bob3NwaXRhbC5pbiIsInJvbGUiOiJhbmFseXN0IiwiZXhwIjoxNzgyNzQzOTQxLCJpYXQiOjE3ODI3MTUxNDF9.sjf5dYGPbHPVQjiba16zevFz0iH1yk60-8BvUc4JNok"
+[mani@maxim ZeroRespond]$ RESP=$(curl -s -o /dev/null -w "%{http_code}" -X PUT http://localhost:8000/org \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $ANALYST_TOKEN" \
+  -d '{"name": "Hacked"}')
+[ "$RESP" = "403" ] && echo "✓ Analyst blocked from updating org" || echo "✗ Expected 403, got $RESP"
+✓ Analyst blocked from updating org
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: org profile API — GET /org, PUT /org (admin only)"
+[main 7328cd0] feat: org profile API — GET /org, PUT /org (admin only)
+ 9 files changed, 1920 insertions(+), 6 deletions(-)
+ delete mode 100644 DPDP_Report_ransomware.pdf
+ create mode 100644 backend/app/routers/org.py
+ create mode 100644 backend/app/schemas/org.py
+ create mode 100644 weekly tasks/week 6/ZeroRespond_Week6_Tasks.md
+ create mode 100644 weekly tasks/week 6/week6_log.txt
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 31, done.
+Counting objects: 100% (31/31), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (17/17), done.
+Writing objects: 100% (18/18), 26.14 KiB | 5.23 MiB/s, done.
+Total 18 (delta 12), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (12/12), completed with 12 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   55552e9..7328cd0  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: playbooks router — list, get by attack type, get for case, complete step"
+[main 0557d6c] feat: playbooks router — list, get by attack type, get for case, complete step
+ 3 files changed, 176 insertions(+), 1 deletion(-)
+ create mode 100644 backend/app/routers/playbooks.py
+ create mode 100644 backend/app/schemas/playbook.py
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 15, done.
+Counting objects: 100% (15/15), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (9/9), 2.20 KiB | 2.20 MiB/s, done.
+Total 9 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   7328cd0..0557d6c  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ cd backend
+source venv/bin/activate
+python scripts/seed_playbooks.py
+2026-06-29 12:22:36,572 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-06-29 12:22:36,572 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-29 12:22:36,574 INFO sqlalchemy.engine.Engine select current_schema()
+2026-06-29 12:22:36,574 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-29 12:22:36,576 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-06-29 12:22:36,576 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-06-29 12:22:36,577 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-29 12:22:36,579 INFO sqlalchemy.engine.Engine DELETE FROM playbook_steps
+2026-06-29 12:22:36,579 INFO sqlalchemy.engine.Engine [generated in 0.00021s] {}
+2026-06-29 12:22:36,584 INFO sqlalchemy.engine.Engine DELETE FROM playbooks
+2026-06-29 12:22:36,584 INFO sqlalchemy.engine.Engine [generated in 0.00031s] {}
+2026-06-29 12:22:36,587 INFO sqlalchemy.engine.Engine COMMIT
+Cleared existing playbooks.
+2026-06-29 12:22:36,590 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-29 12:22:36,593 INFO sqlalchemy.engine.Engine INSERT INTO playbooks (attack_type, name, description) VALUES (%(attack_type)s, %(name)s,%(description)s) RETURNING playbooks.id
+2026-06-29 12:22:36,594 INFO sqlalchemy.engine.Engine [generated in 0.00032s] {'attack_type': 'ransomware', 'name': 'Ransomware Response Playbook', 'description': 'Structured response for file-encrypting ransomware. Speed is critical — every minute of delay allows more files to be encrypted and increases recovery cost.'}
+  ✓ Ransomware Response Playbook (7 steps)
+2026-06-29 12:22:36,603 INFO sqlalchemy.engine.Engine INSERT INTO playbooks (attack_type, name, description) VALUES (%(attack_type)s, %(name)s,%(description)s) RETURNING playbooks.id
+2026-06-29 12:22:36,603 INFO sqlalchemy.engine.Engine [cached since 0.009761s ago] {'attack_type': 'phishing', 'name': 'Phishing Attack Response Playbook', 'description': 'Response for phishing attacks including credential harvesting, malicious links, and email-delivered malware. Focus on containing the blast radius and preventing credential reuse.'}
+2026-06-29 12:22:36,609 INFO sqlalchemy.engine.Engine INSERT INTO playbook_steps (playbook_id, step_number, title, description, linux_cmd, windows_cmd, goal, is_blocking) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::TEXT, p4::TEXT, p5::TEXT, p6::VARCHAR, p7::BOOLEAN FROM (VALUES (%(playbook_id__0)s ... 1063 characters truncated ... 5, p6, p7, sen_counter) ORDER BY sen_counter RETURNING playbook_steps.id, playbook_steps.id AS id__1
+2026-06-29 12:22:36,609 INFO sqlalchemy.engine.Engine [generated in 0.00028s (insertmanyvalues) 1/1 (ordered)] {'playbook_id__0': 1, 'windows_cmd__0': "# Disable network adapter in Windows:\nDisable-NetAdapter -Name 'Ethernet' -Confirm:$false\n# Verify:\nGet-NetAdapter | Select Name, Status", 'is_blocking__0': True, 'goal__0': 'Stop lateral movement to other systems', 'description__0': 'Disconnect the infected machine from the network to stop ransomware from spreading to shared drives, backup servers, and other hosts. Do NOT shut down the machine — RAM may contain decryption keys that forensics can recover.', 'step_number__0': 1, 'linux_cmd__0': '# On the infected Linux host:\nsudo ip link set eth0 down\n# OR physically unplug the network cable\n# Verify isolation:\nip addr show', 'title__0': 'Isolate the infected host immediately', 'playbook_id__1': 1, 'windows_cmd__1': "# Save process list:\nGet-Process | Export-Csv C:\\evidence\\processes.csv\nGet-NetTCPConnection | Export-Csv C:\\evidence\\connections.csv\n\n# Note ransom note location:\nGet-ChildItem C:\\ -Recurse -Filter 'READ_ME*' 2>$null | Select FullName", 'is_blocking__1': True, 'goal__1': 'Preserve forensic evidence before remediation', 'description__1': 'Before any remediation, capture the system state. This is required for forensics and insurance claims. Use a USB drive or network share that is NOT connected to the infected machine.', 'step_number__1': 2, 'linux_cmd__1': "# Capture memory dump (requires LiME or avml):\nsudo avml /external-usb/memory_dump.lime\n\n# List running processes before shutdown:\nps aux > /exte ... (36 characters truncated) ... tulpn > /external-usb/network_connections.txt\n\n# Note encrypted file extensions:\nfind /home /var /srv -name '*.enc' -o -name '*.locked' | head -50", 'title__1': 'Preserve memory and disk evidence', 'playbook_id__2': 1, 'windows_cmd__2': "# Find ransom notes:\nGet-ChildItem C:\\ -Recurse -Include 'README*','DECRYPT*','HOW_TO*' 2>$null\n\n# Check event logs for suspicious activity:\nGet-EventLog -LogName System -Newest 100 | Where-Object {$_.EntryType -eq 'Error'}", 'is_blocking__2': False, 'goal__2': 'Determine if a free decryptor exists before considering payment', 'description__2': 'Identifying the specific strain determines whether a free decryptor exists. Upload a ransom note or encrypted file sample to ID Ransomware (https://id-ransomware.malwarehunterteam.com). Check No More Ransom (https://www.nomoreransom.org) for free decryptors before paying anything.', 'step_number__2': 3, 'linux_cmd__2': "# Check ransom note for strain indicators:\ncat /path/to/README_FOR_DECRYPT.txt\n\n# Check encrypted file extension:\nls /affected-directory/ | head -20\n\n# Check for known strain IOCs in logs:\ngrep -r 'ransom\\|encrypt\\|bitcoin' /var/log/ 2>/dev/null | tail -20", 'title__2': 'Identify the ransomware strain', 'playbook_id__3': 1, 'windows_cmd__3': '# Check Windows Backup / Veeam status:\nGet-WBJob\n\n# List recent backup jobs:\nGet-WBBackupSet | Sort-ObjectBackupTime -Descending | Select -First 5', 'is_blocking__3': True, 'goal__3': 'Ensure clean backups exist for recovery', 'description__3': 'Immediately verify your backups are clean and not encrypted. Ransomware specifically targets backup systems. Isolate clean backups from the networkimmediately.', 'step_number__3': 4, 'linux_cmd__3': "# Check backup server is reachable and clean:\nssh backup-server 'ls -lh /backups/ | tail -20'\n\n# Verify backup integrity (example with rsync):\nrs ... (45 characters truncated) ... p/verify/\n\n# Check if backup files show recent modification (sign of encryption):\nfind /backup-mount -newer /tmp/reference_file -type f | head -20", 'title__3': 'Check and protect backups', 'playbook_id__4': 1, 'windows_cmd__4': "# Same curl command works from Windows PowerShell:\nInvoke-WebRequest -Uri 'http://localhost:8000/reports/<CASE_ID>' \\\n  -Headers @{Authorization='Bearer <TOKEN>'} \\\n  -OutFile DPDP_Notification.pdf", 'is_blocking__4': True, 'goal__4': 'Meet DPDP Act 2023 6-hour notification requirement', 'description__4': 'Under DPDP Act 2023, if personal data is affected, CERT-In must be notified within 6 hours of discovery. Notify your DPO, legal team, and senior management immediately. Do not communicate over email if email servers may be compromised — use phone.', 'step_number__4': 5, 'linux_cmd__4': "# Generate the DPDP breach notification from ZeroRespond:\ncurl -X POST http://localhost:8000/reports/<CASE_ID> \\\n  -H 'Authorization: Bearer <TOKE ... (3 characters truncated) ...  \\\n  --output DPDP_Notification.pdf\n\n# Email to CERT-In: incident@cert-in.org.in\n# Subject: Cyber Security Incident Report — [Organisation Name]", 'title__4': 'Notify management and legal', 'playbook_id__5': 1, 'windows_cmd__5': "# Restore from backup:\nStart-WBFileRecovery -BackupSet (Get-WBBackupSet | Select -Last 1) \\\n  -FilePathToRestore 'C:\\Data' -RecoveryTarget 'D:\\Restored'", 'is_blocking__5': True, 'goal__5': 'Restore operations from clean backup', 'description__5': 'Once the infected system is isolated and evidence preserved, restore from the last known-clean backup. Rebuild the OS from scratch rather than restoring to the same infected system — ransomware may have persistence mechanisms.', 'step_number__5': 6, 'linux_cmd__5': '# Wipe and reinstall OS, then restore data:\n# 1. Boot from clean media\n# 2. Reinstall OS\n# 3. Restore data backup:\nrsync -avz --progress backup-server:/backups/pre-infection/ /restored-data/\n\n# Verify restored files:\nmd5sum /restored-data/critical-files/* > checksums.txt', 'title__5': 'Restore from clean backup', 'playbook_id__6': 1, 'windows_cmd__6': "# Check Windows Update status:\nGet-WindowsUpdateLog\n\n# Disable RDP if not needed:\nSet-ItemProperty -Path 'HKLM:\\System\\CurrentControlSet\\Control\\Terminal Server' -Name 'fDenyTSConnections' -Value 1\n\n# Enable Windows Defender:\nSet-MpPreference -DisableRealtimeMonitoring $false", 'is_blocking__6': False, 'goal__6': 'Prevent ransomware recurrence', 'description__6': 'After recovery, implement controls to prevent recurrence. Ransomware most commonly enters via unpatched systems, RDP exposed to internet, or phishing emails.', 'step_number__6': 7, 'linux_cmd__6': "# Update all packages:\nsudo apt update && sudo apt upgrade -y\n\n# Disableunused services:\nsudo systemctl disable telnet ftp rsh\n\n# Check for exposed RDP/SMB ports:\nss -tulpn | grep -E ':3389|:445|:139'\n\n# Enable automatic security updates:\nsudo dpkg-reconfigure -plow unattended-upgrades", 'title__6': 'Post-incident hardening'}
+  ✓ Phishing Attack Response Playbook (6 steps)
+2026-06-29 12:22:36,619 INFO sqlalchemy.engine.Engine INSERT INTO playbooks (attack_type, name, description) VALUES (%(attack_type)s, %(name)s,%(description)s) RETURNING playbooks.id
+2026-06-29 12:22:36,619 INFO sqlalchemy.engine.Engine [cached since 0.02596s ago] {'attack_type': 'unauthorized_access', 'name': 'Unauthorised Access Response Playbook', 'description': 'Response for brute force attacks, authentication bypass, and unauthorised login attempts. Focus on blocking the attacker, assessing damage, and hardening access controls.'}
+2026-06-29 12:22:36,621 INFO sqlalchemy.engine.Engine INSERT INTO playbook_steps (playbook_id, step_number, title, description, linux_cmd, windows_cmd, goal, is_blocking) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::TEXT, p4::TEXT, p5::TEXT, p6::VARCHAR, p7::BOOLEAN FROM (VALUES (%(playbook_id__0)s ... 913 characters truncated ... 5, p6, p7, sen_counter) ORDER BY sen_counter RETURNING playbook_steps.id, playbook_steps.id AS id__1
+2026-06-29 12:22:36,621 INFO sqlalchemy.engine.Engine [cached since 0.01286s ago (insertmanyvalues) 1/1 (ordered)] {'playbook_id__0': 2, 'windows_cmd__0': "# Search Exchange mail logs:\nGet-MessageTrackingLog -ResultSize Unlimited -MessageSubject 'phishing subject' | Select Sender, Recipients, Timestamp\n\n# Search for URL clicks in Exchange:\nGet-MessageTrackingLog -EventId DELIVER | Where-Object {$_.Recipients -like '*finance*'}", 'is_blocking__0': True, 'goal__0': 'Know exactly who was targeted and who interacted with the phishing content', 'description__0': 'Determine who received the phishing email, who clicked the link, and who may have entered credentials. Pull mail server logs immediately — email logs are often overwritten within 24-72 hours.', 'step_number__0': 1, 'linux_cmd__0': "# Pull mail server logs (Postfix example):\ngrep 'phishing-domain.com' /var/log/mail.log | grep 'delivered'\n\n# Check web proxy logs for clicks on m ... (45 characters truncated) ... log/squid/access.log\n\n# List all users who accessed the malicious URL:\nawk '{print $8}' /var/log/squid/access.log | grep 'malicious' | sort | uniq", 'title__0': 'Identify affected users and scope', 'playbook_id__1': 2, 'windows_cmd__1': "# Block URL in Windows Defender SmartScreen or proxy:\nAdd-MpPreference -ExclusionPath 'N/A'  # Use Windows Firewall\nNew-NetFirewallRule -DisplayName 'Block Phishing' -Direction Outbound -Action Block -RemoteAddress 'phishing-ip'", 'is_blocking__1': True, 'goal__1': 'Prevent further exposure across the organisation', 'description__1': 'Immediately block the phishing URL and sender domain at the email gateway and web proxy. This stops anyone else in the organisation from clicking the link.', 'step_number__1': 2, 'linux_cmd__1': "# Block domain at DNS level (add to /etc/hosts on DNS server or Pi-hole):\necho '0.0.0.0 malicious-domain.com'| sudo tee -a /etc/hosts\n\n# Block in ... (133 characters truncated) ... licious-sender@phishing.com REJECT Phishing attempt' >> /etc/postfix/sender_access\npostmap /etc/postfix/sender_access\nsudo systemctl reload postfix", 'title__1': 'Block the malicious URL and sender domain', 'playbook_id__2': 2, 'windows_cmd__2': "# Force password reset in Active Directory:\nSet-ADUser -Identity 'username' -ChangePasswordAtLogon $true\n\n# Revoke all active sessions:\nRevoke-Mg ... (17 characters truncated) ...  -UserId 'user@domain.com'\n\n# Bulk reset from list:\nGet-Content affected_users.txt | ForEach-Object { Set-ADUser $_ -ChangePasswordAtLogon $true }", 'is_blocking__2': True, 'goal__2': 'Neutralise harvested credentials before attackers use them', 'description__2': 'Any user who may have entered credentials on the phishing page must reset their passwordimmediately. Also revoke all active sessions for those accounts.', 'step_number__2': 3, 'linux_cmd__2': '# Force password change on next login (Linux/LDAP):\npasswd -e username\n\n# For multiple users from a file:\nwhile read user; do passwd -e "$user";  ... (69 characters truncated) ... ome/username/.ssh/authorized_keys\n\n# Check for new SSH keys added by attacker:\nfind /home -name \'authorized_keys\' -newer /tmp/reference_date -ls', 'title__2': 'Force password reset for all affected users', 'playbook_id__3': 2, 'windows_cmd__3': "# Check Windows event logs for suspicious logons (Event ID 4624):\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} | Where-Object {$_.Me ... (51 characters truncated)... sage | Select -First 20\n\n# Look for logons from unusual locations:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} | Select-First 50", 'is_blocking__3': False, 'goal__3': 'Determine if attacker already used the harvested credentials', 'description__3': 'Review authentication logs for the affected accounts. Look for logins from unusual IPs, at unusual times, or to systems they do not normally access.', 'step_number__3': 4, 'linux_cmd__3': "# Check auth logs for suspicious logins:\ngrep 'Accepted password' /var/log/auth.log | grep 'username'\n\n# Look for logins from foreign IPs:\ngrep ' ... (27 characters truncated) ...  | awk '{print $11}' | sort | uniq -c | sort -rn\n\n# Check for privilege escalation attempts:\ngrep 'sudo\\|su ' /var/log/auth.log | grep 'username'", 'title__3': 'Check for account compromise and lateral movement', 'playbook_id__4': 2, 'windows_cmd__4': "# Enable MFA via Microsoft 365 / Azure AD:\nSet-MsolUser -UserPrincipalName 'user@domain.com' -StrongAuthenticationRequirements @(New-Object -TypeName Microsoft.Online.Administration.StrongAuthenticationRequirement)", 'is_blocking__4': True, 'goal__4': 'Prevent future credential reuse even if attacker retains the password', 'description__4': 'Password reset alone is not enough if the attacker still has the old password. Enable multi-factor authentication on all affected accounts before they log back in.', 'step_number__4': 5, 'linux_cmd__4': "# Enable Google Authenticator for SSH (PAM):\nsudo apt install libpam-google-authenticator\n\n# Configure PAM:\necho 'auth required pam_google_authen ... (24 characters truncated) ... a /etc/pam.d/sshd\n\n# Update SSH config:\necho 'ChallengeResponseAuthentication yes' | sudo tee -a /etc/ssh/sshd_config\nsudo systemctl restart sshd", 'title__4': 'Enable MFA for all affected accounts', 'playbook_id__5': 2, 'windows_cmd__5': '# Export phishing email from Outlook:\n# File > Open & Export > Import/Export > Export to a File > Outlook Data File (.pst)', 'is_blocking__5': False, 'goal__5': 'Meet reporting obligations and prevent recurrence', 'description__5': 'Report the phishing campaign to CERT-In (incident@cert-in.org.in) with the full email headers and malicious URL. Run an immediate awareness session with staff about the specific phishing technique used.', 'step_number__5': 6, 'linux_cmd__5': "# Generate DPDP report:\ncurl -X POST http://localhost:8000/reports/<CASE_ID> \\\n  -H 'Authorization: Bearer <TOKEN>' \\\n  --output DPDP_Phishing_Report.pdf\n\n# Save full email headers for CERT-In submission:\ncat /var/mail/username | head -100 > phishing_email_headers.txt", 'title__5': 'Report phishing email to CERT-In and conduct user awareness'}
+  ✓ Unauthorised Access Response Playbook (6 steps)
+2026-06-29 12:22:36,626 INFO sqlalchemy.engine.Engine INSERT INTO playbooks (attack_type, name, description) VALUES (%(attack_type)s, %(name)s,%(description)s) RETURNING playbooks.id
+2026-06-29 12:22:36,627 INFO sqlalchemy.engine.Engine [cached since 0.03344s ago] {'attack_type': 'exfiltration', 'name': 'Data Exfiltration Response Playbook', 'description': 'Response for suspected or confirmed data theft. Focus on stopping the transfer, determining what data left, and meeting DPDP Act 2023 notification requirements.'}
+2026-06-29 12:22:36,628 INFO sqlalchemy.engine.Engine INSERT INTO playbook_steps (playbook_id, step_number, title, description, linux_cmd, windows_cmd, goal, is_blocking) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::TEXT, p4::TEXT, p5::TEXT, p6::VARCHAR, p7::BOOLEAN FROM (VALUES (%(playbook_id__0)s ... 913 characters truncated ... 5, p6, p7, sen_counter) ORDER BY sen_counter RETURNING playbook_steps.id, playbook_steps.id AS id__1
+2026-06-29 12:22:36,629 INFO sqlalchemy.engine.Engine [cached since 0.02019s ago (insertmanyvalues) 1/1 (ordered)] {'playbook_id__0': 3, 'windows_cmd__0': "# Block IP in Windows Firewall:\nNew-NetFirewallRule -DisplayName 'Block Attacker' -Direction Inbound -Action Block -RemoteAddress '203.0.113.42'\n\n# Verify:\nGet-NetFirewallRule -DisplayName 'Block Attacker'", 'is_blocking__0': True, 'goal__0': 'Stop the ongoing attack immediately', 'description__0': 'Block the source IP at the firewall and on the affected host. If the attacker is using multiple IPs (distributed brute force), block the entire subnet.', 'step_number__0': 1, 'linux_cmd__0': '# Block single IP:\nsudo ufw deny from 203.0.113.42 to any\n# OR with iptables:\nsudo iptables -A INPUT -s 203.0.113.42 -j DROP\n\n# Block entire sub ... (83 characters truncated) ... ock:\nsudo ufw status numbered\n\n# Install and use fail2ban for automatic blocking:\nsudo apt install fail2ban\nsudo systemctl enable fail2ban --now', 'title__0': 'Blockthe attacking IP immediately', 'playbook_id__1': 3, 'windows_cmd__1': "# Search for successful logons from attacking IP:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} | \\\n  Where-Object {$_.Message -lik ... (18 characters truncated) ... } | Select TimeCreated, Message\n\n# Check for new accounts created:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4720} | Select -First 10", 'is_blocking__1': True, 'goal__1': 'Determine if the attacker gained access — this changes the severity of the response', 'description__1': "A brute force attack is lowimpact if no login succeeded. Check authentication logs very carefully for any 'Accepted' entries from the attacking IP before the block took effect.", 'step_number__1': 2, 'linux_cmd__1': "# Check for successful logins from the attacker IP:\ngrep 'Accepted' /var/log/auth.log | grep '203.0.113.42'\n\n# Check all successful logins in the  ... (145 characters truncated) ... users created recently (attacker persistence):\ngrep 'new user\\|useradd\\|adduser' /var/log/auth.log\nawk -F: '$3 > 1000 {print $1, $3}' /etc/passwd", 'title__1': 'Determine if any login was successful', 'playbook_id__2': 3, 'windows_cmd__2': '# Set password policy via Group Policy or local policy:\nnet accounts /minpwlen:12 /maxpwage:90 /uniquepw:5\n\n# Check current password policy:\nnet accounts', 'is_blocking__2': False, 'goal__2': 'Close the vulnerability that allowed the bruteforce attempt', 'description__2': 'Brute force succeeds because of weak passwords. Check what accounts were targeted and enforce stronger passwords immediately.', 'step_number__2': 3, 'linux_cmd__2': '# Install and configure password quality checking:\nsudo apt install libpam-pwquality\n\n# Configure /etc/security/pwquality.conf:\nminlen = 12\ndcre ... (86 characters truncated) ... o password:\nsudo awk -F: \'($2 == "" || $2 =="!") {print $1}\' /etc/shadow\n\n# Check for accounts with no password expiry:\nsudo chage -l username', 'title__2': 'Review and strengthen password policy', 'playbook_id__3': 3, 'windows_cmd__3': "# Restrict RDP to internal network only:\nNew-NetFirewallRule -DisplayName 'RDP Internal Only' -Direction Inbound -LocalPort 3389 -Protocol TCP -Remo ... (5 characters truncated) ... ress '10.0.0.0/8' -Action Allow\nNew-NetFirewallRule -DisplayName 'Block RDP External' -Direction Inbound -LocalPort 3389 -Protocol TCP -Action Block", 'is_blocking__3': False, 'goal__3': 'Prevent future brute force from the internet', 'description__3': 'SSH and RDP should never be open to the entire internet. Restrict access to specific IP ranges or implement a VPN for remote access.', 'step_number__3': 4, 'linux_cmd__3': "# Restrict SSH to specific IPs only:\nsudo ufw allow from 10.0.0.0/8 to any port 22\nsudo ufw allow from 192.168.0.0/16 to any port 22\nsudo ufw deny ... (115 characters truncated) ...  restart sshd\n\n# Disable password auth — use keys only:\nsudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config", 'title__3': 'Restrict SSH / RDP to known IPs only', 'playbook_id__4': 3, 'windows_cmd__4': '# Windows equivalent: configure Account Lockout Policy:\nnet accounts /lockoutthreshold:5 /lockoutduration:60 /lockoutwindow:10\n\n# Or use Windows Defender ATP for automatic blocking', 'is_blocking__4': False, 'goal__4': 'Automate protection against future brute force attempts', 'description__4': 'Fail2ban monitors auth logs and automaticallyblocks IPs after a configurable number of failed attempts. This provides ongoing protection without manual intervention.', 'step_number__4': 5,'linux_cmd__4': '# Install fail2ban:\nsudo apt install fail2ban -y\n\n# Create local config:\nsudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local\n\n# Configure  ... (133 characters truncated) ...  5\nbantime  = 3600\nfindtime = 600\n\n# Start and enable:\nsudo systemctl enable fail2ban --now\n\n# Check status:\nsudo fail2ban-client status sshd', 'title__4': 'Configure automatic blocking with fail2ban', 'playbook_id__5': 3, 'windows_cmd__5': '# Enable Azure MFA for all users:\nConnect-MsolService\nGet-MsolUser -All | Where-Object {$_.IsLicensed -eq $true} | ForEach-Object {\n  $Requirement ... (70 characters truncated) ... nistration.StrongAuthenticationRequirement\n  Set-MsolUser -UserPrincipalName $_.UserPrincipalName -StrongAuthenticationRequirements $Requirements\n}', 'is_blocking__5': False, 'goal__5': 'Make stolen passwords useless without a second factor', 'description__5': 'Even if an attacker gets a valid password, 2FA stops them from logging in. Enable it on all internet-facingservices.', 'step_number__5': 6, 'linux_cmd__5': "# Install Google Authenticator PAM module:\nsudo apt install libpam-google-authenticator -y\n\n# Run as each user to set up:\ngoogle-authenticator\n\ ... (81 characters truncated) ... o tee -a /etc/pam.d/sshd\necho 'AuthenticationMethodspublickey,keyboard-interactive' | sudo tee -a /etc/ssh/sshd_config\nsudo systemctl restart sshd", 'title__5': 'Enable two-factor authentication'}
+  ✓ Data Exfiltration Response Playbook (6 steps)
+2026-06-29 12:22:36,633 INFO sqlalchemy.engine.Engine INSERT INTO playbooks (attack_type, name, description) VALUES (%(attack_type)s, %(name)s,%(description)s) RETURNING playbooks.id
+2026-06-29 12:22:36,633 INFO sqlalchemy.engine.Engine [cached since 0.04003s ago] {'attack_type': 'insider', 'name': 'Insider Threat Response Playbook', 'description': 'Response for suspected insider threats — employees or contractors misusing access. Requires careful handling to avoid tipping off the suspect while preserving evidence for HR and legal proceedings.'}
+2026-06-29 12:22:36,635 INFO sqlalchemy.engine.Engine INSERT INTO playbook_steps (playbook_id, step_number, title, description, linux_cmd, windows_cmd, goal, is_blocking) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::TEXT, p4::TEXT, p5::TEXT, p6::VARCHAR, p7::BOOLEAN FROM (VALUES (%(playbook_id__0)s ... 913 characters truncated ... 5, p6, p7, sen_counter) ORDER BY sen_counter RETURNING playbook_steps.id, playbook_steps.id AS id__1
+2026-06-29 12:22:36,636 INFO sqlalchemy.engine.Engine [cached since 0.02706s ago (insertmanyvalues) 1/1 (ordered)] {'playbook_id__0': 4, 'windows_cmd__0': "# Block outbound connection:\nNew-NetFirewallRule -DisplayName 'Block Exfil' -Direction Outbound -Action Block -RemoteAddress '<destination-ip>'\n\n# Capture traffic:\nnetsh trace start capture=yes tracefile=C:\\evidence\\capture.etl", 'is_blocking__0': True, 'goal__0': 'Stop data leaving the network immediately', 'description__0': "Stop the active data transfer. Block the destination IP and the source host's outbound internet access while preserving the system for forensics.", 'step_number__0': 1, 'linux_cmd__0': "# Block outbound to exfiltration destination:\nsudo ufw deny out to <destination-ip>\n\n# Block all outbound from the compromised host (drastic but e ... (168 characters truncated) ... on-ip>' > /evidence/active_connections.txt\n\n# Capture network traffic dump:\nsudo tcpdump -i eth0 -w /evidence/capture.pcap host <destination-ip> &", 'title__0': 'Block the outbound connection immediately', 'playbook_id__1': 4, 'windows_cmd__1': "# Check recent file access:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4663} | Select -First 50\n\n# Check PowerShell history:\nGet-Content (Get-PSReadlineOption).HistorySavePath | Select-String 'Invoke-WebRequest|curl|ftp'", 'is_blocking__1': True, 'goal__1': 'Establish what personal data may have been exfiltrated for DPDP reporting', 'description__1': 'Determine how much data left, to where, and what it may have contained. This is critical for DPDP reporting — you must estimate the number of persons affected.', 'step_number__1': 2, 'linux_cmd__1': '# Check network traffic volume to destination IP (from NetFlow or proxy logs):\ngrep \'<destination-ip>\' /var/log/squid/access.log | \\\n  awk \'{su ... (256 characters truncated) ... esql/postgresql.log | tail -100\n\n# Review bash history of compromised user:\ncat /home/username/.bash_history | grep -E \'curl|wget|scp|rsync|tar\'', 'title__1': 'Quantify what data was transferred', 'playbook_id__2': 4, 'windows_cmd__2': "# Check for cloud sync:\nGet-Process | Where-Object{$_.Name -like '*drop*' -or $_.Name -like '*one*'}\n\n# Check scheduled tasks:\nGet-ScheduledTask | Where-Object {$_.State -eq 'Ready'} | Select TaskName, TaskPath", 'is_blocking__2': True, 'goal__2': 'Close the exfiltration channel and remove attacker tools', 'description__2': 'Determine how data was being exfiltrated — web upload, email attachment, FTP, cloud sync, or physical media — and close that channel.', 'step_number__2': 3, 'linux_cmd__2': "# Check for active cloud sync clients:\nps aux | grep -E 'dropbox|onedrive|googledrive|rclone|rsync'\n\n# Check for scheduled tasks that may be exfil ... (135 characters truncated) ... la\nfind / -name 'rclone' -o -name 'exfil*' 2>/dev/null\n\n# Check recently installed packages:\ndpkg --get-selections | grep -v deinstall | tail -20", 'title__2': 'Identify and contain the exfiltration vector', 'playbook_id__3': 4, 'windows_cmd__3': "# Check for recently installed software:\nGet-WmiObject Win32_Product | Sort-Object InstallDate -Descending | Select-First 10\n\n# Review PowerShell execution logs:\nGet-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'} | Select -First 50", 'is_blocking__3': False, 'goal__3': 'Understand how the attacker got in so you can close the initial access vector', 'description__3': 'How did the attacker get access to the system that was exfiltrating data? Look for the initial access vector — phishing email, compromised credential, unpatched vulnerability, or insider.', 'step_number__3': 4, 'linux_cmd__3': "# Review authentication logs for the days before exfiltration:\ngrep 'Accepted' /var/log/auth.log | grep -v 'known-good-ip'\n\n# Check for webshell o ... (202 characters truncated) ... c/systemd/system/*.service | grep -v 'root'\n\n# Look for recently modified system files:\nfind /etc /bin /usr/bin -newer /tmp/reference_date -type f", 'title__3': 'Determine root cause of compromise', 'playbook_id__4': 4, 'windows_cmd__4': "# Same API call from PowerShell:\nInvoke-WebRequest -Uri 'http://localhost:8000/reports/<CASE_ID>' \\\n  -Headers @{Authorization='Bearer <TOKEN>'} -Method POST \\\n  -OutFile DPDP_Exfiltration_Report.pdf", 'is_blocking__4': True, 'goal__4': 'Meet DPDP Act 2023 mandatory notification requirements', 'description__4': 'Under DPDP Act 2023, data principals (the people whose data was stolen) must be notified. CERT-In must be notified within 6 hours. Generate the breach notification report andcontact affected individuals.', 'step_number__4': 5, 'linux_cmd__4': "# Generate DPDP breach notification:\ncurl -X POST http://localhost:8000/reports/<CASE_ID> \\\n  -H 'Authorization: Bearer <TOKEN>' \\\n  --output DP ... (31 characters truncated) ...  Email CERT-In:\n# To: incident@cert-in.org.in\n# Subject: Data Breach Notification — [Organisation] — [Date]\n# Attach: DPDP_Exfiltration_Report.pdf", 'title__4': 'Notify affected data principals and CERT-In', 'playbook_id__5': 4, 'windows_cmd__5': '# Enable Windows Information Protection:\n# Configure via Intune or Group Policy\n\n# Monitor outbound with Windows Firewall logging:\nnetsh advfirewall set global statefulftp disable\nnetsh advfirewall set currentprofile logging filename C:\\Windows\\System32\\LogFiles\\Firewall\\pfirewall.log', 'is_blocking__5': False, 'goal__5': 'Prevent future exfiltration with ongoing monitoring', 'description__5': 'After the incident is contained, implement Data Loss Prevention controls to monitor and block unauthorised data transfers in future.', 'step_number__5': 6, 'linux_cmd__5': '# Monitor outbound data with OpenDLP or similar:\n# Configure network monitoring on the gateway:\nsudo apt install nload iftop nethogs -y\n\n# Set up ... (103 characters truncated) ... ny outgoing\nsudo ufw allow out 80/tcp\nsudo ufw allow out 443/tcp\nsudo ufw allow out 53/udp\n\n# Log all outbound connections:\nsudo ufw logging on', 'title__5': 'Implement DLP controls'}
+  ✓ Insider Threat Response Playbook (6 steps)
+2026-06-29 12:22:36,640 INFO sqlalchemy.engine.Engine INSERT INTO playbook_steps (playbook_id, step_number, title, description, linux_cmd, windows_cmd, goal, is_blocking) SELECT p0::INTEGER, p1::INTEGER, p2::VARCHAR, p3::TEXT, p4::TEXT, p5::TEXT, p6::VARCHAR, p7::BOOLEAN FROM (VALUES (%(playbook_id__0)s ... 913 characters truncated ... 5, p6, p7, sen_counter) ORDER BY sen_counter RETURNING playbook_steps.id, playbook_steps.id AS id__1
+2026-06-29 12:22:36,640 INFO sqlalchemy.engine.Engine [cached since 0.03208s ago (insertmanyvalues) 1/1 (ordered)] {'playbook_id__0': 5, 'windows_cmd__0': "# Export event logs for the user silently:\nGet-WinEvent -FilterHashtable @{LogName='Security'} | \\\n  Where-Object {$_.Message -like '*username*'}  ... (89 characters truncated) ... e access logs:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4663} | \\\n  Where-Object {$_.Message -like '*username*'} | Select -First 100", 'is_blocking__0': True, 'goal__0': 'Gather evidence without alerting the suspect and allowing evidence destruction', 'description__0': 'Unlike external attacks, insider investigations require discretion. Preserve all evidence before taking any action that the suspect might notice. Contact HR and legal before doing anything visible to the employee.', 'step_number__0': 1, 'linux_cmd__0': "# Quietly capture logs without the user knowing:\n# Copy relevant auth logs to secure location:\nsudo cp /var/log/auth.log /secure-evidence/auth_$(da ... (172 characters truncated) ... dence/failed_logins.txt\n\n# Export user's process history (non-intrusively):\nsudo ausearch -ua $(id -u username) > /secure-evidence/audit_trail.txt", 'title__0': 'Preserve evidence quietly — do not alert the suspect', 'playbook_id__1': 5, 'windows_cmd__1': "# Build Windows timeline:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4634,4663,4688} | \\\n  Where-Object {$_.Message -like '*username*'} | \\\n  Sort-Object TimeCreated | Export-Csv timeline.csv", 'is_blocking__1': False, 'goal__1': 'Create a legally admissible activity timeline', 'description__1': 'Build a complete timeline of what the user accessed, when, from where, and what they did. This is the foundation of any HR or legal action.', 'step_number__1': 2, 'linux_cmd__1': "# Build access timeline:\ngrep 'username' /var/log/auth.log | grep -E 'Accepted|session opened|session closed' | \\\n  awk '{print $1, $2, $3, $NF}'  ... (273 characters truncated) ... NSERT|DELETE|UPDATE' | \\\n  grep -v 'pg_' > /secure-evidence/db_queries.txt\n\n# Check VPN/remote access logs:\ngrep 'username' /var/log/openvpn.log", 'title__1': 'Establish the timeline of suspicious activity', 'playbook_id__2': 5, 'windows_cmd__2': "# Check file access for the user:\nGet-WinEvent -FilterHashtable @{LogName='Security'; Id=4663} | \\\n  Where-Object {$_.Message -like '*username*' - ... (72 characters truncated) ... B device connections:\nGet-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-DriverFrameworks-UserMode/Operational'; Id=2003} | Select -First 10", 'is_blocking__2': False, 'goal__2': 'Establish what data was compromised and determine DPDP notification obligation', 'description__2': 'Determine exactly what sensitive data the insider accessed, modified, or copied. Pay special attention to bulk downloads, data exports, and access to data outside their normal role.', 'step_number__2': 3, 'linux_cmd__2': "# Check files accessed outside normal work hours:\nausearch -ua$(id -u username) -ts 2026-01-01T00:00:00 -te 2026-01-01T07:00:00 | \\\n  aureport -- ... (209 characters truncated) ... e):\ngrep 'username@domain' /var/log/mail.log | grep 'status=sent'\n\n# Check USB device usage:\ngrep -i 'usb\\|removable' /var/log/syslog | tail -50", 'title__2': 'Identify what data was accessed or copied', 'playbook_id__3': 5, 'windows_cmd__3': '# Same — document findings and wait for HR/legal\n# Do not lock the account yet\n# Do not confront the employee', 'is_blocking__3': True, 'goal__3': 'Ensure legally sound process that protects the organisation', 'description__3': 'Do NOT suspend the account, confront the employee, or take disciplinary action without HR and legal approval. Premature action can compromise legal proceedings and expose the organisation to wrongful termination claims.', 'step_number__3': 4, 'linux_cmd__3': "# Document your findings clearly:\ncat > /secure-evidence/summary_for_hr.txt << EOF\nDate of discovery: $(date)\nEmployee: [name]\nSuspicious activit ... (91 characters truncated) ... ocation: /secure-evidence/\nEOF\n\n# Do not take any system action until HR/legal approve\necho 'WAITING FOR HR AND LEGAL APPROVAL BEFORE PROCEEDING'", 'title__3': 'Involve HR and legal before taking action', 'playbook_id__4': 5, 'windows_cmd__4': "#Disable AD account (after HR approval):\nDisable-ADAccount -Identity 'username'\n\n# Reset password immediately:\nSet-ADAccountPassword -Identity ' ... (28 characters truncated) ... d (ConvertTo-SecureString 'TempPass@123!' -AsPlainText -Force)\n\n# Revoke all active sessions:\nRevoke-MgUserSignInSession -UserId 'user@domain.com'", 'is_blocking__4': True, 'goal__4': 'Remove access without tipping off prematurely', 'description__4': "Only after HR and legal have reviewed the evidence and approved action: disable the account, revoke all access credentials, and collect the employee's devices.", 'step_number__4': 5, 'linux_cmd__4': '# Disable user account (after HR approval):\nsudo usermod -L username   # Lock account\nsudo usermod -s /usr/sbin/nologin username   # Disable shell\ ... (168 characters truncated) ... n# Expire all active sessions:\nsudo pkill -u username\n\n# Change shared passwords the user knew:\n# (document which shared passwords need rotation)', 'title__4': 'Revoke access and contain (after HR approval)', 'playbook_id__5': 5, 'windows_cmd__5': "# Audit all users in privileged groups:\nGet-ADGroupMember -Identity 'DomainAdmins' | Select Name, SamAccountName\nGet-ADGroupMember -Identity 'Administrators' | Select Name\n\n# Review user permissions on sensitive folders:\nGet-Acl 'C:\\SensitiveData' | Format-List", 'is_blocking__5': False, 'goal__5': 'Implement least-privilege to reduce insider threat exposure', 'description__5': 'After the incident, conduct a least-privilege audit. Employees should only have access to data required for their specific role. Remove accumulated permissions that were granted over time but are no longer needed.', 'step_number__5': 6, 'linux_cmd__5': "# Audit all users with elevated permissions:\nsudo grep -E '^sudo:|^admin:' /etc/group\ncat /etc/sudoers\n\n# List all users who can SSH to this serv ...(129 characters truncated) ... groupname -type f 2>/dev/null | head -50\n\n# Implement mandatory access control (AppArmor/SELinux):\nsudo apt install apparmor-utils\nsudo aa-status", 'title__5': 'Review and tighten access controls'}
+2026-06-29 12:22:36,644 INFO sqlalchemy.engine.Engine COMMIT
+
+Seeded 5 playbooks with 31 steps total.
+
+Verify with:
+  curl http://localhost:8000/playbooks -H 'Authorization: Bearer <TOKEN>'
+(venv) [mani@maxim backend]$ cd ..
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: seed 5 production playbooks with 31 steps — real Linux commands and DPDP guidance"
+[main ba25430] feat: seed 5 production playbooks with 31 steps — real Linux commands and DPDP guidance
+ 1 file changed, 384 insertions(+)
+ create mode 100644 backend/scripts/seed_playbooks.py
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 8, done.
+Counting objects: 100% (8/8), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 11.86 KiB | 3.95 MiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   0557d6c..ba25430  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: playbook runner — step-by-step checklist with Linux/Windows commands and complete tracking"
+[main 1f1f24f] feat: playbook runner — step-by-step checklist with Linux/Windows commands and complete tracking
+ 6 files changed, 346 insertions(+), 1 deletion(-)
+ create mode 100644 frontend/src/components/playbook/PlaybookRunner.tsx
+ create mode 100644 frontend/src/pages/PlaybookPage.tsx
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 28, done.
+Counting objects: 100% (28/28), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (16/16), 4.80 KiB | 2.40 MiB/s, done.
+Total 16 (delta 8), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (8/8), completed with 8 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   ba25430..1f1f24f  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ openssl rand -hex 32
+ae133fc4b47eed9d39770a5a7cd8d642038eecb81038d8a46c96eb4df9e43e85
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: Docker Compose full stack — postgres + fastapi + react + nginx"
+[main 3f44b19] feat: Docker Compose full stack — postgres + fastapi + react + nginx
+ 6 files changed, 168 insertions(+)
+ create mode 100644 backend/.env.production
+ create mode 100644 backend/Dockerfile
+ create mode 100644 backend/start.sh
+ create mode 100644 docker-compose.yml
+ create mode 100644 frontend/Dockerfile
+ create mode 100644 frontend/nginx.conf
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 2.69 KiB | 2.69 MiB/s, done.
+Total 10 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   1f1f24f..3f44b19  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ git add .
+(venv) [mani@maxim ZeroRespond]$ git commit -m "feat: settings page for org profile — DPDP report data management"
+[main 115d6c7] feat: settings page for org profile — DPDP report data management
+ 3 files changed, 109 insertions(+)
+ create mode 100644 frontend/src/pages/Settings.tsx
+(venv) [mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 18, done.
+Counting objects: 100% (18/18), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 2.34 KiB | 2.34 MiB/s, done.
+Total 10 (delta 7), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 7 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   3f44b19..115d6c7  main -> main
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ docker compose up --build -d
+WARN[0000] /home/mani/Projects/ZeroRespond/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+WARN[0000] Docker Compose requires buildx plugin to be installed 
+Sending build context to Docker daemon  62.77MB
+Step 1/12 : FROM python:3.11-slim
+ ---> cdbd05fb6f45
+Step 2/12 : RUN apt-get update && apt-get install -y     libpango-1.0-0     libpangoft2-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf2.0-0     libffi-dev     shared-mime-info     && rm -rf /var/lib/apt/lists/*
+ ---> Running in 5f6579920843
+Hit:1 http://deb.debian.org/debian trixie InRelease
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9671 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [223 kB]
+Fetched 9990 kB in 7s (1399 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Package libgdk-pixbuf2.0-0 is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+However the following packages replace it:
+  libgdk-pixbuf-xlib-2.0-0
+
+E: Package 'libgdk-pixbuf2.0-0' has no installation candidate
+[+] up 0/1
+ ⠙ Image zerorespond-backend Building                                                                                                                     26.6s
+The command '/bin/sh -c apt-get update && apt-get install -y     libpango-1.0-0     libpangoft2-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf2.0-0     libffi-dev     shared-mime-info     && rm -rf /var/lib/apt/lists/*' returned a non-zero code: 100
+(venv) [mani@maxim ZeroRespond]$ docker compose up --build -d
+WARN[0000] /home/mani/Projects/ZeroRespond/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+WARN[0000] Docker Compose requires buildx plugin to be installed 
+Sending build context to Docker daemon  62.77MB
+Step 1/12 : FROM python:3.11-slim
+ ---> cdbd05fb6f45
+Step 2/12 : RUN apt-get update && apt-get install -y     libpango-1.0-0     libpangoft2-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf-2.0-0     libffi-dev     shared-mime-info     && rm -rf /var/lib/apt/lists/*
+ ---> Running in e1ace0b0147e
+Hit:1 http://deb.debian.org/debian trixie InRelease
+Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
+Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 Packages [9671 kB]
+Get:5 http://deb.debian.org/debian trixie-updates/main amd64 Packages [5412 B]
+Get:6 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [223 kB]
+Fetched 9990 kB in 7s (1398 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  fontconfig fontconfig-config fonts-dejavu-core fonts-dejavu-mono libatomic1
+  libbrotli1 libcairo2 libdatrie1 libdeflate0 libexpat1 libfontconfig1
+  libfreetype6 libfribidi0 libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-common
+  libglib2.0-0t64 libglib2.0-data libgraphite2-3 libharfbuzz0b libjbig0
+  libjpeg62-turbo liblerc4 libpixman-1-0 libpng16-16t64 libsharpyuv0
+  libthai-data libthai0 libtiff6 libwebp7 libx11-6 libx11-data libxau6
+  libxcb-render0 libxcb-shm0 libxcb1 libxdmcp6 libxext6 libxml2 libxrender1
+  xdg-user-dirs
+Suggested packages:
+  low-memory-monitor
+The following NEW packages will be installed:
+  fontconfig fontconfig-config fonts-dejavu-core fonts-dejavu-mono libatomic1
+  libbrotli1 libcairo2 libdatrie1 libdeflate0 libexpat1 libffi-dev
+  libfontconfig1 libfreetype6 libfribidi0 libgdk-pixbuf-2.0-0
+  libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-common libglib2.0-0t64 libglib2.0-data
+  libgraphite2-3 libharfbuzz0b libjbig0 libjpeg62-turbo liblerc4
+  libpango-1.0-0 libpangocairo-1.0-0 libpangoft2-1.0-0 libpixman-1-0
+  libpng16-16t64 libsharpyuv0 libthai-data libthai0 libtiff6 libwebp7 libx11-6
+  libx11-data libxau6 libxcb-render0 libxcb-shm0 libxcb1 libxdmcp6 libxext6
+  libxml2 libxrender1 shared-mime-info xdg-user-dirs
+0 upgraded, 46 newly installed, 0 to remove and 0 not upgraded.
+Need to get 13.3 MB of archives.
+After this operation, 46.9 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian trixie/main amd64 libexpat1 amd64 2.7.1-2 [108 kB]
+Get:2 http://deb.debian.org/debian trixie/main amd64 libbrotli1 amd64 1.1.0-2+b7 [307 kB]
+Get:3 http://deb.debian.org/debian trixie/main amd64 libpng16-16t64 amd64 1.6.48-1+deb13u5 [283 kB]
+Get:4 http://deb.debian.org/debian trixie/main amd64 libfreetype6 amd64 2.13.3+dfsg-1+deb13u1 [452 kB]
+Get:5 http://deb.debian.org/debian trixie/main amd64 fonts-dejavu-mono all 2.37-8 [489 kB]
+Get:6 http://deb.debian.org/debian trixie/main amd64 fonts-dejavu-core all 2.37-8 [840 kB]
+Get:7 http://deb.debian.org/debian trixie/main amd64 fontconfig-config amd64 2.15.0-2.3 [318 kB]
+Get:8 http://deb.debian.org/debian trixie/main amd64 libfontconfig1 amd64 2.15.0-2.3 [392 kB]
+Get:9 http://deb.debian.org/debian trixie/main amd64 fontconfig amd64 2.15.0-2.3 [463 kB]
+Get:10 http://deb.debian.org/debian trixie/main amd64 libatomic1 amd64 14.2.0-19 [9308 B]
+Get:11 http://deb.debian.org/debian trixie/main amd64 libpixman-1-0 amd64 0.44.0-3 [248 kB]
+Get:12 http://deb.debian.org/debian trixie/main amd64 libxau6 amd64 1:1.0.11-1 [20.4 kB]
+Get:13 http://deb.debian.org/debian trixie/main amd64 libxdmcp6 amd64 1:1.1.5-1 [27.8 kB]
+Get:14 http://deb.debian.org/debian trixie/main amd64 libxcb1 amd64 1.17.0-2+b1 [144 kB]
+Get:15 http://deb.debian.org/debian trixie/main amd64 libx11-data all 2:1.8.12-1 [343 kB]
+Get:16 http://deb.debian.org/debian trixie/main amd64 libx11-6 amd64 2:1.8.12-1 [815 kB]
+Get:17 http://deb.debian.org/debian trixie/main amd64 libxcb-render0 amd64 1.17.0-2+b1 [115 kB]
+Get:18 http://deb.debian.org/debian trixie/main amd64 libxcb-shm0 amd64 1.17.0-2+b1 [105 kB]
+Get:19 http://deb.debian.org/debian trixie/main amd64 libxext6 amd64 2:1.3.4-1+b3 [50.4 kB]
+Get:20 http://deb.debian.org/debian trixie/main amd64 libxrender1 amd64 1:0.9.12-1 [27.9 kB]
+Get:21 http://deb.debian.org/debian trixie/main amd64 libcairo2 amd64 1.18.4-1+b1 [538 kB]
+Get:22 http://deb.debian.org/debian trixie/main amd64 libdatrie1 amd64 0.2.13-3+b1 [38.1 kB]
+Get:23 http://deb.debian.org/debian trixie/main amd64 libdeflate0 amd64 1.23-2 [47.3 kB]
+Get:24 http://deb.debian.org/debian trixie/main amd64 libffi-dev amd64 3.4.8-2 [61.1 kB]
+Get:25 http://deb.debian.org/debian trixie/main amd64 libfribidi0 amd64 1.0.16-1 [26.5 kB]
+Get:26 http://deb.debian.org/debian trixie/main amd64 libgdk-pixbuf2.0-common all 2.42.12+dfsg-4+deb13u1 [312 kB]
+Get:27 http://deb.debian.org/debian trixie/main amd64 libglib2.0-0t64 amd64 2.84.4-3~deb13u3 [1519 kB]
+Get:28 http://deb.debian.org/debian trixie/main amd64 libxml2 amd64 2.12.7+dfsg+really2.9.14-2.1+deb13u2 [698 kB]
+Get:29 http://deb.debian.org/debian trixie/main amd64 shared-mime-info amd64 2.4-5+b2 [760 kB]
+Get:30 http://deb.debian.org/debian trixie/main amd64 libjpeg62-turbo amd64 1:2.1.5-4 [168 kB]
+Get:31 http://deb.debian.org/debian trixie/main amd64 libjbig0 amd64 2.1-6.1+b2 [32.1 kB]
+Get:32 http://deb.debian.org/debian trixie/main amd64 liblerc4 amd64 4.0.0+ds-5 [183 kB]
+Get:33 http://deb.debian.org/debian trixie/main amd64 libsharpyuv0 amd64 1.5.0-0.1 [116 kB]
+Get:34 http://deb.debian.org/debian trixie/main amd64 libwebp7 amd64 1.5.0-0.1 [318 kB]
+Get:35 http://deb.debian.org/debian trixie/main amd64 libtiff6 amd64 4.7.0-3+deb13u2 [345 kB]
+Get:36 http://deb.debian.org/debian trixie/main amd64 libgdk-pixbuf-2.0-0 amd64 2.42.12+dfsg-4+deb13u1 [141 kB]
+Get:37 http://deb.debian.org/debian trixie/main amd64 libgdk-pixbuf2.0-bin amd64 2.42.12+dfsg-4+deb13u1 [18.9 kB]
+Get:38 http://deb.debian.org/debian trixie/main amd64 libglib2.0-data all 2.84.4-3~deb13u3 [1287 kB]
+Get:39 http://deb.debian.org/debian trixie/main amd64 libgraphite2-3 amd64 1.3.14-2+b1 [75.4 kB]
+Get:40 http://deb.debian.org/debian trixie/main amd64 libharfbuzz0b amd64 10.2.0-1+deb13u1 [479 kB]
+Get:41 http://deb.debian.org/debian trixie/main amd64 libthai-data all 0.1.29-2 [168 kB]
+Get:42 http://deb.debian.org/debian trixie/main amd64 libthai0 amd64 0.1.29-2+b1 [49.4 kB]
+Get:43 http://deb.debian.org/debian trixie/main amd64 libpango-1.0-0 amd64 1.56.3-1 [226 kB]
+Get:44 http://deb.debian.org/debian trixie/main amd64 libpangoft2-1.0-0 amd64 1.56.3-1 [55.6 kB]
+Get:45 http://deb.debian.org/debian trixie/main amd64 libpangocairo-1.0-0 amd64 1.56.3-1 [35.7 kB]
+Get:46 http://deb.debian.org/debian trixie/main amd64 xdg-user-dirs amd64 0.18-2 [53.2 kB]
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 46.)
+debconf: falling back to frontend: Teletype
+debconf: unable to initialize frontend: Teletype
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Noninteractive
+Preconfiguring packages ...
+Fetched 13.3 MB in 5s (2727 kB/s)
+Selecting previously unselected package libexpat1:amd64.
+(Reading database ... 5645 files and directories currently installed.)
+Preparing to unpack .../00-libexpat1_2.7.1-2_amd64.deb ...
+Unpacking libexpat1:amd64 (2.7.1-2) ...
+Selecting previously unselected package libbrotli1:amd64.
+Preparing to unpack .../01-libbrotli1_1.1.0-2+b7_amd64.deb ...
+Unpacking libbrotli1:amd64 (1.1.0-2+b7) ...
+Selecting previously unselected package libpng16-16t64:amd64.
+Preparing to unpack .../02-libpng16-16t64_1.6.48-1+deb13u5_amd64.deb ...
+Unpacking libpng16-16t64:amd64 (1.6.48-1+deb13u5) ...
+Selecting previously unselected package libfreetype6:amd64.
+Preparing to unpack .../03-libfreetype6_2.13.3+dfsg-1+deb13u1_amd64.deb ...
+Unpacking libfreetype6:amd64 (2.13.3+dfsg-1+deb13u1) ...
+Selecting previously unselected package fonts-dejavu-mono.
+Preparing to unpack .../04-fonts-dejavu-mono_2.37-8_all.deb ...
+Unpacking fonts-dejavu-mono (2.37-8) ...
+Selecting previously unselected package fonts-dejavu-core.
+Preparing to unpack .../05-fonts-dejavu-core_2.37-8_all.deb ...
+Unpacking fonts-dejavu-core (2.37-8) ...
+Selecting previously unselected package fontconfig-config.
+Preparing to unpack .../06-fontconfig-config_2.15.0-2.3_amd64.deb ...
+Unpacking fontconfig-config (2.15.0-2.3) ...
+Selecting previously unselected package libfontconfig1:amd64.
+Preparing to unpack .../07-libfontconfig1_2.15.0-2.3_amd64.deb ...
+Unpacking libfontconfig1:amd64 (2.15.0-2.3) ...
+Selecting previously unselected package fontconfig.
+Preparing to unpack .../08-fontconfig_2.15.0-2.3_amd64.deb ...
+Unpacking fontconfig (2.15.0-2.3) ...
+Selecting previously unselected package libatomic1:amd64.
+Preparing to unpack .../09-libatomic1_14.2.0-19_amd64.deb ...
+Unpacking libatomic1:amd64 (14.2.0-19) ...
+Selecting previously unselected package libpixman-1-0:amd64.
+Preparing to unpack .../10-libpixman-1-0_0.44.0-3_amd64.deb ...
+Unpacking libpixman-1-0:amd64 (0.44.0-3) ...
+Selecting previously unselected package libxau6:amd64.
+Preparing to unpack .../11-libxau6_1%3a1.0.11-1_amd64.deb ...
+Unpacking libxau6:amd64 (1:1.0.11-1) ...
+Selecting previously unselected package libxdmcp6:amd64.
+Preparing to unpack .../12-libxdmcp6_1%3a1.1.5-1_amd64.deb ...
+Unpacking libxdmcp6:amd64 (1:1.1.5-1) ...
+Selecting previously unselected package libxcb1:amd64.
+Preparing to unpack .../13-libxcb1_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb1:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libx11-data.
+Preparing to unpack .../14-libx11-data_2%3a1.8.12-1_all.deb ...
+Unpacking libx11-data (2:1.8.12-1) ...
+Selecting previously unselected package libx11-6:amd64.
+Preparing to unpack .../15-libx11-6_2%3a1.8.12-1_amd64.deb ...
+Unpacking libx11-6:amd64 (2:1.8.12-1) ...
+Selecting previously unselected package libxcb-render0:amd64.
+Preparing to unpack .../16-libxcb-render0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-render0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxcb-shm0:amd64.
+Preparing to unpack .../17-libxcb-shm0_1.17.0-2+b1_amd64.deb ...
+Unpacking libxcb-shm0:amd64 (1.17.0-2+b1) ...
+Selecting previously unselected package libxext6:amd64.
+Preparing to unpack .../18-libxext6_2%3a1.3.4-1+b3_amd64.deb ...
+Unpacking libxext6:amd64 (2:1.3.4-1+b3) ...
+Selecting previously unselected package libxrender1:amd64.
+Preparing to unpack .../19-libxrender1_1%3a0.9.12-1_amd64.deb ...
+Unpacking libxrender1:amd64 (1:0.9.12-1) ...
+Selecting previously unselected package libcairo2:amd64.
+Preparing to unpack .../20-libcairo2_1.18.4-1+b1_amd64.deb ...
+Unpacking libcairo2:amd64 (1.18.4-1+b1) ...
+Selecting previously unselected package libdatrie1:amd64.
+Preparing to unpack .../21-libdatrie1_0.2.13-3+b1_amd64.deb ...
+Unpacking libdatrie1:amd64 (0.2.13-3+b1) ...
+Selecting previously unselected package libdeflate0:amd64.
+Preparing to unpack .../22-libdeflate0_1.23-2_amd64.deb ...
+Unpacking libdeflate0:amd64 (1.23-2) ...
+Selecting previously unselected package libffi-dev:amd64.
+Preparing to unpack .../23-libffi-dev_3.4.8-2_amd64.deb ...
+Unpacking libffi-dev:amd64 (3.4.8-2) ...
+Selecting previously unselected package libfribidi0:amd64.
+Preparing to unpack .../24-libfribidi0_1.0.16-1_amd64.deb ...
+Unpacking libfribidi0:amd64 (1.0.16-1) ...
+Selecting previously unselected package libgdk-pixbuf2.0-common.
+Preparing to unpack .../25-libgdk-pixbuf2.0-common_2.42.12+dfsg-4+deb13u1_all.deb ...
+Unpacking libgdk-pixbuf2.0-common (2.42.12+dfsg-4+deb13u1) ...
+Selecting previously unselected package libglib2.0-0t64:amd64.
+Preparing to unpack .../26-libglib2.0-0t64_2.84.4-3~deb13u3_amd64.deb ...
+Unpacking libglib2.0-0t64:amd64 (2.84.4-3~deb13u3) ...
+Selecting previously unselected package libxml2:amd64.
+Preparing to unpack .../27-libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u2_amd64.deb ...
+Unpacking libxml2:amd64 (2.12.7+dfsg+really2.9.14-2.1+deb13u2) ...
+Selecting previously unselected package shared-mime-info.
+Preparing to unpack .../28-shared-mime-info_2.4-5+b2_amd64.deb ...
+Unpacking shared-mime-info (2.4-5+b2) ...
+Selecting previously unselected package libjpeg62-turbo:amd64.
+Preparing to unpack .../29-libjpeg62-turbo_1%3a2.1.5-4_amd64.deb ...
+Unpacking libjpeg62-turbo:amd64 (1:2.1.5-4) ...
+Selecting previously unselected package libjbig0:amd64.
+Preparing to unpack .../30-libjbig0_2.1-6.1+b2_amd64.deb ...
+Unpacking libjbig0:amd64 (2.1-6.1+b2) ...
+Selecting previously unselected package liblerc4:amd64.
+Preparing to unpack .../31-liblerc4_4.0.0+ds-5_amd64.deb ...
+Unpacking liblerc4:amd64 (4.0.0+ds-5) ...
+Selecting previously unselected package libsharpyuv0:amd64.
+Preparing to unpack .../32-libsharpyuv0_1.5.0-0.1_amd64.deb ...
+Unpacking libsharpyuv0:amd64 (1.5.0-0.1) ...
+Selecting previously unselected package libwebp7:amd64.
+Preparing to unpack .../33-libwebp7_1.5.0-0.1_amd64.deb ...
+Unpacking libwebp7:amd64 (1.5.0-0.1) ...
+Selecting previously unselected package libtiff6:amd64.
+Preparing to unpack .../34-libtiff6_4.7.0-3+deb13u2_amd64.deb ...
+Unpacking libtiff6:amd64 (4.7.0-3+deb13u2) ...
+Selecting previously unselected package libgdk-pixbuf-2.0-0:amd64.
+Preparing to unpack .../35-libgdk-pixbuf-2.0-0_2.42.12+dfsg-4+deb13u1_amd64.deb ...
+Unpacking libgdk-pixbuf-2.0-0:amd64 (2.42.12+dfsg-4+deb13u1) ...
+Selecting previously unselected package libgdk-pixbuf2.0-bin.
+Preparing to unpack .../36-libgdk-pixbuf2.0-bin_2.42.12+dfsg-4+deb13u1_amd64.deb ...
+Unpacking libgdk-pixbuf2.0-bin (2.42.12+dfsg-4+deb13u1) ...
+Selecting previously unselected package libglib2.0-data.
+Preparing to unpack .../37-libglib2.0-data_2.84.4-3~deb13u3_all.deb ...
+Unpacking libglib2.0-data (2.84.4-3~deb13u3) ...
+Selecting previously unselected package libgraphite2-3:amd64.
+Preparing to unpack .../38-libgraphite2-3_1.3.14-2+b1_amd64.deb ...
+Unpacking libgraphite2-3:amd64 (1.3.14-2+b1) ...
+Selecting previously unselected package libharfbuzz0b:amd64.
+Preparing to unpack .../39-libharfbuzz0b_10.2.0-1+deb13u1_amd64.deb ...
+Unpacking libharfbuzz0b:amd64 (10.2.0-1+deb13u1) ...
+Selecting previously unselected package libthai-data.
+Preparing to unpack .../40-libthai-data_0.1.29-2_all.deb ...
+Unpacking libthai-data (0.1.29-2) ...
+Selecting previously unselected package libthai0:amd64.
+Preparing to unpack .../41-libthai0_0.1.29-2+b1_amd64.deb ...
+Unpacking libthai0:amd64 (0.1.29-2+b1) ...
+Selecting previously unselected package libpango-1.0-0:amd64.
+Preparing to unpack .../42-libpango-1.0-0_1.56.3-1_amd64.deb ...
+Unpacking libpango-1.0-0:amd64 (1.56.3-1) ...
+Selecting previously unselected package libpangoft2-1.0-0:amd64.
+Preparing to unpack .../43-libpangoft2-1.0-0_1.56.3-1_amd64.deb ...
+Unpacking libpangoft2-1.0-0:amd64 (1.56.3-1) ...
+Selecting previously unselected package libpangocairo-1.0-0:amd64.
+Preparing to unpack .../44-libpangocairo-1.0-0_1.56.3-1_amd64.deb ...
+Unpacking libpangocairo-1.0-0:amd64 (1.56.3-1) ...
+Selecting previously unselected package xdg-user-dirs.
+Preparing to unpack .../45-xdg-user-dirs_0.18-2_amd64.deb ...
+Unpacking xdg-user-dirs (0.18-2) ...
+Setting up libexpat1:amd64 (2.7.1-2) ...
+Setting up libgraphite2-3:amd64 (1.3.14-2+b1) ...
+Setting up libpixman-1-0:amd64 (0.44.0-3) ...
+Setting up libsharpyuv0:amd64 (1.5.0-0.1) ...
+Setting up libxau6:amd64 (1:1.0.11-1) ...
+Setting up libxdmcp6:amd64 (1:1.1.5-1) ...
+Setting up libxcb1:amd64 (1.17.0-2+b1) ...
+Setting up liblerc4:amd64 (4.0.0+ds-5) ...
+Setting up libdatrie1:amd64 (0.2.13-3+b1) ...
+Setting up xdg-user-dirs (0.18-2) ...
+Setting up libxcb-render0:amd64 (1.17.0-2+b1) ...
+Setting up libbrotli1:amd64 (1.1.0-2+b7) ...
+Setting up libgdk-pixbuf2.0-common (2.42.12+dfsg-4+deb13u1) ...
+Setting up libdeflate0:amd64 (1.23-2) ...
+Setting up libxcb-shm0:amd64 (1.17.0-2+b1) ...
+Setting up libffi-dev:amd64 (3.4.8-2) ...
+Setting up libjbig0:amd64 (2.1-6.1+b2) ...
+Setting up libglib2.0-data (2.84.4-3~deb13u3) ...
+Setting up libjpeg62-turbo:amd64 (1:2.1.5-4) ...
+Setting up libx11-data (2:1.8.12-1) ...
+Setting up libfribidi0:amd64 (1.0.16-1) ...
+Setting up fonts-dejavu-mono (2.37-8) ...
+Setting up libpng16-16t64:amd64 (1.6.48-1+deb13u5) ...
+Setting up libatomic1:amd64 (14.2.0-19) ...
+Setting up fonts-dejavu-core (2.37-8) ...
+Setting up libwebp7:amd64 (1.5.0-0.1) ...
+Setting up libtiff6:amd64 (4.7.0-3+deb13u2) ...
+Setting up libx11-6:amd64 (2:1.8.12-1) ...
+Setting up libthai-data (0.1.29-2) ...
+Setting up libxml2:amd64 (2.12.7+dfsg+really2.9.14-2.1+deb13u2) ...
+Setting up libxrender1:amd64 (1:0.9.12-1) ...
+Setting up fontconfig-config (2.15.0-2.3) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8.)
+debconf: falling back to frontend: Teletype
+debconf: unable to initialize frontend: Teletype
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Noninteractive
+Setting up libxext6:amd64 (2:1.3.4-1+b3) ...
+Setting up libthai0:amd64 (0.1.29-2+b1) ...
+Setting up libglib2.0-0t64:amd64 (2.84.4-3~deb13u3) ...
+No schema files found: doing nothing.
+Setting up libfreetype6:amd64 (2.13.3+dfsg-1+deb13u1) ...
+Setting up shared-mime-info (2.4-5+b2) ...
+Setting up libharfbuzz0b:amd64 (10.2.0-1+deb13u1) ...
+Setting up libgdk-pixbuf-2.0-0:amd64 (2.42.12+dfsg-4+deb13u1) ...
+Setting up libfontconfig1:amd64 (2.15.0-2.3) ...
+Setting up fontconfig (2.15.0-2.3) ...
+Regenerating fonts cache... done.
+Setting up libpango-1.0-0:amd64 (1.56.3-1) ...
+Setting up libcairo2:amd64 (1.18.4-1+b1) ...
+Setting up libgdk-pixbuf2.0-bin (2.42.12+dfsg-4+deb13u1) ...
+Setting up libpangoft2-1.0-0:amd64 (1.56.3-1) ...
+Setting up libpangocairo-1.0-0:amd64 (1.56.3-1) ...
+Processing triggers for libc-bin (2.41-12+deb13u3) ...
+ ---> Removed intermediate container e1ace0b0147e
+ ---> c84bcb904c5a
+Step 3/12 : WORKDIR /app
+ ---> Running in a697e10f461a
+ ---> Removed intermediate container a697e10f461a
+ ---> a3d047bf8282
+Step 4/12 : COPY requirements.txt .
+ ---> fd67eab3968b
+Step 5/12 : RUN pip install --no-cache-dir -r requirements.txt
+ ---> Running in e1f794e4ad81
+Collecting alembic==1.18.4 (from -r requirements.txt (line 1))
+  Downloading alembic-1.18.4-py3-none-any.whl.metadata (7.2 kB)
+Collecting annotated-doc==0.0.4 (from -r requirements.txt (line 2))
+  Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+Collecting annotated-types==0.7.0 (from -r requirements.txt (line 3))
+  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting anyio==4.14.0 (from -r requirements.txt (line 4))
+  Downloading anyio-4.14.0-py3-none-any.whl.metadata (4.6 kB)
+Collecting bcrypt==4.0.1 (from -r requirements.txt (line 5))
+  Downloading bcrypt-4.0.1-cp36-abi3-manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+Collecting brotli==1.2.0 (from -r requirements.txt (line 6))
+  Downloading brotli-1.2.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (6.1 kB)
+Collecting certifi==2026.6.17 (from -r requirements.txt (line 7))
+  Downloading certifi-2026.6.17-py3-none-any.whl.metadata (2.5 kB)
+Collecting cffi==2.0.0 (from -r requirements.txt (line 8))
+  Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting click==8.4.1 (from -r requirements.txt (line 9))
+  Downloading click-8.4.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting cryptography==49.0.0 (from -r requirements.txt (line 10))
+  Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (4.3 kB)
+Collecting cssselect2==0.9.0 (from -r requirements.txt (line 11))
+  Downloading cssselect2-0.9.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting ecdsa==0.19.2 (from -r requirements.txt (line 12))
+  Downloading ecdsa-0.19.2-py2.py3-none-any.whl.metadata (29 kB)
+Collecting fastapi==0.138.0 (from -r requirements.txt (line 13))
+  Downloading fastapi-0.138.0-py3-none-any.whl.metadata (27 kB)
+Collecting fonttools==4.63.0 (from -r requirements.txt (line 14))
+  Downloading fonttools-4.63.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (118 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 118.7/118.7 kB 4.6 MB/s eta 0:00:00
+Collecting greenlet==3.5.2 (from -r requirements.txt (line 15))
+  Downloading greenlet-3.5.2-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Collecting h11==0.16.0 (from -r requirements.txt (line 16))
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting httpcore==1.0.9 (from -r requirements.txt (line 17))
+  Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting httptools==0.8.0 (from -r requirements.txt (line 18))
+  Downloading httptools-0.8.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (3.5 kB)
+Collecting httpx==0.28.1 (from -r requirements.txt (line 19))
+  Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting idna==3.18 (from -r requirements.txt (line 20))
+  Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting iniconfig==2.3.0 (from -r requirements.txt (line 21))
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting Jinja2==3.1.6 (from -r requirements.txt (line 22))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting Mako==1.3.12 (from -r requirements.txt (line 23))
+  Downloading mako-1.3.12-py3-none-any.whl.metadata (2.9 kB)
+Collecting MarkupSafe==3.0.3 (from -r requirements.txt (line 24))
+  Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting packaging==26.2 (from -r requirements.txt (line 25))
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting passlib==1.7.4 (from -r requirements.txt (line 26))
+  Downloading passlib-1.7.4-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting pillow==12.2.0 (from -r requirements.txt (line 27))
+  Downloading pillow-12.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.8 kB)
+Collecting pluggy==1.6.0 (from -r requirements.txt (line 28))
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting psycopg2-binary==2.9.12 (from -r requirements.txt (line 29))
+  Downloading psycopg2_binary-2.9.12-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Collecting pyasn1==0.6.3 (from -r requirements.txt (line 30))
+  Downloading pyasn1-0.6.3-py3-none-any.whl.metadata (8.4 kB)
+Collecting pycparser==3.0 (from -r requirements.txt (line 31))
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Collecting pydantic==2.13.4 (from -r requirements.txt (line 32))
+  Downloading pydantic-2.13.4-py3-none-any.whl.metadata (109 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 109.4/109.4 kB 5.7 MB/s eta 0:00:00
+Collecting pydantic-settings==2.14.2 (from -r requirements.txt (line 33))
+  Downloading pydantic_settings-2.14.2-py3-none-any.whl.metadata (3.4 kB)
+Collecting pydantic_core==2.46.4 (from -r requirements.txt (line 34))
+  Downloading pydantic_core-2.46.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting pydyf==0.12.1 (from -r requirements.txt (line 35))
+  Downloading pydyf-0.12.1-py3-none-any.whl.metadata (2.5 kB)
+Collecting Pygments==2.20.0 (from -r requirements.txt (line 36))
+  Downloading pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting pyphen==0.17.2 (from -r requirements.txt (line 37))
+  Downloading pyphen-0.17.2-py3-none-any.whl.metadata (3.2 kB)
+Collecting pytest==9.1.1 (from -r requirements.txt (line 38))
+  Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-asyncio==1.4.0 (from -r requirements.txt (line 39))
+  Downloading pytest_asyncio-1.4.0-py3-none-any.whl.metadata (4.1 kB)
+Collecting python-dotenv==1.2.2 (from -r requirements.txt (line 40))
+  Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+Collecting python-jose==3.5.0 (from -r requirements.txt (line 41))
+  Downloading python_jose-3.5.0-py2.py3-none-any.whl.metadata (5.5 kB)
+Collecting python-multipart==0.0.32 (from -r requirements.txt (line 42))
+  Downloading python_multipart-0.0.32-py3-none-any.whl.metadata (2.1 kB)
+Collecting PyYAML==6.0.3 (from -r requirements.txt (line 43))
+  Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting rsa==4.9.1 (from -r requirements.txt (line 44))
+  Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+Collecting six==1.17.0 (from -r requirements.txt (line 45))
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting SQLAlchemy==2.0.51 (from -r requirements.txt (line 46))
+  Downloading sqlalchemy-2.0.51-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.5 kB)
+Collecting starlette==1.3.1 (from -r requirements.txt (line 47))
+  Downloading starlette-1.3.1-py3-none-any.whl.metadata (6.4 kB)
+Collecting tinycss2==1.5.1 (from -r requirements.txt (line 48))
+  Downloading tinycss2-1.5.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting tinyhtml5==2.1.0 (from -r requirements.txt (line 49))
+  Downloading tinyhtml5-2.1.0-py3-none-any.whl.metadata (2.9 kB)
+Collecting typing-inspection==0.4.2 (from -r requirements.txt (line 50))
+  Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting typing_extensions==4.15.0 (from -r requirements.txt (line 51))
+  Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting uvicorn==0.49.0 (from -r requirements.txt (line 52))
+  Downloading uvicorn-0.49.0-py3-none-any.whl.metadata (6.7 kB)
+Collecting uvloop==0.22.1 (from -r requirements.txt (line 53))
+  Downloading uvloop-0.22.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.9 kB)
+Collecting watchfiles==1.2.0 (from -r requirements.txt (line 54))
+  Downloading watchfiles-1.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+Collecting weasyprint==69.0 (from -r requirements.txt (line 55))
+  Downloading weasyprint-69.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting webencodings==0.5.1 (from -r requirements.txt (line 56))
+  Downloading webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+Collecting websockets==16.0 (from -r requirements.txt (line 57))
+  Downloading websockets-16.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+Collecting zopfli==0.4.3 (from -r requirements.txt (line 58))
+  Downloading zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.5 kB)
+Downloading alembic-1.18.4-py3-none-any.whl (263 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 263.9/263.9 kB 7.0 MB/s eta 0:00:00
+Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Downloading anyio-4.14.0-py3-none-any.whl (123 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 123.5/123.5 kB 6.7 MB/s eta 0:00:00
+Downloading bcrypt-4.0.1-cp36-abi3-manylinux_2_28_x86_64.whl (593 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 593.7/593.7 kB 10.0 MB/s eta 0:00:00
+Downloading brotli-1.2.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 8.0 MB/s eta 0:00:00
+Downloading certifi-2026.6.17-py3-none-any.whl (133 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.3/133.3 kB 10.1 MB/s eta 0:00:00
+Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (215 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 215.6/215.6 kB 8.2 MB/s eta 0:00:00
+Downloading click-8.4.1-py3-none-any.whl (116 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 116.6/116.6 kB 12.3 MB/s eta 0:00:00
+Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 5.0 MB/s eta 0:00:00
+Downloading cssselect2-0.9.0-py3-none-any.whl (15 kB)
+Downloading ecdsa-0.19.2-py2.py3-none-any.whl (150 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 150.8/150.8 kB 14.2 MB/s eta 0:00:00
+Downloading fastapi-0.138.0-py3-none-any.whl (126 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 126.8/126.8 kB 13.2 MB/s eta 0:00:00
+Downloading fonttools-4.63.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.1/5.1 MB 8.1 MB/s eta 0:00:00
+Downloading greenlet-3.5.2-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (616 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 616.9/616.9 kB 8.4 MB/s eta 0:00:00
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.8/78.8 kB 16.4 MB/s eta 0:00:00
+Downloading httptools-0.8.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (464 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 464.7/464.7 kB 5.3 MB/s eta 0:00:00
+Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 kB 6.2 MB/s eta 0:00:00
+Downloading idna-3.18-py3-none-any.whl (65 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 65.5/65.5 kB 14.6 MB/s eta 0:00:00
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 134.9/134.9 kB 9.6 MB/s eta 0:00:00
+Downloading mako-1.3.12-py3-none-any.whl (78 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.5/78.5 kB 14.5 MB/s eta 0:00:00
+Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading packaging-26.2-py3-none-any.whl (100 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.2/100.2 kB 11.2 MB/s eta 0:00:00
+Downloading passlib-1.7.4-py2.py3-none-any.whl (525 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 525.6/525.6 kB 6.2 MB/s eta 0:00:00
+Downloading pillow-12.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.1/7.1 MB 5.7 MB/s eta 0:00:00
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading psycopg2_binary-2.9.12-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.3/4.3 MB 6.7 MB/s eta 0:00:00
+Downloading pyasn1-0.6.3-py3-none-any.whl (83 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.0/84.0 kB 7.6 MB/s eta 0:00:00
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 48.2/48.2 kB 14.1 MB/s eta 0:00:00
+Downloading pydantic-2.13.4-py3-none-any.whl (472 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 472.3/472.3 kB 5.8 MB/s eta 0:00:00
+Downloading pydantic_settings-2.14.2-py3-none-any.whl (61 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.7/61.7 kB 4.5 MB/s eta 0:00:00
+Downloading pydantic_core-2.46.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 9.1 MB/s eta 0:00:00
+Downloading pydyf-0.12.1-py3-none-any.whl (8.0 kB)
+Downloading pygments-2.20.0-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 9.6 MB/s eta 0:00:00
+Downloading pyphen-0.17.2-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 8.5 MB/s eta 0:00:00
+Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 386.5/386.5 kB 9.4 MB/s eta 0:00:00
+Downloading pytest_asyncio-1.4.0-py3-none-any.whl (16 kB)
+Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+Downloading python_jose-3.5.0-py2.py3-none-any.whl (34 kB)
+Downloading python_multipart-0.0.32-py3-none-any.whl (30 kB)
+Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 8.1 MB/s eta 0:00:00
+Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading sqlalchemy-2.0.51-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 8.7 MB/s eta 0:00:00
+Downloading starlette-1.3.1-py3-none-any.whl (73 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.6/73.6 kB 10.9 MB/s eta 0:00:00
+Downloading tinycss2-1.5.1-py3-none-any.whl (28 kB)
+Downloading tinyhtml5-2.1.0-py3-none-any.whl (39 kB)
+Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 44.6/44.6 kB 34.3 MB/s eta 0:00:00
+Downloading uvicorn-0.49.0-py3-none-any.whl (71 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 71.4/71.4 kB 20.7 MB/s eta 0:00:00
+Downloading uvloop-0.22.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.8/3.8 MB 8.3 MB/s eta 0:00:00
+Downloading watchfiles-1.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (456 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 456.9/456.9 kB 6.4 MB/s eta 0:00:00
+Downloading weasyprint-69.0-py3-none-any.whl (322 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 322.9/322.9 kB 37.9 MB/s eta 0:00:00
+Downloading webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+Downloading websockets-16.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (184 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 184.6/184.6 kB 9.9 MB/s eta 0:00:00
+Downloading zopfli-0.4.3-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (829 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 829.4/829.4 kB 4.3 MB/s eta 0:00:00
+Installing collected packages: webencodings, passlib, brotli, zopfli, websockets, uvloop, typing_extensions, tinyhtml5, tinycss2, six, PyYAML, python-multipart, python-dotenv, pyphen, Pygments, pydyf, pycparser, pyasn1, psycopg2-binary, pluggy, pillow, packaging, MarkupSafe, iniconfig, idna, httptools, h11, greenlet, fonttools, click, certifi, bcrypt, annotated-types, annotated-doc, uvicorn, typing-inspection, SQLAlchemy, rsa, pytest, pydantic_core, Mako, Jinja2, httpcore, ecdsa, cssselect2, cffi, anyio, weasyprint, watchfiles, starlette, python-jose, pytest-asyncio, pydantic, httpx, cryptography, alembic, pydantic-settings, fastapi
+Successfully installed Jinja2-3.1.6 Mako-1.3.12 MarkupSafe-3.0.3 PyYAML-6.0.3 Pygments-2.20.0 SQLAlchemy-2.0.51 alembic-1.18.4 annotated-doc-0.0.4 annotated-types-0.7.0 anyio-4.14.0 bcrypt-4.0.1 brotli-1.2.0 certifi-2026.6.17 cffi-2.0.0 click-8.4.1 cryptography-49.0.0 cssselect2-0.9.0 ecdsa-0.19.2 fastapi-0.138.0 fonttools-4.63.0 greenlet-3.5.2 h11-0.16.0 httpcore-1.0.9 httptools-0.8.0 httpx-0.28.1 idna-3.18 iniconfig-2.3.0 packaging-26.2 passlib-1.7.4 pillow-12.2.0 pluggy-1.6.0 psycopg2-binary-2.9.12 pyasn1-0.6.3 pycparser-3.0 pydantic-2.13.4 pydantic-settings-2.14.2 pydantic_core-2.46.4 pydyf-0.12.1 pyphen-0.17.2 pytest-9.1.1 pytest-asyncio-1.4.0 python-dotenv-1.2.2 python-jose-3.5.0 python-multipart-0.0.32 rsa-4.9.1 six-1.17.0 starlette-1.3.1 tinycss2-1.5.1 tinyhtml5-2.1.0 typing-inspection-0.4.2 typing_extensions-4.15.0 uvicorn-0.49.0 uvloop-0.22.1 watchfiles-1.2.0 weasyprint-69.0 webencodings-0.5.1 websockets-16.0 zopfli-0.4.3
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 24.0 -> 26.1.2
+[notice] To update, run: pip install --upgrade pip
+ ---> Removed intermediate container e1f794e4ad81
+ ---> b580512735c8
+Step 6/12 : COPY . .
+ ---> 55d87757fc17
+Step 7/12 : RUN mkdir -p /data/reports /data/evidence
+ ---> Running in c4de9e372c38
+ ---> Removed intermediate container c4de9e372c38
+ ---> 2a5c1a5af019
+Step 8/12 : EXPOSE 8000
+ ---> Running in 7037447cdd6b
+ ---> Removed intermediate container 7037447cdd6b
+ ---> af84056dfe75
+Step 9/12 : COPY start.sh .
+ ---> b5485aedf34e
+Step 10/12 : RUN chmod +x start.sh
+ ---> Running in e146399ff694
+ ---> Removed intermediate container e146399ff694
+ ---> 4d1e7f3c26eb
+Step 11/12 : CMD ["./start.sh"]
+ ---> Running in 0c54e2cd2e6c
+ ---> Removed intermediate container 0c54e2cd2e6c
+ ---> b0a44527d3b3
+Step 12/12 : LABEL com.docker.compose.image.builder=classic
+ ---> Running in 5ceaaa9e6dbc
+ ---> Removed intermediate container 5ceaaa9e6dbc
+ ---> b1eeac7d9734
+Successfully built b1eeac7d9734
+Successfully tagged zerorespond-backend:latest
+Sending build context to Docker daemon  42.95MB
+Step 1/12 : FROM node:20-alpine AS builder
+20-alpine: Pulling from library/node
+fff4e2c1b189: Pull complete 
+b2cbbfe903b0: Pull complete 
+6a0ac1617861: Pull complete 
+4feea04c1543: Pull complete 
+0f92261bcd1c: Download complete 
+14f8540414db: Download complete 
+Digest: sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+Status: Downloaded newer image for node:20-alpine
+ ---> fb4cd12c85ee
+Step 2/12 : WORKDIR /app
+ ---> Running in 05bdea832fe4
+ ---> Removed intermediate container 05bdea832fe4
+ ---> 3cfa058f7620
+Step 3/12 : COPY package*.json ./
+ ---> af5f5ef32944
+Step 4/12 : RUN npm ci
+ ---> Running in 08acd22dd537
+
+added 175 packages, and audited 176 packages in 10s
+
+38 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.17.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0
+npm notice To update run: npm install -g npm@11.17.0
+npm notice
+ ---> Removed intermediate container 08acd22dd537
+ ---> 52e53edfb329
+Step 5/12 : COPY . .
+ ---> fec8cf8e5c03
+Step 6/12 : RUN npm run build
+ ---> Running in 0c487882fc3b
+
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+src/components/playbook/PlaybookRunner.tsx(5,25): error TS6196: 'PlaybookStep' is declared but never used.
+src/components/playbook/PlaybookRunner.tsx(8,21): error TS6133: 'AlertTriangle' is declared but its value is never read.
+src/components/playbook/PlaybookRunner.tsx(64,17): error TS6133: 'isBlocking' is declared but its value is never read.
+src/pages/Alerts.tsx(5,10): error TS6133: 'AlertTriangle' is declared but its value is never read.
+src/pages/Dashboard.tsx(86,24): error TS18048: 'name' is possibly 'undefined'.
+src/pages/Dashboard.tsx(86,51): error TS18048: 'percent' is possibly 'undefined'.
+[+] up 1/2
+ ✔ Image zerorespond-backend  Built                                                125.1s
+ ⠙ Image zerorespond-frontend Building                                              85.8s
+The command '/bin/sh -c npm run build' returned a non-zero code: 2
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ docker rm -f zr-postgres zr-backend zr-frontend
+docker compose up -d
+zr-postgres
+Error response from daemon: No such container: zr-backend
+Error response from daemon: No such container: zr-frontend
+WARN[0000] /home/mani/Projects/ZeroRespond/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+WARN[0000] volume "zr_pgdata" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume 
+[+] up 3/3
+ ✔ Container zr-postgres Healthy                                                    11.0s
+ ✔ Container zr-backend  Started                                                    11.2s
+ ✔ Container zr-frontend Started                                                    11.4s
+(venv) [mani@maxim ZeroRespond]$ 
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | 
+zr-backend   | The above exception was the direct cause of the following exception:
+zr-backend   | 
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/bin/alembic", line 8, in <module>
+zr-backend   |     sys.exit(main())
+zr-backend   |              ^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1047, in main
+zr-backend   |     CommandLine(prog=prog).main(argv=argv)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1037, in main
+zr-backend   |     self.run_cmd(cfg, options)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 971, in run_cmd
+zr-backend   |     fn(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/command.py", line 483, in upgrade
+zr-backend   |     script.run_env()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/script/base.py", line 545, in run_env
+zr-backend   |     util.load_python_file(self.dir, "env.py")
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+zr-backend   |     module = load_module_py(module_id, path)
+zr-backend   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+zr-backend   |     spec.loader.exec_module(module)  # type: ignore
+zr-backend   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+zr-backend   |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+zr-backend   |   File "/app/alembic/env.py", line 40, in <module>
+zr-backend   |     run_migrations_online()
+zr-backend   |   File "/app/alembic/env.py", line 32, in run_migrations_online
+zr-backend   |     with connectable.connect() as connection:
+zr-backend   |          ^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3295, in connect
+zr-backend   |     return self._connection_cls(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+zr-backend   |     Connection._handle_dbapi_exception_noconnection(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2450, in _handle_dbapi_exception_noconnection
+zr-backend   |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+zr-backend exited with code 1 (restarting)
+zr-backend   | Running Alembic migrations...
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | 
+zr-backend   | The above exception was the direct cause of the following exception:
+zr-backend   | 
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/bin/alembic", line 8, in <module>
+zr-backend   |     sys.exit(main())
+zr-backend   |              ^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1047, in main
+zr-backend   |     CommandLine(prog=prog).main(argv=argv)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1037, in main
+zr-backend   |     self.run_cmd(cfg, options)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 971, in run_cmd
+zr-backend   |     fn(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/command.py", line 483, in upgrade
+zr-backend   |     script.run_env()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/script/base.py", line 545, in run_env
+zr-backend   |     util.load_python_file(self.dir, "env.py")
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+zr-backend   |     module = load_module_py(module_id, path)
+zr-backend   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+zr-backend   |     spec.loader.exec_module(module)  # type: ignore
+zr-backend   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+zr-backend   |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+zr-backend   |   File "/app/alembic/env.py", line 40, in <module>
+zr-backend   |     run_migrations_online()
+zr-backend   |   File "/app/alembic/env.py", line 32, in run_migrations_online
+zr-backend   |     with connectable.connect() as connection:
+zr-backend   |          ^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3295, in connect
+zr-backend   |     return self._connection_cls(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+zr-backend   |     Connection._handle_dbapi_exception_noconnection(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2450, in _handle_dbapi_exception_noconnection
+zr-backend   |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+zr-backend exited with code 1 (restarting)
+zr-backend   | Running Alembic migrations...
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | 
+zr-backend   | The above exception was the direct cause of the following exception:
+zr-backend   | 
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/bin/alembic", line 8, in <module>
+zr-backend   |     sys.exit(main())
+zr-backend   |              ^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1047, in main
+zr-backend   |     CommandLine(prog=prog).main(argv=argv)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1037, in main
+zr-backend   |     self.run_cmd(cfg, options)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 971, in run_cmd
+zr-backend   |     fn(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/command.py", line 483, in upgrade
+zr-backend   |     script.run_env()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/script/base.py", line 545, in run_env
+zr-backend   |     util.load_python_file(self.dir, "env.py")
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+zr-backend   |     module = load_module_py(module_id, path)
+zr-backend   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+zr-backend   |     spec.loader.exec_module(module)  # type: ignore
+zr-backend   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+zr-backend   |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+zr-backend   |   File "/app/alembic/env.py", line 40, in <module>
+zr-backend   |     run_migrations_online()
+zr-backend   |   File "/app/alembic/env.py", line 32, in run_migrations_online
+zr-backend   |     with connectable.connect() as connection:
+zr-backend   |          ^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3295, in connect
+zr-backend   |     return self._connection_cls(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+zr-backend   |     Connection._handle_dbapi_exception_noconnection(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2450, in _handle_dbapi_exception_noconnection
+zr-backend   |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+zr-backend exited with code 1 (restarting)
+zr-backend   | Running Alembic migrations...
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | 
+zr-backend   | The above exception was the direct cause of the following exception:
+zr-backend   | 
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/bin/alembic", line 8, in <module>
+zr-backend   |     sys.exit(main())
+zr-backend   |              ^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1047, in main
+zr-backend   |     CommandLine(prog=prog).main(argv=argv)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1037, in main
+zr-backend   |     self.run_cmd(cfg, options)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 971, in run_cmd
+zr-backend   |     fn(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/command.py", line 483, in upgrade
+zr-backend   |     script.run_env()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/script/base.py", line 545, in run_env
+zr-backend   |     util.load_python_file(self.dir, "env.py")
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+zr-backend   |     module = load_module_py(module_id, path)
+zr-backend   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+zr-backend   |     spec.loader.exec_module(module)  # type: ignore
+zr-backend   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+zr-backend   |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+zr-backend   |   File "/app/alembic/env.py", line 40, in <module>
+zr-backend   |     run_migrations_online()
+zr-backend   |   File "/app/alembic/env.py", line 32, in run_migrations_online
+zr-backend   |     with connectable.connect() as connection:
+zr-backend   |          ^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3295, in connect
+zr-backend   |     return self._connection_cls(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+zr-backend   |     Connection._handle_dbapi_exception_noconnection(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2450, in _handle_dbapi_exception_noconnection
+zr-backend   |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+zr-backend exited with code 1 (restarting)
+zr-backend   | Running Alembic migrations...
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | 
+zr-backend   | The above exception was the direct cause of the following exception:
+zr-backend   | 
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/bin/alembic", line 8, in <module>
+zr-backend   |     sys.exit(main())
+zr-backend   |              ^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1047, in main
+zr-backend   |     CommandLine(prog=prog).main(argv=argv)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1037, in main
+zr-backend   |     self.run_cmd(cfg, options)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 971, in run_cmd
+zr-backend   |     fn(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/command.py", line 483, in upgrade
+zr-backend   |     script.run_env()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/script/base.py", line 545, in run_env
+zr-backend   |     util.load_python_file(self.dir, "env.py")
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+zr-backend   |     module = load_module_py(module_id, path)
+zr-backend   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+zr-backend   |     spec.loader.exec_module(module)  # type: ignore
+zr-backend   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+zr-backend   |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+zr-backend   |   File "/app/alembic/env.py", line 40, in <module>
+zr-backend   |     run_migrations_online()
+zr-backend   |   File "/app/alembic/env.py", line 32, in run_migrations_online
+zr-backend   |     with connectable.connect() as connection:
+zr-backend   |          ^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3295, in connect
+zr-backend   |     return self._connection_cls(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+zr-backend   |     Connection._handle_dbapi_exception_noconnection(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2450, in _handle_dbapi_exception_noconnection
+zr-backend   |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+zr-backend exited with code 1 (restarting)
+zr-backend   | Running Alembic migrations...
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | 
+zr-backend   | The above exception was the direct cause of the following exception:
+zr-backend   | 
+zr-backend   | Traceback (most recent call last):
+zr-backend   |   File "/usr/local/bin/alembic", line 8, in <module>
+zr-backend   |     sys.exit(main())
+zr-backend   |              ^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1047, in main
+zr-backend   |     CommandLine(prog=prog).main(argv=argv)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 1037, in main
+zr-backend   |     self.run_cmd(cfg, options)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/config.py", line 971, in run_cmd
+zr-backend   |     fn(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/command.py", line 483, in upgrade
+zr-backend   |     script.run_env()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/script/base.py", line 545, in run_env
+zr-backend   |     util.load_python_file(self.dir, "env.py")
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 116, in load_python_file
+zr-backend   |     module = load_module_py(module_id, path)
+zr-backend   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/alembic/util/pyfiles.py", line 136, in load_module_py
+zr-backend   |     spec.loader.exec_module(module)  # type: ignore
+zr-backend   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+zr-backend   |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+zr-backend   |   File "/app/alembic/env.py", line 40, in <module>
+zr-backend   |     run_migrations_online()
+zr-backend   |   File "/app/alembic/env.py", line 32, in run_migrations_online
+zr-backend   |     with connectable.connect() as connection:
+zr-backend   |          ^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3295, in connect
+zr-backend   |     return self._connection_cls(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+zr-backend   |     Connection._handle_dbapi_exception_noconnection(
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2450, in _handle_dbapi_exception_noconnection
+zr-backend   |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 144, in __init__
+zr-backend   |     self._dbapi_connection = engine.raw_connection()
+zr-backend   |                              ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3319, in raw_connection
+zr-backend   |     return self.pool.connect()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 448, in connect
+zr-backend   |     return _ConnectionFairy._checkout(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 1272, in _checkout
+zr-backend   |     fairy = _ConnectionRecord.checkout(pool)
+zr-backend   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+zr-backend   |     rec = pool._do_get()
+zr-backend   |           ^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/impl.py", line 307, in _do_get
+zr-backend   |     return self._create_connection()
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 389, in _create_connection
+zr-backend   |     return _ConnectionRecord(self)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+zr-backend   |     self.__connect()
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+zr-backend   |     with util.safe_reraise():
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+zr-backend   |     raise exc_value.with_traceback(exc_tb)
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+zr-backend   |     self.dbapi_connection = connection = pool._invoke_creator(self)
+zr-backend   |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/create.py", line 667, in connect
+zr-backend   |     return dialect.connect(*cargs_tup, **cparams)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 630, in connect
+zr-backend   |     return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   |   File "/usr/local/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+zr-backend   |     conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+zr-backend   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+zr-backend   | sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+zr-backend   |  Is the server running on that host and accepting TCP/IP connections?
+zr-backend   | 
+zr-backend   | (Background on this error at: https://sqlalche.me/e/20/e3q8)
+zr-backend exited with code 1 (restarting)
+zr-frontend  | 172.19.0.1 - - [29/Jun/2026:07:49:27 +0000] "GET / HTTP/1.1" 200 458 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" "-"
+zr-frontend  | 172.19.0.1 - - [29/Jun/2026:07:49:27 +0000] "GET /assets/index-BRZatQJo.js HTTP/1.1" 200 681514 "http://localhost/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" "-"
+zr-frontend  | 172.19.0.1 - - [29/Jun/2026:07:49:27 +0000] "GET /assets/index-DtCxYF6T.css HTTP/1.1" 200 14250 "http://localhost/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" "-"
+zr-frontend  | 172.19.0.1 - - [29/Jun/2026:07:49:27 +0000] "GET /favicon.svg HTTP/1.1" 200 9522 "http://localhost/login" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36" "-"
+^C
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ 
+(venv) [mani@maxim ZeroRespond]$ # Start the API for curl tests (can use Docker or dev server)
+BASE="http://localhost:8000"
+
+# First login to get token
+TOKEN=$(curl -s -X POST $BASE/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@hospital.in","password":"SecurePass123"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+# Check 1: Org profile GET and PUT
+curl -s -X PUT $BASE/org \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"name":"Test Hospital","dpo_name":"Dr. Test","dpo_email":"dpo@test.in","cert_in_email":"incident@cert-in.org.in"}' \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['name']=='Test Hospital'; print('✓ PUT /org works')"
+
+curl -s $BASE/org -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['dpo_name']=='Dr. Test'; print('✓ GET /org returns updated profile')"
+
+# Check 2: Playbooks seeded correctly
+COUNT=$(curl -s $BASE/playbooks -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; print(len(json.load(sys.stdin)))")
+[ "$COUNT" = "5" ] && echo "✓ 5 playbooks seeded" || echo "✗ Expected 5, got $COUNT"
+
+# Check 3: Each playbook has steps
+for TYPE in ransomware phishing unauthorized_access exfiltration insider; do
+  STEPS=$(curl -s "$BASE/playbooks/$TYPE" -H "Authorization: Bearer $TOKEN" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d['steps']))")
+  echo "✓ $TYPE playbook: $STEPS steps"
+done
+
+# Check 4: Case playbook endpoint
+curl -s "$BASE/cases/IR-20260623-0003/playbook" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['attack_type']=='ransomware'; print('✓ Case playbook returns correct playbook for breach type')"
+
+# Check 5: Complete a step
+STEP_ID=$(curl -s "$BASE/playbooks/ransomware" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['steps'][0]['id'])")
+
+curl -s -X POST "$BASE/cases/IR-20260623-0003/steps/$STEP_ID/complete" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['completed_at'] is not None; print('✓ Step completion works')"
+
+# Check 6: Idempotent step completion (second call returns same record)
+curl -s -X POST "$BASE/cases/IR-20260623-0003/steps/$STEP_ID/complete" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); assert d['playbook_step_id'] == $STEP_ID; print('✓ Step completion is idempotent')"
+
+# Check 7: Docker Compose stack starts cleanly
+docker compose ps
+echo "✓ All containers running — check manually"
+✓ PUT /org works
+✓ GET /org returns updated profile
+✓ 5 playbooks seeded
+✓ ransomware playbook: 7 steps
+✓ phishing playbook: 6 steps
+✓ unauthorized_access playbook: 6 steps
+✓ exfiltration playbook: 6 steps
+✓ insider playbook: 6 steps
+✓ Case playbook returns correct playbook for breach type
+✓ Step completion works
+✓ Step completion is idempotent
+WARN[0000] /home/mani/Projects/ZeroRespond/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+NAME          IMAGE                  COMMAND                  SERVICE    CREATED     STATUS                    PORTS
+zr-backend    zerorespond-backend    "./start.sh"             backend    About a minute ago   Up About a minute         0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+zr-frontend   zerorespond-frontend   "/docker-entrypoint.…"   frontend   11 minutes ago     Up 11 minutes             0.0.0.0:80->80/tcp, [::]:80->80/tcp
+zr-postgres   postgres:15-alpine     "docker-entrypoint.s…"   postgres   11 minutes ago     Up 11 minutes (healthy)   5432/tcp
+✓ All containers running — check manually
+(venv) [mani@maxim ZeroRespond]$ git add .
+git commit -m "feat: week 6 complete — org profile API, playbooks, playbook runner, Docker Compose"
+git tag v0.6.0-week6
+git push origin main --tags
+[main 2f45e40] feat: week 6 complete — org profile API, playbooks, playbook runner, Docker Compose
+ 8 files changed, 19 insertions(+), 7 deletions(-)
+Enumerating objects: 37, done.
+Counting objects: 100% (37/37), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (18/18), done.
+Writing objects: 100% (19/19), 1.77 KiB | 1.77 MiB/s, done.
+Total 19 (delta 16), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (16/16), completed with 16 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   115d6c7..2f45e40  main -> main
+ * [new tag]         v0.6.0-week6 -> v0.6.0-week6
+(venv) [mani@maxim ZeroRespond]$ 
