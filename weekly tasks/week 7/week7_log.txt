@@ -1,0 +1,144 @@
+[mani@maxim ZeroRespond]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[mani@maxim ZeroRespond]$ docker compose up -d
+WARN[0000] /home/mani/Projects/ZeroRespond/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+WARN[0000] volume "zr_pgdata" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume 
+[+] up 4/4
+ ✔ Network zr-network    Created                                                                                                                           0.0s
+ ✔ Container zr-postgres Healthy                                                                                                                          10.9s
+ ✔ Container zr-backend  Started                                                                                                                          11.0s
+ ✔ Container zr-frontend Started                                                                                                                          11.2s
+[mani@maxim ZeroRespond]$ docker ps
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS                    PORTS                                         NAMES
+c95ca5200712   zerorespond-frontend   "/docker-entrypoint.…"   14 seconds ago   Up 3 seconds              0.0.0.0:80->80/tcp, [::]:80->80/tcp           zr-frontend
+b646c08132cf   zerorespond-backend    "./start.sh"             14 seconds ago   Up 3 seconds              0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp   zr-backend
+51a0440bc8cd   postgres:15-alpine     "docker-entrypoint.s…"   14 seconds ago   Up 14 seconds (healthy)   5432/tcp                                      zr-postgres
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: evidence service — file upload validation, storage, deletion"
+[main d8fa5bc] feat: evidence service — file upload validation, storage, deletion
+ 4 files changed, 1345 insertions(+)
+ create mode 100644 backend/app/schemas/evidence.py
+ create mode 100644 backend/app/services/evidence_service.py
+ create mode 100644 weekly tasks/week 7/ZeroRespond_Week7_Tasks.md
+ create mode 100644 weekly tasks/week 7/week7_log.txt
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 17, done.
+Counting objects: 100% (17/17), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (11/11), done.
+Writing objects: 100% (11/11), 14.97 KiB | 7.48 MiB/s, done.
+Total 11 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   093e8dd..d8fa5bc  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ echo $TOKEN
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0IiwiZW1haWwiOiJhZG1pbkBob3NwaXRhbC5pbiIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc4MjgyMTY0NCwiaWF0IjoxNzgyNzkyODQ0fQ.cq7G9VGnf0-LPULW5vzAO9ppG3oVhfftBe5HnRWGquY
+[mani@maxim ZeroRespond]$ echo "Suspicious login attempts logged at 2026-06-29 02:15 AM from 203.0.113.42" > /tmp/test_evidence.log
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/cases/IR-20260623-0001/evidence \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "file=@/tmp/test_evidence.log" \
+  -F "description=Auth log excerpt showing brute force timestamps"
+# Expected: 201 with evidence object including id, filename, file_size
+{"id":2,"case_id":"IR-20260623-0001","filename":"test_evidence.log","description":"Auth log excerpt showing brute force timestamps","file_size":74,"uploaded_by":"admin@hospital.in","uploaded_at":"2026-06-30T04:25:07.619766Z"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/cases/IR-20260623-0001/evidence \
+  -H "Authorization: Bearer $TOKEN"
+# Expected: array with 1 item
+[{"id":2,"case_id":"IR-20260623-0001","filename":"test_evidence.log","description":"Auth log excerpt showing brute force timestamps","file_size":74,"uploaded_by":"admin@hospital.in","uploaded_at":"2026-06-30T04:25:07.619766Z"},{"id":1,"case_id":"IR-20260623-0001","filename":"test_evidence.log","description":"Auth log excerpt showing brute force timestamps","file_size":74,"uploaded_by":"admin@hospital.in","uploaded_at":"2026-06-30T04:24:36.265141Z"}][mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ curl http://localhost:8000/evidence/1/download \
+  -H "Authorization: Bearer $TOKEN" \
+  --output /tmp/downloaded_evidence.log
+diff /tmp/test_evidence.log /tmp/downloaded_evidence.log
+# Expected: no output (files identical)
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+100     74 100     74   0      0   8382      0                              0
+[mani@maxim ZeroRespond]$ echo "malicious" > /tmp/test.exe
+curl -X POST http://localhost:8000/cases/IR-20260623-0001/evidence \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "file=@/tmp/test.exe"
+# Expected: 400 "File type '.exe' not allowed..."
+{"detail":"File type '.exe' not allowed. Allowed types: .csv, .evtx, .jpeg, .jpg, .json, .log, .pcap, .pcapng, .pdf, .png, .txt, .zip"}[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ echo $ANALYST_TOKEN
+eyJ...
+[mani@maxim ZeroRespond]$ curl -X POST http://localhost:8000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "check@hospital.in",
+    "password": "CheckPass123"
+  }'
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJjaGVja0Bob3NwaXRhbC5pbiIsInJvbGUiOiJhbmFseXN0IiwiZXhwIjoxNzgyODIyMzk1LCJpYXQiOjE3ODI3OTM1OTV9.IVOOTMCPjPbP897K6jCB3y03zY4HLMkPMqlFOiNzQmw","token_type":"bearer","expires_in":28800}[mani@[mani@maxim ZeroRespond]$ ANALYST_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJjaGVja0Bob3NwaXRhbC5pbiIsInJvbGUiOiJhbmFseXN0IiwiZXhwIjoxNzgyODIyMzk1LCJpYXQiOjE3ODI3OTM1OTV9.IVOOTMCPjPbP897K6jCB3y03zY4HLMkPMqlFOiNzQmw"
+[mani@maxim ZeroRespond]$ echo $ANALYST_TOKEN
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwiZW1haWwiOiJjaGVja0Bob3NwaXRhbC5pbiIsInJvbGUiOiJhbmFseXN0IiwiZXhwIjoxNzgyODIyMzk1LCJpYXQiOjE3ODI3OTM1OTV9.IVOOTMCPjPbP897K6jCB3y03zY4HLMkPMqlFOiNzQmw
+[mani@maxim ZeroRespond]$ RESP=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE http://localhost:8000/evidence/1 \
+  -H "Authorization: Bearer $ANALYST_TOKEN")
+[ "$RESP" = "403" ] && echo "✓ Analyst blocked from deleting evidence" || echo "✗ Expected 403, got $RESP"
+✓ Analyst blocked from deleting evidence
+[mani@maxim ZeroRespond]$ find data/evidence -type f
+# Expected: data/evidence/IR-20260623-0001/<uuid>_test_evidence.log
+data/evidence/.gitkeep
+data/evidence/IR-20260623-0001/d704b24d_test_evidence.log
+data/evidence/IR-20260623-0001/75617f32_test_evidence.log
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: evidence router — upload, list, download,delete (admin-only delete)"
+[main 3700b2d] feat: evidence router — upload, list, download, delete (admin-only delete)
+ 2 files changed, 122 insertions(+), 1 deletion(-)
+ create mode 100644 backend/app/routers/evidence.py
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 12, done.
+Counting objects: 100% (12/12), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 1.73 KiB | 1.73 MiB/s, done.
+Total 7 (delta 5), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (5/5), completed with 5 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   d8fa5bc..3700b2d  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: evidence upload UI — drag/drop, file list, download, admin delete"
+[main ad2d2c7] feat: evidence upload UI — drag/drop, file list, download, admin delete
+ 4 files changed, 236 insertions(+), 1 deletion(-)
+ create mode 100644 frontend/src/components/evidence/EvidenceUpload.tsx
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 23, done.
+Counting objects: 100% (23/23), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (13/13), 3.79 KiB | 3.79 MiB/s, done.
+Total 13 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   3700b2d..ad2d2c7  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ sudo sysctl -w vm.max_map_count=262144
+[sudo] password for mani: 
+vm.max_map_count = 262144
+[mani@maxim ZeroRespond]$ echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
+vm.max_map_count=262144
+[mani@maxim ZeroRespond]$ sysctl vm.max_map_count
+vm.max_map_count = 262144
+[mani@maxim ZeroRespond]$ echo ".env" >> .gitignore
+echo "config/wazuh_indexer_ssl_certs/" >> .gitignore
+[mani@maxim ZeroRespond]$ chmod +x setup.sh
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "feat: containerize full stack — Wazuh (manager/indexer/dashboard) + Ollama via docker-compose"
+[main 427fc74] feat: containerize full stack — Wazuh (manager/indexer/dashboard) + Ollama via docker-compose
+ 9 files changed, 1032 insertions(+), 316 deletions(-)
+ create mode 100644 config/certs.yml
+ create mode 100644 config/wazuh_cluster/wazuh_manager.conf
+ create mode 100644 config/wazuh_dashboard/opensearch_dashboards.yml
+ create mode 100644 config/wazuh_indexer/wazuh.indexer.yml
+ create mode 100644 generate-indexer-certs.yml
+ create mode 100755 setup.sh
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 23, done.
+Counting objects: 100% (23/23), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (15/15), done.
+Writing objects: 100% (17/17), 23.73 KiB | 4.75 MiB/s, done.
+Total 17 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   ad2d2c7..427fc74  main -> main
+[mani@maxim ZeroRespond]$ 
