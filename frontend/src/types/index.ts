@@ -108,3 +108,13 @@ export interface PlaybookListItem {
   name: string;
   description: string | null;
 }
+
+export interface EvidenceItem {
+  id: number;
+  case_id: string;
+  filename: string;
+  description: string | null;
+  file_size: number | null;
+  uploaded_by: string | null;
+  uploaded_at: string;
+}

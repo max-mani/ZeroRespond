@@ -1,6 +1,6 @@
 // src/api/client.ts
 import axios from "axios";
-import type { CaseListItem, CaseDetail, CaseUpdate, AlertOut } from "../types";
+import type { CaseListItem, CaseDetail, CaseUpdate, AlertOut, EvidenceItem } from "../types";
 
 const TOKEN_KEY = "zr_access_token";
 
@@ -115,4 +115,30 @@ export const updateOrg = async (payload: {
 }) => {
   const { data } = await api.put("/org", payload);
   return data;
+};
+
+// ─── Evidence ────────────────────────────────────────────────────────────────
+
+export const getEvidence = async (caseId: string): Promise<EvidenceItem[]> => {
+  const { data } = await api.get(`/cases/${caseId}/evidence`);
+  return data;
+};
+
+export const uploadEvidence = async (
+  caseId: string,
+  file: File,
+  description?: string
+): Promise<EvidenceItem> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  if (description) formData.append("description", description);
+
+  const { data } = await api.post(`/cases/${caseId}/evidence`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+};
+
+export const deleteEvidenceFile = async (evidenceId: number): Promise<void> => {
+  await api.delete(`/evidence/${evidenceId}`);
 };

@@ -6,6 +6,7 @@ import { SeverityBadge, StatusBadge, BreachTypeBadge } from "./StatusBadge";
 import { formatDatetime } from "../utils/time";
 import type { CaseDetail as CaseDetailType, Status } from "../../types";
 import { generateReport } from "../../api/client";
+import EvidenceUpload from "../evidence/EvidenceUpload";
 import { FileText } from "lucide-react";
 import { BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -266,6 +267,9 @@ export default function CaseDetail({ caseData: c }: Props) {
           <span className="ml-3 text-xs text-green-400">Saved successfully</span>
         )}
       </div>
+
+      {/* Evidence Upload */}
+      <EvidenceUpload caseId={c.id} />
     </div>
   );
 }
