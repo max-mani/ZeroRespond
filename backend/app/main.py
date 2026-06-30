@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import IntegrityError
 from app.services.alert_queue import queue_worker
-from app.routers import alerts, cases, auth, reports, org, playbooks
+from app.routers import alerts, cases, auth, reports, org, playbooks, evidence
 
 logging.basicConfig(
     level=logging.INFO,
@@ -78,6 +78,8 @@ app.include_router(reports.router)
 app.include_router(org.router)
 app.include_router(playbooks.router)
 app.include_router(playbooks.cases_router)
+app.include_router(evidence.cases_evidence_router)
+app.include_router(evidence.evidence_router)
 
 @app.get("/health", tags=["System"])
 async def health_check():
