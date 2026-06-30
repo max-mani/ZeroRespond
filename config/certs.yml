@@ -1,0 +1,8 @@
+# config/certs.yml — defines the node names that need certs
+nodes:
+  indexer:
+    - name: wazuh.indexer
+  server:
+    - name: wazuh.manager
+  dashboard:
+    - name: wazuh.dashboard

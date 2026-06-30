@@ -1,6 +1,4 @@
 # docker-compose.yml
-version: "3.9"
-
 services:
 
   # ─── PostgreSQL Database ─────────────────────────────────────────────────
@@ -8,18 +6,49 @@ services:
     image: postgres:15-alpine
     container_name: zr-postgres
     environment:
-      POSTGRES_DB:       zerorespondnd
-      POSTGRES_USER:     zr
-      POSTGRES_PASSWORD: secret
+      POSTGRES_DB:       ${POSTGRES_DB}
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - zr_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U zr -d zerorespondnd"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - zr-network
+    restart: unless-stopped
+
+  # ─── Ollama — local AI inference, air-gapped ──────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: zr-ollama
+    volumes:
+      - zr_ollama_data:/root/.ollama
+    networks:
+      - zr-network
+    restart: unless-stopped
+    # GPU passthrough (uncomment if the deployment host has an NVIDIA GPU):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Pulls the model once on first boot, then exits. Backend retries until ready.
+  ollama-model-init:
+    image: ollama/ollama:latest
+    container_name: zr-ollama-init
+    depends_on:
+      - ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["sleep 5 && OLLAMA_HOST=http://ollama:11434 ollama pull ${OLLAMA_MODEL}"]
+    networks:
+      - zr-network
+    restart: "no"
 
   # ─── FastAPI Backend ─────────────────────────────────────────────────────
   backend:
@@ -28,18 +57,20 @@ services:
       dockerfile: Dockerfile
     container_name: zr-backend
     environment:
-      DATABASE_URL: postgresql://zr:secret@postgres:5432/zerorespondnd
-      OLLAMA_URL:   http://host.docker.internal:11434   # Ollama runs on host
-      OLLAMA_MODEL: qwen2.5:7b
-      SECRET_KEY:   change-this-to-a-secure-random-string-in-production
-      ENVIRONMENT:  production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      OLLAMA_URL:   http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL}
+      SECRET_KEY:   ${SECRET_KEY}
+      ENVIRONMENT:  ${ENVIRONMENT}
     volumes:
-      - ./data/reports:/data/reports         # DPDP PDFs
-      - ./data/evidence:/data/evidence       # Evidence uploads
-      - ./backend/templates:/app/templates   # Jinja2 templates
+      - ./data/reports:/data/reports
+      - ./data/evidence:/data/evidence
+      - ./backend/templates:/app/templates
     depends_on:
       postgres:
         condition: service_healthy
+      ollama:
+        condition: service_started
     ports:
       - "8000:8000"
     networks:
@@ -60,10 +91,157 @@ services:
       - zr-network
     restart: unless-stopped
 
+  # ─── Wazuh Manager ─────────────────────────────────────────────────────────
+  wazuh.manager:
+    image: wazuh/wazuh-manager:4.14.5
+    hostname: wazuh.manager
+    container_name: zr-wazuh-manager
+    restart: unless-stopped
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 655360
+        hard: 655360
+    ports:
+      - "1514:1514"
+      - "1515:1515"
+      - "514:514/udp"
+      - "55000:55000"
+    environment:
+      INDEXER_URL: https://wazuh.indexer:9200
+      INDEXER_USERNAME: ${INDEXER_USERNAME}
+      INDEXER_PASSWORD: ${INDEXER_PASSWORD}
+      FILEBEAT_SSL_VERIFICATION_MODE: full
+      SSL_CERTIFICATE_AUTHORITIES: /etc/ssl/root-ca.pem
+      SSL_CERTIFICATE: /etc/ssl/filebeat.pem
+      SSL_KEY: /etc/ssl/filebeat.key
+      API_USERNAME: ${WAZUH_API_USER}
+      API_PASSWORD: ${WAZUH_API_PASSWORD}
+    volumes:
+      - wazuh_api_configuration:/var/ossec/api/configuration
+      - wazuh_etc:/var/ossec/etc
+      - wazuh_logs:/var/ossec/logs
+      - wazuh_queue:/var/ossec/queue
+      - wazuh_var_multigroups:/var/ossec/var/multigroups
+      - wazuh_integrations:/var/ossec/integrations
+      - wazuh_active_response:/var/ossec/active-response/bin
+      - wazuh_agentless:/var/ossec/agentless
+      - wazuh_wodles:/var/ossec/wodles
+      - ./config/wazuh_indexer_ssl_certs/root-ca-manager.pem:/etc/ssl/root-ca.pem
+      - ./config/wazuh_indexer_ssl_certs/wazuh.manager.pem:/etc/ssl/filebeat.pem
+      - ./config/wazuh_indexer_ssl_certs/wazuh.manager-key.pem:/etc/ssl/filebeat.key
+      - ./config/wazuh_cluster/wazuh_manager.conf:/wazuh-config-mount/etc/ossec.conf
+    depends_on:
+      - wazuh.indexer
+    networks:
+      - zr-network
+
+  # ─── Wazuh Indexer (OpenSearch) ─────────────────────────────────────────────
+  wazuh.indexer:
+    image: wazuh/wazuh-indexer:4.14.5
+    hostname: wazuh.indexer
+    container_name: zr-wazuh-indexer
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+    environment:
+      OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: ${INDEXER_PASSWORD}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - zr_wazuh_indexer_data:/var/lib/wazuh-indexer
+      - ./config/wazuh_indexer_ssl_certs/root-ca.pem:/usr/share/wazuh-indexer/certs/root-ca.pem
+      - ./config/wazuh_indexer_ssl_certs/wazuh.indexer-key.pem:/usr/share/wazuh-indexer/certs/wazuh-indexer-key.pem
+      - ./config/wazuh_indexer_ssl_certs/wazuh.indexer.pem:/usr/share/wazuh-indexer/certs/wazuh-indexer.pem
+      - ./config/wazuh_indexer_ssl_certs/admin.pem:/usr/share/wazuh-indexer/certs/admin.pem
+      - ./config/wazuh_indexer_ssl_certs/admin-key.pem:/usr/share/wazuh-indexer/certs/admin-key.pem
+      - ./config/wazuh_indexer/wazuh.indexer.yml:/usr/share/wazuh-indexer/opensearch.yml
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sk https://localhost:9200 -u ${INDEXER_USERNAME}:${INDEXER_PASSWORD} | grep -q 'wazuh-indexer'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - zr-network
+
+  # ─── Wazuh Dashboard ─────────────────────────────────────────────────────────
+  wazuh.dashboard:
+    image: wazuh/wazuh-dashboard:4.14.5
+    hostname: wazuh.dashboard
+    container_name: zr-wazuh-dashboard
+    restart: unless-stopped
+    ports:
+      - "8443:5601"     # exposed on 8443 to avoid colliding with ZeroRespond frontend on 80/443
+    environment:
+      INDEXER_USERNAME: ${INDEXER_USERNAME}
+      INDEXER_PASSWORD: ${INDEXER_PASSWORD}
+      WAZUH_API_URL: https://wazuh.manager
+      DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
+      DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
+      API_USERNAME: ${WAZUH_API_USER}
+      API_PASSWORD: ${WAZUH_API_PASSWORD}
+    volumes:
+      - ./config/wazuh_indexer_ssl_certs/wazuh.dashboard.pem:/usr/share/wazuh-dashboard/certs/wazuh-dashboard.pem
+      - ./config/wazuh_indexer_ssl_certs/wazuh.dashboard-key.pem:/usr/share/wazuh-dashboard/certs/wazuh-dashboard-key.pem
+      - ./config/wazuh_indexer_ssl_certs/root-ca.pem:/usr/share/wazuh-dashboard/certs/root-ca.pem
+      - ./config/wazuh_dashboard/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
+      - wazuh_dashboard_config:/usr/share/wazuh-dashboard/data/wazuh/config
+      - wazuh_dashboard_custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom
+    depends_on:
+      wazuh.indexer:
+        condition: service_healthy
+    links:
+      - wazuh.indexer:wazuh.indexer
+      - wazuh.manager:wazuh.manager
+    networks:
+      - zr-network
+
+  # ─── Alert Processor — bridges Wazuh alerts.json → ZeroRespond API ─────────
+  alert-processor:
+    build:
+      context: ./alert-processor
+      dockerfile: Dockerfile
+    container_name: zr-alert-processor
+    environment:
+      ZERORESPOND_API_URL: http://backend:8000
+      ZERORESPOND_API_TOKEN: ${ZERORESPOND_API_TOKEN}
+      WAZUH_ALERTS_LOG: /wazuh-logs/alerts.json
+    volumes:
+      - wazuh_logs:/wazuh-logs:ro
+    depends_on:
+      - backend
+      - wazuh.manager
+    networks:
+      - zr-network
+    restart: unless-stopped
+
 # ─── Volumes ──────────────────────────────────────────────────────────────────
 volumes:
   zr_pgdata:
     name: zr_pgdata
+  zr_ollama_data:
+    name: zr_ollama_data
+  zr_wazuh_indexer_data:
+    name: zr_wazuh_indexer_data
+  wazuh_api_configuration:
+  wazuh_etc:
+  wazuh_logs:
+  wazuh_queue:
+  wazuh_var_multigroups:
+  wazuh_integrations:
+  wazuh_active_response:
+  wazuh_agentless:
+  wazuh_wodles:
+  wazuh_dashboard_config:
+  wazuh_dashboard_custom:
 
 # ─── Networks ─────────────────────────────────────────────────────────────────
 networks:

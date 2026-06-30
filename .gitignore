@@ -26,4 +26,5 @@ data/reports/*
 .idea/
 *.DS_Store
 
-*.pdf
+*.pdf.env
+config/wazuh_indexer_ssl_certs/
