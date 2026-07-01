@@ -142,3 +142,571 @@ remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
 To https://github.com/max-mani/ZeroRespond.git
    ad2d2c7..427fc74  main -> main
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m"Updated the Week 7 Log file till Day 4"
+[main a65ac21] Updated the Week 7 Log file till Day 4
+ 1 file changed, 144 insertions(+)
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 3.14 KiB | 3.14 MiB/s, done.
+Total 5 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   427fc74..a65ac21  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ rm -rf config/wazuh_indexer_ssl_certs/*
+./setup.sh
+ls config/wazuh_indexer_ssl_certs/
+=== ZeroRespond Setup ===
+[1/3] Checking vm.max_map_count (required by Wazuh indexer)...
+  OK — vm.max_map_count is 262144
+[2/3] Generating Wazuh TLS certificates (one-time)...
+Container zerorespond-generator-run-87d054345bb8 Creating 
+Container zerorespond-generator-run-87d054345bb8 Created 
+Checking https://packages.wazuh.com/4.14/wazuh-certs-tool.sh ...
+Downloaded wazuh-certs-tool.sh from https://packages.wazuh.com/4.14/
+30/06/2026 08:30:36 INFO: Verbose logging redirected to //wazuh-certificates-tool.log
+30/06/2026 08:30:36 INFO: Generating the root certificate.
+30/06/2026 08:30:36 INFO: Generating Admin certificates.
+30/06/2026 08:30:37 INFO: Admin certificates created.
+30/06/2026 08:30:37 INFO: Generating Wazuh indexer certificates.
+30/06/2026 08:30:37 INFO: Wazuh indexer certificates created.
+30/06/2026 08:30:37 INFO: Generating Filebeat certificates.
+30/06/2026 08:30:37 INFO: Wazuh Filebeat certificates created.
+30/06/2026 08:30:37 INFO: Generating Wazuh dashboard certificates.
+30/06/2026 08:30:37 INFO: Wazuh dashboard certificates created.
+Moving created certificates to the destination directory
+Changing certificate permissions
+Setting UID indexer and dashboard
+Setting UID for wazuh manager and worker
+cp: cannot create regular file 'config/wazuh_indexer_ssl_certs/root-ca-manager.pem': Permission denied
+admin-key.pem  root-ca-manager.key  wazuh.dashboard-key.pem  wazuh.indexer.pem
+admin.pem      root-ca-manager.pem  wazuh.dashboard.pem      wazuh.manager-key.pem
+root-ca.key    root-ca.pem          wazuh.indexer-key.pem    wazuh.manager.pem
+[mani@maxim ZeroRespond]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[mani@maxim ZeroRespond]$ docker ps -al
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[mani@maxim ZeroRespond]$ docker compose up -d postgres ollama ollama-model-init backend frontend wazuh.indexer wazuh.manager wazuh.dashboard
+docker compose ps
+[+] up 48/50
+ ✔ Image wazuh/wazuh-manager:4.14.5                    Pulled                    1558.7s
+[+] up 71/71ama/ollama:latest [⣿⣿⣿⣿] 3.252GB / 3.254GB Pulling                   2325.6s
+ ✔ Image wazuh/wazuh-manager:4.14.5          Pulled                              1558.7s
+ ✔ Image ollama/ollama:latest                Pulled                              2325.6s
+ ✔ Image wazuh/wazuh-dashboard:4.14.5        Pulled                               756.0s
+ ✔ Image wazuh/wazuh-indexer:4.14.5          Pulled                              1883.4s
+ ✔ Volume zerorespond_wazuh_var_multigroups  Created                                0.0s
+ ✔ Volume zerorespond_wazuh_logs             Created                                0.0s
+ ✔ Volume zerorespond_wazuh_dashboard_config Created                                0.0s
+ ✔ Volume zerorespond_wazuh_etc              Created                                0.0s
+ ✔ Volume zerorespond_wazuh_queue            Created                                0.0s
+ ✔ Volume zerorespond_wazuh_wodles           Created                                0.0s
+ ✔ Volume zerorespond_wazuh_active_response  Created                                0.0s
+ ✔ Volume zr_wazuh_indexer_data              Created                                0.0s
+ ✔ Volume zerorespond_wazuh_agentless        Created                                0.0s
+ ... 12 more                                                                            
+dependency failed to start: container zr-wazuh-indexer is unhealthy
+NAME               IMAGE                        COMMAND                  SERVICE             CREATED         STATUS                     PORTS
+zr-backend         zerorespond-backend          "./start.sh"             backend             2 minutes ago   Up 2 minutes               0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+zr-frontend        zerorespond-frontend         "/docker-entrypoint.…"   frontend            2 minutes ago   Up 2 minutes               0.0.0.0:80->80/tcp, [::]:80->80/tcp
+zr-ollama          ollama/ollama:latest         "/bin/ollama serve"      ollama              2 minutes ago   Up 2 minutes               11434/tcp
+zr-ollama-init     ollama/ollama:latest         "/bin/sh -c 'sleep 5…"   ollama-model-init   2 minutes ago   Up 2 minutes               11434/tcp
+zr-postgres        postgres:15-alpine           "docker-entrypoint.s…"   postgres            2 minutes ago   Up 2 minutes (healthy)     5432/tcp
+zr-wazuh-indexer   wazuh/wazuh-indexer:4.14.5   "/entrypoint.sh open…"   wazuh.indexer       2 minutes ago   Up 2 minutes (unhealthy)   0.0.0.0:9200->9200/tcp, [::]:9200->9200/tcp
+zr-wazuh-manager   wazuh/wazuh-manager:4.14.5   "/init"                  wazuh.manager       2 minutes ago   Up 2 minutes               0.0.0.0:1514-1515->1514-1515/tcp, [::]:1514-1515->1514-1515/tcp, 0.0.0.0:514->514/udp, [::]:514->514/udp, 0.0.0.0:55000->55000/tcp, [::]:55000->55000/tcp, 1516/tcp
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ docker compose logs -f wazuh.manager
+zr-wazuh-manager  | [s6-init] making user provided files available at /var/run/s6/etc...exited 0.
+zr-wazuh-manager  | [s6-init] ensuring user provided files have correct perms...exited 0.
+zr-wazuh-manager  | [fix-attrs.d] applying ownership & permissions fixes...
+zr-wazuh-manager  | [fix-attrs.d] done.
+zr-wazuh-manager  | [cont-init.d] executing container initialization scripts...
+zr-wazuh-manager  | [cont-init.d] 0-wazuh-init: executing... 
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/api/configuration/
+zr-wazuh-manager  | The path /var/ossec/api/configuration is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/etc/
+zr-wazuh-manager  | The path /var/ossec/etc is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/logs/
+zr-wazuh-manager  | The path /var/ossec/logs is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/queue/
+zr-wazuh-manager  | The path /var/ossec/queue is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/agentless/
+zr-wazuh-manager  | The path /var/ossec/agentless is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/var/multigroups/
+zr-wazuh-manager  | Installing /var/ossec/var/multigroups
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/integrations/
+zr-wazuh-manager  | The path /var/ossec/integrations is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/active-response/bin/
+zr-wazuh-manager  | The path /var/ossec/active-response/bin is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/var/ossec/wodles/
+zr-wazuh-manager  | The path /var/ossec/wodles is already mounted
+zr-wazuh-manager  | /var/ossec/data_tmp/permanent/etc/filebeat/
+zr-wazuh-manager  | The path /etc/filebeat is already mounted
+zr-wazuh-manager  | Updating /var/ossec/etc/internal_options.conf
+zr-wazuh-manager  | Updating /var/ossec/integrations/slack
+zr-wazuh-manager  | Updating /var/ossec/integrations/slack.py
+zr-wazuh-manager  | Updating /var/ossec/integrations/virustotal
+zr-wazuh-manager  | Updating /var/ossec/integrations/virustotal.py
+zr-wazuh-manager  | Updating /var/ossec/integrations/shuffle
+zr-wazuh-manager  | Updating /var/ossec/integrations/shuffle.py
+zr-wazuh-manager  | Updating /var/ossec/integrations/pagerduty
+zr-wazuh-manager  | Updating /var/ossec/integrations/pagerduty.py
+zr-wazuh-manager  | Updating /var/ossec/integrations/maltiverse
+zr-wazuh-manager  | Updating /var/ossec/integrations/maltiverse.py
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/default-firewall-drop
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/disable-account
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/firewalld-drop
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/firewall-drop
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/host-deny
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/ip-customblock
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/ipfw
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/kaspersky.py
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/kaspersky
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/npf
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/wazuh-slack
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/pf
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/restart-wazuh
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/restart.sh
+zr-wazuh-manager  | Updating /var/ossec/active-response/bin/route-null
+zr-wazuh-manager  | Updating /var/ossec/agentless/sshlogin.exp
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_pixconfig_diff
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_asa-fwsmconfig_diff
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_integrity_check_bsd
+zr-wazuh-manager  | Updating /var/ossec/agentless/main.exp
+zr-wazuh-manager  | Updating /var/ossec/agentless/su.exp
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_integrity_check_linux
+zr-wazuh-manager  | Updating /var/ossec/agentless/register_host.sh
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_generic_diff
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_foundry_diff
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh_nopass.exp
+zr-wazuh-manager  | Updating /var/ossec/agentless/ssh.exp
+zr-wazuh-manager  | Updating /var/ossec/wodles/utils.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/aws-s3
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/aws-s3.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/__init__.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/aws_tools.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/wazuh_integration.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/__init__.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/aws_bucket.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/cloudtrail.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/config.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/guardduty.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/load_balancers.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/server_access.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/umbrella.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/vpcflow.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/buckets_s3/waf.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/services/__init__.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/services/aws_service.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/services/cloudwatchlogs.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/services/inspector.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/subscribers/__init__.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/subscribers/s3_log_handler.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/subscribers/sqs_message_processor.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/aws/subscribers/sqs_queue.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure-logs
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure-logs.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/db/orm.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/db/utils.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/db/__init__.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure_utils.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure_services/__init__.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure_services/analytics.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure_services/graph.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/azure/azure_services/storage.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/docker/DockerListener
+zr-wazuh-manager  | Updating /var/ossec/wodles/docker/DockerListener.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/gcloud
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/gcloud.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/integration.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/tools.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/exceptions.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/buckets/bucket.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/buckets/access_logs.py
+zr-wazuh-manager  | Updating /var/ossec/wodles/gcloud/pubsub/subscriber.py
+zr-wazuh-manager  | Updating /var/ossec/etc/lists/malicious-ioc/malicious-ip
+zr-wazuh-manager  | Updating /var/ossec/etc/lists/malicious-ioc/malicious-domains
+zr-wazuh-manager  | Updating /var/ossec/etc/lists/malicious-ioc/malware-hashes
+zr-wazuh-manager  | Updating /etc/filebeat/wazuh-template.json
+zr-wazuh-manager  | Updating /etc/filebeat/filebeat.yml
+zr-wazuh-manager  | find: '/proc/397/task/397/fd/6': No such file or directory
+zr-wazuh-manager  | find: '/proc/397/task/397/fdinfo/6': No such file or directory
+zr-wazuh-manager  | find: '/proc/397/fd/5': No such file or directory
+zr-wazuh-manager  | find: '/proc/397/fdinfo/5': No such file or directory
+zr-wazuh-manager  | find: '/proc/398/task/398/fd/6': No such file or directory
+zr-wazuh-manager  | find: '/proc/398/task/398/fdinfo/6': No such file or directory
+zr-wazuh-manager  | find: '/proc/398/fd/5': No such file or directory
+zr-wazuh-manager  | find: '/proc/398/fdinfo/5': No such file or directory
+zr-wazuh-manager  | find: '/proc/399/task/399/fd/6': No such file or directory
+zr-wazuh-manager  | find: '/proc/399/task/399/fdinfo/6': No such file or directory
+zr-wazuh-manager  | find: '/proc/399/fd/5': No such file or directory
+zr-wazuh-manager  | find: '/proc/399/fdinfo/5': No such file or directory
+zr-wazuh-manager  | Identified Wazuh configuration files to mount...
+zr-wazuh-manager  | '/wazuh-config-mount/etc/ossec.conf' -> '/var/ossec/etc/ossec.conf'
+zr-wazuh-manager  | [cont-init.d] 0-wazuh-init: exited 0.
+zr-wazuh-manager  | [cont-init.d] 1-config-filebeat: executing... 
+zr-wazuh-manager  | Customize Elasticsearch output IP
+zr-wazuh-manager  | Configuring username.
+zr-wazuh-manager  | Configuring password.
+zr-wazuh-manager  | Configuring SSL verification mode.
+zr-wazuh-manager  | Configuring Certificate Authorities.
+zr-wazuh-manager  | Configuring SSL Certificate.
+zr-wazuh-manager  | Configuring SSL Key.
+zr-wazuh-manager  | [cont-init.d] 1-config-filebeat: exited 0.
+zr-wazuh-manager  | [cont-init.d] 2-manager: executing... 
+zr-wazuh-manager  | Configuring password.
+zr-wazuh-manager  | 2026/07/01 04:24:32 wazuh-modulesd:router: INFO: Loaded router module.
+zr-wazuh-manager  | 2026/07/01 04:24:32 wazuh-modulesd:content_manager: INFO: Loaded content_manager module.
+zr-wazuh-manager  | 2026/07/01 04:24:32 wazuh-modulesd:inventory-harvester: INFO: Loaded Inventory harvester module.
+zr-wazuh-manager  | Starting Wazuh v4.14.5...
+zr-wazuh-manager  | Started wazuh-apid...
+zr-wazuh-manager  | Started wazuh-csyslogd...
+zr-wazuh-manager  | Started wazuh-dbd...
+zr-wazuh-manager  | 2026/07/01 04:24:34 wazuh-integratord: INFO: Remote integrations not configured. Clean exit.
+zr-wazuh-manager  | Started wazuh-integratord...
+zr-wazuh-manager  | Started wazuh-agentlessd...
+zr-wazuh-manager  | Started wazuh-authd...
+zr-wazuh-manager  | Started wazuh-db...
+zr-wazuh-manager  | Started wazuh-execd...
+zr-wazuh-manager  | Started wazuh-analysisd...
+zr-wazuh-manager  | Started wazuh-syscheckd...
+zr-wazuh-manager  | Started wazuh-remoted...
+zr-wazuh-manager  | Started wazuh-logcollector...
+zr-wazuh-manager  | Started wazuh-monitord...
+zr-wazuh-manager  | 2026/07/01 04:24:38 wazuh-modulesd:router: INFO: Loaded router module.
+zr-wazuh-manager  | 2026/07/01 04:24:38 wazuh-modulesd:content_manager: INFO: Loaded content_manager module.
+zr-wazuh-manager  | 2026/07/01 04:24:38 wazuh-modulesd:inventory-harvester: INFO: Loaded Inventory harvester module.
+zr-wazuh-manager  | Started wazuh-modulesd...
+zr-wazuh-manager  | Completed.
+zr-wazuh-manager  | [cont-init.d] 2-manager: exited 0.
+zr-wazuh-manager  | [cont-init.d] done.
+zr-wazuh-manager  | [services.d] starting services
+zr-wazuh-manager  | starting Filebeat
+zr-wazuh-manager  | 2026/07/01 04:24:39 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-hotfixes-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-hardware-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-protocols-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-interfaces-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-networks-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-users-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-groups-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-browser-extensions-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 indexer-connector: WARNING: IndexerConnector initialization failed for index 'wazuh-states-inventory-services-wazuh.manager', retrying until the connection is successful.
+zr-wazuh-manager  | 2026/07/01 04:24:40 logger-helper: INFO: InventoryHarvesterFacade module started.
+zr-wazuh-manager  | [services.d] done.
+zr-wazuh-manager  | 2026-07-01T04:24:42.043Z    INFO    instance/beat.go:645    Home path: [/usr/share/filebeat] Config path: [/etc/filebeat] Data path: [/var/lib/filebeat] Logs path: [/var/log/filebeat]
+zr-wazuh-manager  | 2026-07-01T04:24:42.047Z    INFO    instance/beat.go:653    Beat ID: dbe5cb8f-8f7f-403e-b57c-7e1b2909cbb7
+zr-wazuh-manager  | 2026-07-01T04:24:42.048Z    INFO    [seccomp]       seccomp/seccomp.go:124  Syscall filter successfully installed
+zr-wazuh-manager  | 2026-07-01T04:24:42.048Z    INFO    [beat]  instance/beat.go:981    Beat info       {"system_info": {"beat": {"path": {"config": "/etc/filebeat", "data": "/var/lib/filebeat", "home": "/usr/share/filebeat", "logs": "/var/log/filebeat"}, "type": "filebeat", "uuid": "dbe5cb8f-8f7f-403e-b57c-7e1b2909cbb7"}}}
+zr-wazuh-manager  | 2026-07-01T04:24:42.048Z    INFO    [beat]  instance/beat.go:990    Build info      {"system_info": {"build": {"commit": "aacf9ecd9c494aa0908f61fbca82c906b16562a8", "libbeat": "7.10.2", "time": "2025-10-17T12:05:34.000Z", "version": "7.10.2"}}}
+zr-wazuh-manager  | 2026-07-01T04:24:42.048Z    INFO    [beat]  instance/beat.go:993    Go runtime info {"system_info": {"go": {"os":"linux","arch":"amd64","max_procs":16,"version":"go1.14.12"}}}
+zr-wazuh-manager  | 2026-07-01T04:24:42.050Z    INFO    [beat]  instance/beat.go:997    Host info       {"system_info": {"host": {"architecture":"x86_64","boot_time":"2026-07-01T03:30:52Z","containerized":false,"name":"wazuh.manager","ip":["127.0.0.1/8","::1/128","172.19.0.5/16"],"kernel_version":"7.0.12-arch1-1","mac":["0a:3d:39:67:65:50"],"os":{"family":"redhat","platform":"amzn","name":"Amazon Linux","version":"2023","major":2023,"minor":11,"patch":20260526},"timezone":"UTC","timezone_offset_sec":0}}}
+zr-wazuh-manager  | 2026-07-01T04:24:42.050Z    INFO    [beat]  instance/beat.go:1026   Process info    {"system_info": {"process": {"capabilities": {"inheritable":null,"permitted":["chown","dac_override","fowner","fsetid","kill","setgid","setuid","setpcap","net_bind_service","net_raw","sys_chroot","mknod","audit_write","setfcap"],"effective":["chown","dac_override","fowner","fsetid","kill","setgid","setuid","setpcap","net_bind_service","net_raw","sys_chroot","mknod","audit_write","setfcap"],"bounding":["chown","dac_override","fowner","fsetid","kill","setgid","setuid","setpcap","net_bind_service","net_raw","sys_chroot","mknod","audit_write","setfcap"],"ambient":null}, "cwd": "/run/s6/services/filebeat", "exe": "/usr/share/filebeat/bin/filebeat", "name": "filebeat", "pid": 2091, "ppid": 2088, "seccomp": {"mode":"filter","no_new_privs":true}, "start_time": "2026-07-01T04:24:41.170Z"}}}
+zr-wazuh-manager  | 2026-07-01T04:24:42.050Z    INFO    instance/beat.go:299    Setup Beat: filebeat; Version: 7.10.2
+zr-wazuh-manager  | 2026-07-01T04:24:42.051Z    INFO    eslegclient/connection.go:99    elasticsearch url: https://wazuh.indexer:9200
+zr-wazuh-manager  | 2026-07-01T04:24:42.051Z    INFO    [publisher]     pipeline/module.go:113  Beat name: wazuh.manager
+zr-wazuh-manager  | 2026-07-01T04:24:42.052Z    INFO    beater/filebeat.go:117  Enabled modules/filesets: wazuh (alerts),  ()
+zr-wazuh-manager  | 2026-07-01T04:24:42.053Z    INFO    instance/beat.go:455    filebeat start running.
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    memlog/store.go:119     Loading data file of '/var/lib/filebeat/registry/filebeat' succeeded. Active transaction id=0
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    memlog/store.go:124     Finished loading transaction log file for '/var/lib/filebeat/registry/filebeat'. Active transaction id=0
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    [registrar]     registrar/registrar.go:109      States Loaded from registrar: 0
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    [crawler]       beater/crawler.go:71    Loading Inputs: 1
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    log/input.go:157        Configured paths: [/var/ossec/logs/alerts/alerts.json]
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    [crawler]       beater/crawler.go:141   Starting input (ID: 9132358592892857476)
+zr-wazuh-manager  | 2026-07-01T04:24:42.056Z    INFO    [crawler]       beater/crawler.go:108   Loading and starting Inputs completed. Enabled inputs: 1
+zr-wazuh-manager  | 2026-07-01T04:24:42.057Z    INFO    log/harvester.go:302    Harvester started for file: /var/ossec/logs/alerts/alerts.json
+zr-wazuh-manager  | 2026/07/01 04:24:51 sca: INFO: Evaluation finished for policy '/var/ossec/ruleset/sca/cis_amazon_linux_2023.yml'
+zr-wazuh-manager  | 2026/07/01 04:24:51 sca: INFO: Security Configuration Assessment scan finished. Duration: 13 seconds.
+zr-wazuh-manager  | 2026-07-01T04:24:58.058Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:24:58.058Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:24:58.058Z    INFO    [publisher_pipeline_output]     pipeline/output.go:143  Connecting to backoff(elasticsearch(https://wazuh.indexer:9200))
+zr-wazuh-manager  | 2026-07-01T04:24:58.461Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:24:59.490Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:24:59.490Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 1 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:24:59.490Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:24:59.491Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026/07/01 04:25:02 wazuh-syscheckd: INFO: netstat not available. Skipping port check.
+zr-wazuh-manager  | 2026-07-01T04:25:02.481Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": dial tcp 172.19.0.3:9200: connect: connection refused
+zr-wazuh-manager  | 2026-07-01T04:25:02.481Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 2 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:25:02.482Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:25:02.482Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026/07/01 04:25:07 rootcheck: INFO: Ending rootcheck scan.
+zr-wazuh-manager  | 2026-07-01T04:25:09.018Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": dial tcp 172.19.0.3:9200: connect: connection refused
+zr-wazuh-manager  | 2026-07-01T04:25:09.018Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 3 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:25:09.018Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:25:09.018Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:25:09.467Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:25:20.222Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:25:20.222Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 4 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:25:20.222Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:25:20.222Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:25:20.451Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026/07/01 04:25:23 wazuh-modulesd:vulnerability-scanner: INFO: Database decompression finished.
+zr-wazuh-manager  | 2026/07/01 04:25:23 wazuh-modulesd:vulnerability-scanner: INFO: Vulnerability scanner module started.
+zr-wazuh-manager  | 2026-07-01T04:25:39.132Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:25:39.132Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 5 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:25:39.132Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:25:39.132Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:25:40.022Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:26:29.879Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:26:29.879Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 6 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:26:29.879Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:26:29.879Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:26:31.289Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:27:27.841Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:27:27.841Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 7 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:27:27.842Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:27:27.842Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:27:28.673Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:28:21.625Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:28:21.625Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 8 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:28:21.625Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:28:21.625Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:28:21.917Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:29:19.160Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:29:19.160Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 9 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:29:19.160Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:29:19.160Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:29:19.297Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:29:49.702Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:29:49.702Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 10 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:29:49.702Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:29:49.702Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:29:50.090Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:30:24.070Z    INFO    log/harvester.go:333    File is inactive: /var/ossec/logs/alerts/alerts.json. Closing because close_inactive of 5m0s reached.
+zr-wazuh-manager  | 2026-07-01T04:30:40.035Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:30:40.035Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 11 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:30:40.035Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:30:40.035Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:30:40.336Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026/07/01 04:31:01 wazuh-modulesd:content-updater: WARNING: Offset processing failed. Triggered a snapshot download.
+zr-wazuh-manager  | 2026-07-01T04:31:29.034Z    ERROR   [publisher_pipeline_output]     pipeline/output.go:154  Failed to connect to backoff(elasticsearch(https://wazuh.indexer:9200)): Get "https://wazuh.indexer:9200": lookup wazuh.indexer on 127.0.0.11:53: no such host
+zr-wazuh-manager  | 2026-07-01T04:31:29.034Z    INFO    [publisher_pipeline_output]     pipeline/output.go:145  Attempting to reconnect to backoff(elasticsearch(https://wazuh.indexer:9200)) with 12 reconnect attempt(s)
+zr-wazuh-manager  | 2026-07-01T04:31:29.034Z    INFO    [publisher]     pipeline/retry.go:219   retryer: send unwait signal to consumer
+zr-wazuh-manager  | 2026-07-01T04:31:29.034Z    INFO    [publisher]     pipeline/retry.go:223     done
+zr-wazuh-manager  | 2026-07-01T04:31:29.371Z    WARN    [transport]     transport/tcp.go:52     DNS lookup failure "wazuh.indexer": lookup wazuh.indexer on 127.0.0.11:53: no such host
+^C
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ docker compose exec wazuh.manager bash -c \
+  "for i in {1..6}; do echo 'Failed password for invalid user test from 127.0.0.1 port 22 ssh2' >> /var/ossec/logs/active-responses.log; done"
+[mani@maxim ZeroRespond]$ docker compose logs -f alert-processor
+zr-alert-processor  | 2026-07-01 04:24:35,669 [INFO] Watching /wazuh-logs/alerts/alerts.json for new alerts...
+zr-alert-processor  | 2026-07-01 04:24:35,669 [WARNING] Alerts log not found at /wazuh-logs/alerts/alerts.json, waiting for Wazuh...
+zr-alert-processor  | 2026-07-01 04:24:53,873 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:53,874 [INFO] Forwarded alert 1782879893.113750 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,057 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,057 [INFO] Forwarded alert 1782879893.116766 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,082 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,082 [INFO] Forwarded alert 1782879893.134054 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,115 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,116 [INFO] Forwarded alert 1782879893.177981 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,162 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,162 [INFO] Forwarded alert 1782879893.181885 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,189 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,189 [INFO] Forwarded alert 1782879893.203903 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,223 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,224 [INFO] Forwarded alert 1782879893.224326 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,254 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,254 [INFO] Forwarded alert 1782879894.276961 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,301 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,301 [INFO] Forwarded alert 1782879894.279904 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,324 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,324 [INFO] Forwarded alert 1782879894.282428 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,360 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,361 [INFO] Forwarded alert 1782879894.285669 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,398 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,398 [INFO] Forwarded alert 1782879894.289074 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,420 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,421 [INFO] Forwarded alert 1782879894.309543 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,456 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,457 [INFO] Forwarded alert 1782879894.314131 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,487 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,487 [INFO] Forwarded alert 1782879894.319267 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,527 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,527 [INFO] Forwarded alert 1782879894.325224 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,551 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,551 [INFO] Forwarded alert 1782879894.333923 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,591 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,591 [INFO] Forwarded alert 1782879894.339635 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,613 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,613 [INFO] Forwarded alert 1782879894.346442 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,668 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,669 [INFO] Forwarded alert 1782879894.351274 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,693 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,693 [INFO] Forwarded alert 1782879894.355402 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,724 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,724 [INFO] Forwarded alert 1782879894.361475 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,785 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,785 [INFO] Forwarded alert 1782879894.366199 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,807 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,808 [INFO] Forwarded alert 1782879894.371325 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,855 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,855 [INFO] Forwarded alert 1782879894.376477 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,877 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,878 [INFO] Forwarded alert 1782879894.381605 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,918 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,918 [INFO] Forwarded alert 1782879894.386747 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,939 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,939 [INFO] Forwarded alert 1782879894.393642 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,978 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,978 [INFO] Forwarded alert 1782879894.401521 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,008 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,008 [INFO] Forwarded alert 1782879894.428501 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,038 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,038 [INFO] Forwarded alert 1782879894.445403 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,079 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,079 [INFO] Forwarded alert 1782879894.471389 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,101 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,101 [INFO] Forwarded alert 1782879894.474981 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,163 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,163 [INFO] Forwarded alert 1782879894.478799 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,214 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,215 [INFO] Forwarded alert 1782879894.482625 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,243 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,244 [INFO] Forwarded alert 1782879894.486473 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,271 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,272 [INFO] Forwarded alert 1782879894.490337 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,302 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,303 [INFO] Forwarded alert 1782879894.494357 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,345 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,345 [INFO] Forwarded alert 1782879894.499235 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,368 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,368 [INFO] Forwarded alert 1782879894.503973 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,398 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,398 [INFO] Forwarded alert 1782879895.631155 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,426 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,426 [INFO] Forwarded alert 1782879895.637174 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,459 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,460 [INFO] Forwarded alert 1782879895.640706 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,497 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,497 [INFO] Forwarded alert 1782879895.647507 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,520 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,520 [INFO] Forwarded alert 1782879895.689234 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,520 [WARNING] Skipping malformed JSON line: {"timestamp":"2026-07-01T04:24:55.190+0000","rule":{"level":3,"description":"CIS Benchmark for Amazo
+zr-alert-processor  | 2026-07-01 04:24:56,521 [WARNING] Skipping malformed JSON line: :"TA0003","mitre_mitigations":"M1027"},"file":["/etc/shadow"],"result":"passed"}}},"location":"sca"}
+zr-alert-processor  | 2026-07-01 04:25:03,543 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:25:03,543 [INFO] Forwarded alert 1782879902.698965 (status 201)
+zr-alert-processor  | 2026-07-01 04:25:14,590 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:25:14,590 [INFO] Forwarded alert 1782879913.700449 (status 201)
+^C
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ [mani@maxim ZeroRespond]$ docker compose exec wazuh.manager bash -c \
+  "for i in {1..6}; do echo 'Failed password for invalid user test from 127.0.0.1 port 22 ssh2' >> /var/ossec/logs/active-responses.log; done"
+[mani@maxim ZeroRespond]$ docker compose logs -f alert-processor
+zr-alert-processor  | 2026-07-01 04:24:35,669 [INFO] Watching /wazuh-logs/alerts/alerts.json for new alerts...
+zr-alert-processor  | 2026-07-01 04:24:35,669 [WARNING] Alerts log not found at /wazuh-logs/alerts/alerts.json, waiting for Wazuh...
+zr-alert-processor  | 2026-07-01 04:24:53,873 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:53,874 [INFO] Forwarded alert 1782879893.113750 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,057 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,057 [INFO] Forwarded alert 1782879893.116766 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,082 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,082 [INFO] Forwarded alert 1782879893.134054 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,115 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,116 [INFO] Forwarded alert 1782879893.177981 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,162 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,162 [INFO] Forwarded alert 1782879893.181885 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,189 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,189 [INFO] Forwarded alert 1782879893.203903 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,223 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,224 [INFO] Forwarded alert 1782879893.224326 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,254 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,254 [INFO] Forwarded alert 1782879894.276961 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,301 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,301 [INFO] Forwarded alert 1782879894.279904 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,324 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,324 [INFO] Forwarded alert 1782879894.282428 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,360 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,361 [INFO] Forwarded alert 1782879894.285669 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,398 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,398 [INFO] Forwarded alert 1782879894.289074 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,420 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,421 [INFO] Forwarded alert 1782879894.309543 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,456 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,457 [INFO] Forwarded alert 1782879894.314131 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,487 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,487 [INFO] Forwarded alert 1782879894.319267 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,527 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,527 [INFO] Forwarded alert 1782879894.325224 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,551 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,551 [INFO] Forwarded alert 1782879894.333923 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,591 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,591 [INFO] Forwarded alert 1782879894.339635 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,613 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,613 [INFO] Forwarded alert 1782879894.346442 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,668 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,669 [INFO] Forwarded alert 1782879894.351274 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,693 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,693 [INFO] Forwarded alert 1782879894.355402 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,724 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,724 [INFO] Forwarded alert 1782879894.361475 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,785 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,785 [INFO] Forwarded alert 1782879894.366199 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,807 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,808 [INFO] Forwarded alert 1782879894.371325 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,855 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,855 [INFO] Forwarded alert 1782879894.376477 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,877 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,878 [INFO] Forwarded alert 1782879894.381605 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,918 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,918 [INFO] Forwarded alert 1782879894.386747 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,939 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,939 [INFO] Forwarded alert 1782879894.393642 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:54,978 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:54,978 [INFO] Forwarded alert 1782879894.401521 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,008 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,008 [INFO] Forwarded alert 1782879894.428501 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,038 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,038 [INFO] Forwarded alert 1782879894.445403 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,079 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,079 [INFO] Forwarded alert 1782879894.471389 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,101 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,101 [INFO] Forwarded alert 1782879894.474981 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,163 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,163 [INFO] Forwarded alert 1782879894.478799 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,214 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,215 [INFO] Forwarded alert 1782879894.482625 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,243 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,244 [INFO] Forwarded alert 1782879894.486473 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,271 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,272 [INFO] Forwarded alert 1782879894.490337 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,302 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,303 [INFO] Forwarded alert 1782879894.494357 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,345 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,345 [INFO] Forwarded alert 1782879894.499235 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,368 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,368 [INFO] Forwarded alert 1782879894.503973 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,398 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,398 [INFO] Forwarded alert 1782879895.631155 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,426 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,426 [INFO] Forwarded alert 1782879895.637174 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,459 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,460 [INFO] Forwarded alert 1782879895.640706 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,497 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,497 [INFO] Forwarded alert 1782879895.647507 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,520 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:24:55,520 [INFO] Forwarded alert 1782879895.689234 (status 201)
+zr-alert-processor  | 2026-07-01 04:24:55,520 [WARNING] Skipping malformed JSON line: {"timestamp":"2026-07-01T04:24:55.190+0000","rule":{"level":3,"description":"CIS Benchmark for Amazo
+zr-alert-processor  | 2026-07-01 04:24:56,521 [WARNING] Skipping malformed JSON line: :"TA0003","mitre_mitigations":"M1027"},"file":["/etc/shadow"],"result":"passed"}}},"location":"sca"}
+zr-alert-processor  | 2026-07-01 04:25:03,543 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:25:03,543 [INFO] Forwarded alert 1782879902.698965 (status 201)
+zr-alert-processor  | 2026-07-01 04:25:14,590 [INFO] HTTP Request: POST http://backend:8000/alerts "HTTP/1.1 201 Created"
+zr-alert-processor  | 2026-07-01 04:25:14,590 [INFO] Forwarded alert 1782879913.700449 (status 201)
+^C
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ docker compose exec wazuh.manager ls -la /var/ossec/logs/alerts/
+docker compose exec wazuh.manager tail -5 /var/ossec/logs/alerts/alerts.json
+total 1116
+drwxr-x--- 3 wazuh wazuh   4096 Jul  1 04:24 .
+drwxrwx--- 8 wazuh wazuh   4096 Jul  1 04:24 ..
+drwxr-x--- 3 wazuh wazuh   4096 Jul  1 04:24 2026
+-rw-r----- 2 wazuh wazuh 424388 Jul  1 04:25 alerts.json
+-rw-r----- 2 wazuh wazuh 701951 Jul  1 04:25 alerts.log
+{"timestamp":"2026-07-01T04:24:55.180+0000","rule":{"level":7,"description":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Ensure accounts in /etc/passwd use shadowed passwords.","id":"19007","firedtimes":45,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"],"cis":["6.2.1"],"cis_csc_v8":["3.11"],"cis_csc_v7":["16.4"],"hipaa":["164.312(a)(2)(iv)","164.312(e)(2)(ii)"],"nist_sp_800-53":["SC-28","SC-28(1)"],"soc_2":["CC6.1"],"iso_27001-2013":["A.10.1.1"],"mitre_techniques":["T1003","T1003.008"],"mitre_tactics":["TA0003"],"mitre_mitigations":["M1027"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879895.689234","decoder":{"name":"sca"},"data":{"sca":{"type":"check","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","check":{"id":"31181","title":"Ensure accounts in /etc/passwd use shadowed passwords.","description":"Local accounts can use shadowed passwords. With shadowed passwords, the passwords are saved in shadow password file, /etc/shadow, encrypted by a salted one-way hash. Accounts with a shadowed password have an x in the second field in /etc/passwd.","rationale":"The /etc/passwd file also contains information like user ID's and group ID's that are used by many system programs. Therefore, the /etc/passwd file must remain world readable. In spite of encoding the password with a randomly-generated one-way hash function, an attacker could still break the system if they got access to the /etc/passwd file. This can be mitigated by using shadowed passwords, thus moving the passwords in the /etc/passwd file to /etc/shadow. The /etc/shadow file is set so only root will be able to read and write. This helps mitigate the risk of an attacker gaining access to the encoded passwords with which to perform a dictionary attack. Note: - All accounts must have passwords or be locked to prevent the account from being used by an unauthorized user. - A user account with an empty second field in /etc/passwd allows the account to be logged into by providing only the username.","remediation":"Run the following command to set accounts to use shadowed passwords: # sed -e 's/^\\([a-zA-Z0-9_]*\\):[^:]*:/\\1:x:/' -i /etc/passwd Investigate to determine if the account is logged in and what it is being used for, to determine if it needs to be forced off.","compliance":{"cis":"6.2.1","cis_csc_v8":"3.11","cis_csc_v7":"16.4","cmmc_v2":{"0":"AC.L2-3.1.19,IA.L2-3.5.10,MP.L2-3.8.1,SC.L2-3.13.11,SC.L2-3.13.16"},"hipaa":"164.312(a)(2)(iv),164.312(e)(2)(ii)","pci_dss_v3":{"2":{"1":"3.4,3.4.1,8.2.1"}},"pci_dss_v4":{"0":"3.1.1,3.3.2,3.3.3,3.5.1,3.5.1.2,3.5.1.3,8.3.2"},"nist_sp_800-53":"SC-28,SC-28(1)","soc_2":"CC6.1","iso_27001-2013":"A.10.1.1","mitre_techniques":"T1003,T1003.008","mitre_tactics":"TA0003","mitre_mitigations":"M1027"},"file":["/etc/passwd"],"result":"failed"}}},"location":"sca"}
+{"timestamp":"2026-07-01T04:24:55.190+0000","rule":{"level":3,"description":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Ensure password fields are not empty.","id":"19008","firedtimes":50,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"],"cis":["6.2.2"],"cis_csc_v8":["5.2"],"cis_csc_v7":["4.4"],"iso_27001-2013":["A.9.4.3"],"nist_sp_800-53":["IA-5(1)"],"soc_2":["CC6.1"],"mitre_techniques":["T1078","T1078.001","T1078.003"],"mitre_tactics":["TA0003"],"mitre_mitigations":["M1027"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879895.694154","decoder":{"name":"sca"},"data":{"sca":{"type":"check","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","check":{"id":"31182","title":"Ensure password fields are not empty.","description":"An account with an empty password field means that anybody may log in as that user without providing a password.","rationale":"All accounts must have passwords or be locked to prevent the account from being used by an unauthorized user.","remediation":"If any accounts in the /etc/shadow file do not have a password, run the following command to lock the account until it can be determined why it does not have a password: # passwd -l <username> Also, check to see if the account is logged in and investigate what it is being used for to determine if it needs to be forced off.","compliance":{"cis":"6.2.2","cis_csc_v8":"5.2","cis_csc_v7":"4.4","cmmc_v2":{"0":"IA.L2-3.5.7"},"iso_27001-2013":"A.9.4.3","nist_sp_800-53":"IA-5(1)","pci_dss_v4":{"0":"2.2.2,8.3.5,8.3.6,8.6.3"},"soc_2":"CC6.1","mitre_techniques":"T1078,T1078.001,T1078.003","mitre_tactics":"TA0003","mitre_mitigations":"M1027"},"file":["/etc/shadow"],"result":"passed"}}},"location":"sca"}
+{"timestamp":"2026-07-01T04:24:55.200+0000","rule":{"level":3,"description":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Ensure root is the only UID 0 account.","id":"19008","firedtimes":51,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"],"cis":["6.2.9"],"mitre_techniques":["T1548"],"mitre_tactics":["TA0001"],"mitre_mitigations":["M1026"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879895.696945","decoder":{"name":"sca"},"data":{"sca":{"type":"check","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","check":{"id":"31183","title":"Ensure root is the only UID 0 account.","description":"Any account with UID 0 has superuser privileges on the system.","rationale":"This access must be limited to only the default root account and only from the system console. Administrative access must be through an unprivileged account using an approved mechanism as noted in Item 5.6 Ensure access to the su command is restricted.","remediation":"Remove any users other than root with UID 0 or assign them a new UID if appropriate.","compliance":{"cis":"6.2.9","mitre_techniques":"T1548","mitre_tactics":"TA0001","mitre_mitigations":"M1026"},"file":["/etc/passwd"],"result":"passed"}}},"location":"sca"}
+{"timestamp":"2026-07-01T04:25:02.227+0000","rule":{"level":5,"description":"SCA summary: CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Score less than80% (53)","id":"19003","firedtimes":1,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879902.698965","decoder":{"name":"sca"},"data":{"sca":{"type":"summary","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","description":"This document provides prescriptive guidance for establishing a secure configuration posture for Amazon Linux 2023 systems running on x86 and x64 platforms. This document was tested against Amazon Linux 2023.","policy_id":"cis_amazon_linux_2023","passed":"51","failed":"45","invalid":"87","total_checks":"183","score":"53","file":"cis_amazon_linux_2023.yml"}},"location":"sca"}
+{"timestamp":"2026-07-01T04:25:13.114+0000","rule":{"level":5,"description":"SCA summary: CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Score less than80% (53)","id":"19003","firedtimes":2,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879913.700449","decoder":{"name":"sca"},"data":{"sca":{"type":"summary","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","description":"This document provides prescriptive guidance for establishing a secure configuration posture for Amazon Linux 2023 systems running on x86 and x64 platforms. This document was tested against Amazon Linux 2023.","policy_id":"cis_amazon_linux_2023","passed":"51","failed":"45","invalid":"87","total_checks":"183","score":"53","file":"cis_amazon_linux_2023.yml"}},"location":"sca"}
+[mani@maxim ZeroRespond]$ 

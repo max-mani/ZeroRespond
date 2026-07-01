@@ -19,7 +19,7 @@ fi
 
 echo "[2/3] Generating Wazuh TLS certificates (one-time)..."
 if [ -f "config/wazuh_indexer_ssl_certs/root-ca.pem" ]; then
-  echo "  Certs already exist — skipping. Delete config/wazuh_indexer_ssl_certs/ to regenerate."
+  echo "  Certs already exist — skipping generation."
 else
   mkdir -p config/wazuh_indexer_ssl_certs
   docker compose -f generate-indexer-certs.yml run --rm generator
@@ -27,6 +27,10 @@ else
   cp config/wazuh_indexer_ssl_certs/root-ca.pem config/wazuh_indexer_ssl_certs/root-ca-manager.pem
   echo "  Certs generated in config/wazuh_indexer_ssl_certs/"
 fi
+
+echo "  Ensuring cert permissions are readable by Docker containers..."
+chmod 755 config/wazuh_indexer_ssl_certs 2>/dev/null || sudo chmod 755 config/wazuh_indexer_ssl_certs
+chmod 644 config/wazuh_indexer_ssl_certs/*.pem 2>/dev/null || sudo chmod 644 config/wazuh_indexer_ssl_certs/*.pem
 
 echo "[3/3] Checking .env exists..."
 if [ ! -f ".env" ]; then

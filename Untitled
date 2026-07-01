@@ -1,0 +1,7 @@
+[mani@maxim ZeroRespond]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[mani@maxim ZeroRespond]$ docker compose up -d
+validating /home/mani/Projects/ZeroRespond/docker-compose.yml: networks.alert-processor additional properties 'container_name', 'depends_on', 'environment', 'networks', 'restart', 'volumes', 'build' not allowed
+[mani@maxim ZeroRespond]$ ^C
+[mani@maxim ZeroRespond]$ ^C
+[mani@maxim ZeroRespond]$ 
