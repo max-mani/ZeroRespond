@@ -710,3 +710,45 @@ drwxr-x--- 3 wazuh wazuh   4096 Jul  1 04:24 2026
 {"timestamp":"2026-07-01T04:25:02.227+0000","rule":{"level":5,"description":"SCA summary: CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Score less than80% (53)","id":"19003","firedtimes":1,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879902.698965","decoder":{"name":"sca"},"data":{"sca":{"type":"summary","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","description":"This document provides prescriptive guidance for establishing a secure configuration posture for Amazon Linux 2023 systems running on x86 and x64 platforms. This document was tested against Amazon Linux 2023.","policy_id":"cis_amazon_linux_2023","passed":"51","failed":"45","invalid":"87","total_checks":"183","score":"53","file":"cis_amazon_linux_2023.yml"}},"location":"sca"}
 {"timestamp":"2026-07-01T04:25:13.114+0000","rule":{"level":5,"description":"SCA summary: CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.: Score less than80% (53)","id":"19003","firedtimes":2,"mail":false,"groups":["sca"],"gdpr":["IV_35.7.d"],"pci_dss":["2.2"],"nist_800_53":["CM.1"],"tsc":["CC7.1","CC7.2"]},"agent":{"id":"000","name":"wazuh.manager"},"manager":{"name":"wazuh.manager"},"id":"1782879913.700449","decoder":{"name":"sca"},"data":{"sca":{"type":"summary","scan_id":"634971578","policy":"CIS Benchmark for Amazon Linux 2023 Benchmark v1.0.0.","description":"This document provides prescriptive guidance for establishing a secure configuration posture for Amazon Linux 2023 systems running on x86 and x64 platforms. This document was tested against Amazon Linux 2023.","policy_id":"cis_amazon_linux_2023","passed":"51","failed":"45","invalid":"87","total_checks":"183","score":"53","file":"cis_amazon_linux_2023.yml"}},"location":"sca"}
 [mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "docs: alert-processor verified against containerized Wazuh volume mount"
+[main 3901e43] docs: alert-processor verified against containerized Wazuh volume mount
+ 16 files changed, 2357 insertions(+), 763 deletions(-)
+ create mode 100644 .env.example
+ create mode 100644 Untitled
+ create mode 100644 alert-processor/Dockerfile
+ create mode 100644 alert-processor/requirements.txt
+ create mode 100644 alert-processor/wazuh_listener.py
+ create mode 100644 config/wazuh_indexer/internal_users.yml
+ create mode 100644 weekly tasks/week 7/ZeroRespond_Week7_Tasks_Day4to7.md
+[mani@maxim ZeroRespond]$ git push origin main
+Enumerating objects: 41, done.
+Counting objects: 100% (41/41), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (23/23), done.
+Writing objects: 100% (25/25), 24.16 KiB | 6.04 MiB/s, done.
+Total 25 (delta 11), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (11/11), completed with 9 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   a65ac21..3901e43  main -> main
+[mani@maxim ZeroRespond]$ 
+[mani@maxim ZeroRespond]$ chmod +x check_stack.sh
+[mani@maxim ZeroRespond]$ git add .
+[mani@maxim ZeroRespond]$ git commit -m "docs: check_stack.sh health verification + client deployment guide"
+git push origin main
+
+[main 1451afd] docs: check_stack.sh health verification + client deployment guide
+ 3 files changed, 198 insertions(+), 1 deletion(-)
+ create mode 100644 DEPLOYMENT.md
+ create mode 100755 check_stack.sh
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 16 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (5/5), 3.13 KiB | 3.13 MiB/s, done.
+Total 5 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/max-mani/ZeroRespond.git
+   3901e43..1451afd  main -> main
+[mani@maxim ZeroRespond]$ 
+

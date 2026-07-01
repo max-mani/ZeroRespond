@@ -2,8 +2,6 @@
 # check_stack.sh — verify all 9 services are reachable
 # Run after: docker compose up -d
 
-set -e
-
 echo "=== ZeroRespond Stack Health Check ==="
 echo ""
 
@@ -12,9 +10,12 @@ docker compose exec postgres pg_isready -U zr -d zerorespondnd \
   && echo "  ✓ PostgreSQL healthy" || echo "  ✗ PostgreSQL not ready"
 echo ""
 
-echo "2. Ollama (via backend network):"
-docker compose exec backend curl -s http://ollama:11434/api/tags \
-  | python3 -m json.tool | head -5
+echo "2. Ollama (via backend AI health check):"
+OLLAMA_STATUS=$(curl -s http://localhost:8000/health/ai \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['ai_agent']['status'])")
+[ "$OLLAMA_STATUS" = "ready" ] \
+  && echo "  ✓ Ollama reachable and model ready" \
+  || echo "  ✗ Ollama status: $OLLAMA_STATUS"
 echo ""
 
 echo "3. Backend:"
@@ -39,10 +40,10 @@ docker compose exec wazuh.indexer curl -sk \
 echo ""
 
 echo "7. Wazuh dashboard:"
-HTTP=$(curl -sk -o /dev/null -w "%{http_code}" https://localhost:8443)
+HTTP=$(curl -sk --max-time 10 -o /dev/null -w "%{http_code}" https://localhost:8443 || echo "000")
 [ "$HTTP" = "200" ] || [ "$HTTP" = "302" ] \
   && echo "  ✓ Wazuh dashboard reachable (HTTP $HTTP)" \
-  || echo "  ✗ Wazuh dashboard returned HTTP $HTTP"
+  || echo "  ⚠ Wazuh dashboard returned HTTP $HTTP (may still be initializing)"
 echo ""
 
 echo "8. Wazuh manager alerts.json:"
